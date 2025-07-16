@@ -7,3 +7,4 @@ export * from "./checkbox";
 export * from "./switch";
 export * from "./textarea";
 export * from "./tooltip";
+export * from "./card";

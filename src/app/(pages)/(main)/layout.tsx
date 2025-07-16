@@ -1,11 +1,13 @@
-import { Footer, Header } from "./_components";
+import { Sidebar } from "lucide-react";
+import { Header } from "./_components";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <>
             <Header />
-            {children}
-            <Footer />
+            <div className="ml-50">
+                {children}
+            </div>
         </>
     );
 }

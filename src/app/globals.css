@@ -5,6 +5,7 @@ html,
 body,
 :root{
   height: 100%;
+  font-size: clamp(12px, 1vw + 0.5rem, 16px);
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -126,8 +127,6 @@ body,
     @apply bg-background text-foreground;
   }
 }
-
-
 
 /* call in */
 
