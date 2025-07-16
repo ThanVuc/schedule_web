@@ -15,7 +15,6 @@ export default function useToastState() {
                 message,
             } = toastState;
 
-            // @ts-ignore
             toast(title, {
                 description: message,
                 action: {

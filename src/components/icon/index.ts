@@ -11,3 +11,5 @@ export * from "./triangleExclaimation";
 export * from "./close";
 export * from "./penToSqure";
 export * from "./chatgpt";
+export * from "./role";
+export * from "./shield";

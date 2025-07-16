@@ -6,8 +6,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input, Button } from "@/components/ui";
 import {
     Bell,
     LogOut,
@@ -23,7 +22,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { PenToSquareIcon } from "@/components/icon";
 
 interface HeaderProps {
     userName: string;
