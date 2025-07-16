@@ -2,21 +2,15 @@ import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 
 type ToastProp = {
-
     title?: string;
     message: string;
-    variant?: "default" | "destructive";
-
 };
-
 export default function useToastState() {
     const [toastState, setToastState] = useState<ToastProp | null>(null);
 
     useEffect(() => {
         if (toastState) {
             const {
-                variant = "destructive",
-
                 title = "Thông báo",
                 message,
             } = toastState;
