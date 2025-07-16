@@ -17,7 +17,7 @@ type CardsProps = {
 
 export const Cards: React.FC<CardsProps> = ({ cards }) => {
     return (
-        <div className="w-full">
+        <div className="w-full ">
             {cards.map((card, index) => (
                 <Card
                     key={index}
