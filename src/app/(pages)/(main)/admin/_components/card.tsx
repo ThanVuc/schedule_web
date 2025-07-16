@@ -27,11 +27,6 @@ export const Card: React.FC<CardProps> = ({
                 <div>
                     <div className="flex items-center space-x-2">
                         <span className="font-medium">{title}</span>
-                        {/* {isRoot?.value && (
-                            <span className="text-gray-500">
-                              {isRoot.icon}
-                            </span>
-                        )} */}
                     {isRoot && (
                         <span className="text-gray-500">
                             {iconIsRoot}
