@@ -1,3 +1,4 @@
-export * from "./dialog";
+export * from "./typography";
 export * from "./alertDialog";
-export * from "./Typography";
+export * from "./pagination";
+export * from "./dialog";

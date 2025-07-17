@@ -20,7 +20,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-xl p-4 bg-white  shadow-sm border mb-4 gap-3">
-            <div className="w-12 h-12 flex items-center juAstify-center rounded-full bg-gray-100 text-2xl">
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-2xl">
                 {icon}
             </div>
             <div className="flex-1">
@@ -28,7 +28,7 @@ export const Card: React.FC<CardProps> = ({
                     <div className="flex items-center space-x-2">
                         <span className="font-medium">{title}</span>
                     {isRoot && (
-                        <span className="text-gray-500">
+                        <span className="text-gray-500 flex">
                             {iconIsRoot}
                         </span>
                     )}
