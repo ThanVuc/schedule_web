@@ -4,6 +4,7 @@ import { toast } from "sonner";
 type ToastProp = {
     title?: string;
     message: string;
+    variant?: "default" | "success" | "error" | "warning";
 };
 export default function useToastState() {
     const [toastState, setToastState] = useState<ToastProp | null>(null);
@@ -13,15 +14,31 @@ export default function useToastState() {
             const {
                 title = "Thông báo",
                 message,
+                variant = "default",
             } = toastState;
 
-            toast(title, {
+            const toastOptions = {
                 description: message,
                 action: {
                     label: "X",
-                    onClick: () => { },
-                }
-            });
+                    onClick: () => {},
+                },
+            };
+
+            switch (variant) {
+                case "success":
+                    toast.success(title, toastOptions);
+                    break;
+                case "error":
+                    toast.error(title, toastOptions);
+                    break;
+                case "warning":
+                    toast.warning(title, toastOptions);
+                    break;
+                default:
+                    toast(title, toastOptions);
+            }
+
             setToastState(null);
         }
     }, [toastState]);
