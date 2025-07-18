@@ -1,6 +1,6 @@
 "use client";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import SideBar from "./_components/sidebar";
+import SideBar from "../../../../components/common/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
@@ -10,6 +10,8 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePathname, useRouter } from "next/navigation";
+import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon } from "@/components/icon";
+
 import { ReactNode } from "react";
 const AdminLayout = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname();
@@ -20,13 +22,35 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         if (pathname.startsWith("/admin/permissions")) return "Quyền hạn";
         return "";
     };
+    const menuItems = [
+        {
+            title: "Trang chủ",
+            url: "/",
+            icon: ReturnUpBackToHome,
+        },
+        {
+            title: "Vai trò",
+            url: "/admin/roles",
+            icon: RoleIcon,
+        },
+        {
+            title: "Danh sách người dùng",
+            url: "/admin/users",
+            icon: CalendarIcon,
+        },
+        {
+            title: "Quyền hạn",
+            url: "/admin/permissions",
+            icon: AssignmentIcon,
+        },
+    ];
 
     const currentPage = getName();
     const router = useRouter();
     return (
         <div className="w-full min-h-screen bg-gray-50">
             <SidebarProvider>
-                <SideBar />
+                <SideBar array={menuItems} />
                 <SidebarInset>
                     <header className="flex h-16 items-center gap-2 border-b px-4">
                         <SidebarTrigger className="-ml-1" />
@@ -36,7 +60,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
                                 <BreadcrumbList>
                                     <BreadcrumbItem>
                                         <BreadcrumbPage
-                                            className="text-sm text-gray-600"
+                                            className="text-sm text-gray-600 flex"
                                             onClick={() => router.push("/admin/users")}
                                         >
                                             Quản trị viên

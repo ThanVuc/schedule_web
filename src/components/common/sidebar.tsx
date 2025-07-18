@@ -11,38 +11,19 @@ import {
     SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { useRouter, usePathname } from "next/navigation";
-import { RoleIcon, HomeIcon, CalendarIcon, AssignmentIcon } from "@/components/icon";
-const menuTitle = [
-    "Trang chủ",
-    "Vai trò",
-    "Danh sách người dùng",
-    "Quyền hạn",
-]
+import { AdminIcon } from "../icon";
 
-const menuItems = [
-    {
-        title: "Trang chủ",
-        url: "/",
-        icon: HomeIcon,
-    },
-    {
-        title: "Vai trò",
-        url: "/admin/roles",
-        icon: RoleIcon,
-    },
-    {
-        title: "Danh sách người dùng",
-        url: "/admin/users",
-        icon: CalendarIcon,
-    },
-    {
-        title: "Quyền hạn",
-        url: "/admin/permissions",
-        icon: AssignmentIcon,
-    },
-];
 
-const SideBar = () => {
+export interface SidebarProp {
+    array: {
+        title: string;
+        url: string;
+        icon: React.ComponentType<{ className?: string }>;
+    }[];
+}
+
+
+const SideBar = ({ array }: SidebarProp) => {
     const router = useRouter();
     const pathname = usePathname();
     return (
@@ -50,12 +31,13 @@ const SideBar = () => {
             <SidebarContent className="p-4">
 
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-xs text-gray-400 uppercase tracking-wider px-2 mb-3">
+                    <SidebarGroupLabel className="text-md font-bold uppercase tracking-wider px-2 mb-3">
+                        <AdminIcon className="w-24 h-24 mr-1" />
                         Quản trị viên
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu className="space-y-1">
-                            {menuItems.map((item) => {
+                            {array.map((item) => {
                                 const isActive = pathname === item.url;
                                 return (
                                     <SidebarMenuItem key={item.title}>

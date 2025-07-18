@@ -17,3 +17,5 @@ export * from "./home";
 export * from "./calendar";
 export * from "./assignment";
 export * from "./next";
+export * from "./returnupbacktohome";
+export * from "./admin";
