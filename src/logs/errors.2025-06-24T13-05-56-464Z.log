@@ -91,3 +91,14 @@ ID: 98811a9d-fa24-4f26-aa5d-fba6f317d443 | Time: 2025-07-15T15:41:17.171Z | Name
 ID: cfcf1b6a-9970-4fd9-aec6-98b0b4b6df9d | Time: 2025-07-15T15:43:56.528Z | Name: ReferenceError | Cause: conte is not defined
 ID: caadc1f0-3504-4049-bc5e-10c211df746c | Time: 2025-07-15T15:43:57.108Z | Name: ReferenceError | Cause: conte is not defined
 ID: 65a5ec10-ee2c-43ce-b902-db2b8f14f121 | Time: 2025-07-16T15:20:24.295Z | Name: ReferenceError | Cause: H2 is not defined
+ID: 9a393165-b978-49df-a253-762e7c166979 | Time: 2025-07-18T14:50:45.079Z | Name: ReferenceError | Cause: AddRole is not defined
+ID: ef90187a-acb3-4047-a920-0e794969fbb5 | Time: 2025-07-18T15:56:11.775Z | Name: ReferenceError | Cause: ShieldIcon is not defined
+ID: 2cce4f6e-0afe-455d-9a2a-67e8c3971e1f | Time: 2025-07-18T15:56:50.239Z | Name: ReferenceError | Cause: ShieldIcon is not defined
+ID: 3e1c3dea-9175-4b44-8447-945ae19d8fcf | Time: 2025-07-18T15:56:59.231Z | Name: ReferenceError | Cause: EyeIcon is not defined
+ID: fbf11a27-1ee5-4e69-b3cc-4f0fbdeec0b5 | Time: 2025-07-19T03:09:24.187Z | Name: TypeError | Cause: Cannot destructure property 'getFieldState' of '(0 , __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__.useFormContext)(...)' as it is null.
+ID: 2624ad4f-61d2-4d9f-b3c9-97f44a8dd15f | Time: 2025-07-19T03:11:42.008Z | Name: TypeError | Cause: Cannot destructure property 'getFieldState' of '(0 , __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__.useFormContext)(...)' as it is null.
+ID: c2799f20-c702-49bb-a8c0-c0a6953caac6 | Time: 2025-07-19T03:16:02.702Z | Name: TypeError | Cause: Cannot destructure property 'getFieldState' of '(0 , __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__.useFormContext)(...)' as it is null.
+ID: d57a2f80-c330-49ae-a2fa-5085e2cfb9b3 | Time: 2025-07-19T04:33:47.482Z | Name: ReferenceError | Cause: H4 is not defined
+ID: 841b5659-68cd-4153-930b-12529d0d6c5e | Time: 2025-07-19T04:39:31.207Z | Name: ReferenceError | Cause: H2 is not defined
+ID: 79eca0cd-916a-45e3-b613-ade552f09db9 | Time: 2025-07-19T08:37:53.883Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'find')
+ID: e69563e7-895a-4f4b-a5eb-0237bb3ead5d | Time: 2025-07-19T08:39:50.272Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'map')

@@ -8,3 +8,6 @@ export * from "./switch";
 export * from "./textarea";
 export * from "./tooltip";
 export * from "./card";
+export * from "./form";
+export * from "./command";
+export * from "./popover";
