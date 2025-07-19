@@ -8,6 +8,7 @@ type CardProps = {
     isRoot?:boolean;
     iconIsRoot?: React.ReactNode;
     actions?: React.ReactNode;
+   
 };
 
 export const Card: React.FC<CardProps> = ({
@@ -17,6 +18,8 @@ export const Card: React.FC<CardProps> = ({
     isRoot,
     iconIsRoot,
     actions ,
+    
+    
 }) => {
     return (
         <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-xl p-4 bg-white  shadow-sm border mb-4 gap-3">

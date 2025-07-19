@@ -91,3 +91,63 @@ ID: 98811a9d-fa24-4f26-aa5d-fba6f317d443 | Time: 2025-07-15T15:41:17.171Z | Name
 ID: cfcf1b6a-9970-4fd9-aec6-98b0b4b6df9d | Time: 2025-07-15T15:43:56.528Z | Name: ReferenceError | Cause: conte is not defined
 ID: caadc1f0-3504-4049-bc5e-10c211df746c | Time: 2025-07-15T15:43:57.108Z | Name: ReferenceError | Cause: conte is not defined
 ID: 65a5ec10-ee2c-43ce-b902-db2b8f14f121 | Time: 2025-07-16T15:20:24.295Z | Name: ReferenceError | Cause: H2 is not defined
+ID: 86254db3-2164-4b7b-99c7-85ce44489ae5 | Time: 2025-07-19T14:16:27.424Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: da7bfe1c-b12c-48dd-94aa-8c3a1ca33310 | Time: 2025-07-19T14:16:33.490Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 67988ad4-1eb9-4672-aeaf-4a8884beddc7 | Time: 2025-07-19T14:17:11.377Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 4124d838-81ec-439f-ad08-f93fff956ab2 | Time: 2025-07-19T14:17:13.978Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 3d04330b-b03c-43d7-9ce3-8b8a87e8e435 | Time: 2025-07-19T14:18:56.448Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 8f3f05fb-fa9c-4cbf-9837-75edb077a37c | Time: 2025-07-19T14:19:54.324Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 549e7d65-436f-4990-82ad-84e3078fc516 | Time: 2025-07-19T14:19:55.779Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 1a74f17d-ad09-4303-bbb7-324182521577 | Time: 2025-07-19T14:20:14.964Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 296fbaa7-fb00-4f3f-9242-c009927dce73 | Time: 2025-07-19T14:20:15.956Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 6a886bc6-80d3-499d-b214-89e52fbad86b | Time: 2025-07-19T14:27:00.876Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 4dc031d0-fd19-44a0-9871-6deb09f99cad | Time: 2025-07-19T14:27:27.881Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 7209cada-3b10-4be3-ad49-26498d91e44d | Time: 2025-07-19T14:27:48.624Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: a3d6a4b2-47cb-4735-a161-37e568f282f1 | Time: 2025-07-19T14:28:08.659Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 93c96fb7-d2f9-485b-800a-9ec3bc7909b9 | Time: 2025-07-19T14:29:24.589Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 89159f91-6a60-4828-a5d7-7ea7b2db965a | Time: 2025-07-19T14:30:47.014Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: f81d174f-0bd8-4604-a671-ca8d52ef8b12 | Time: 2025-07-19T14:30:49.293Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 6047faa9-4331-41c5-831f-76e99b442f70 | Time: 2025-07-19T14:30:51.435Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 1c82e051-3c36-40d3-841b-570b501ada72 | Time: 2025-07-19T14:30:52.446Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: b98afba3-8af1-4a80-9b7d-c6ebd5a365cf | Time: 2025-07-19T14:32:20.463Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 2460eaef-2006-4611-b1c4-3a46011fe601 | Time: 2025-07-19T14:33:06.644Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 8e39aa51-1d7c-4828-b9c3-75466d1d2885 | Time: 2025-07-19T14:33:09.660Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 4a037cc8-a2d8-4191-9bb7-58cdf3be5222 | Time: 2025-07-19T14:35:31.745Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 8051d55e-188d-4580-bde9-664518d46565 | Time: 2025-07-19T14:35:57.692Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `page`.
+ID: 09a13595-675f-41c9-9053-0bd9dbdaceb2 | Time: 2025-07-19T14:39:02.813Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `page`.
+ID: bb056511-f6da-4a81-bc56-52d03375c6ee | Time: 2025-07-19T14:39:04.780Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 08e39194-8d42-49df-81a7-bee32f816687 | Time: 2025-07-19T14:39:39.921Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 87195cee-4d9e-4840-8616-eddf868a05b1 | Time: 2025-07-19T14:40:14.637Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: b7a3b21b-59d9-4c7f-8f7f-a926fb742dd0 | Time: 2025-07-19T14:40:21.679Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 1318b9ca-b6fd-4c77-966c-d8ff5d2c9f79 | Time: 2025-07-19T14:41:41.159Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 34894613-8913-46cd-981f-36fbbe594120 | Time: 2025-07-19T14:42:22.731Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'undefined')
+ID: 1628b0a9-da5d-4133-94ee-2ef27b5826aa | Time: 2025-07-19T14:43:43.621Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'undefined')
+ID: b929eb63-7a22-4f31-9c76-b2f8a148697b | Time: 2025-07-19T14:43:50.925Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: e4d03cba-fa6a-489d-bbea-0be20c062b44 | Time: 2025-07-19T14:43:56.884Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 5ab2d5f9-de7f-416a-a623-5b2dc439ac44 | Time: 2025-07-19T14:43:59.059Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: edafe564-9bbc-42df-8aab-c637bcbd5696 | Time: 2025-07-19T14:44:15.475Z | Name: ReferenceError | Cause: key is not defined
+ID: 1736c381-986e-44f2-91a0-c3fd52a2f67f | Time: 2025-07-19T14:44:25.156Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 2e835614-9548-4069-a587-e029a9e04048 | Time: 2025-07-19T14:44:29.386Z | Name: ReferenceError | Cause: index is not defined
+ID: cd1ed5f0-fce8-4c08-adbd-75dac4ed21e6 | Time: 2025-07-19T14:44:32.393Z | Name: ReferenceError | Cause: index is not defined
+ID: f51c4a59-9102-4b19-98a4-bf3a8e75723d | Time: 2025-07-19T14:44:37.227Z | Name: ReferenceError | Cause: ke is not defined
+ID: 49071f24-81f9-47d1-b407-94228ae44a7d | Time: 2025-07-19T14:44:39.719Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '#<Object>')
+ID: 2314743c-1759-463a-b376-aa5ea9b99229 | Time: 2025-07-19T14:44:41.339Z | Name: ReferenceError | Cause: Key is not defined
+ID: c536f99f-5eaa-4c77-a4d2-2ee4538bfc49 | Time: 2025-07-19T14:44:45.772Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 142c2b31-d5f0-4b64-b765-0be37a7e09f3 | Time: 2025-07-19T14:45:29.671Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: c1759a24-d256-4462-91c3-7b50d0172bf9 | Time: 2025-07-19T14:45:31.375Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 9c3c6c5c-ec94-401d-9f8f-c286de7f238d | Time: 2025-07-19T14:45:33.222Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 72babbec-4901-4b0a-a398-65479a46285f | Time: 2025-07-19T14:45:37.144Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 0b30979e-0aef-418e-9023-a1e7aa624ca1 | Time: 2025-07-19T14:45:39.578Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 4a6a8571-983f-4460-a195-f157beb3245b | Time: 2025-07-19T14:45:46.242Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 4dd6ab45-493d-4f1c-bfcd-644eddf648e9 | Time: 2025-07-19T14:46:57.640Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 579662a6-5408-4683-9d20-cb58c50df6f0 | Time: 2025-07-19T14:48:07.403Z | Name: ReferenceError | Cause: i is not defined
+ID: 40841bb8-f48f-440f-ace6-bf82d9b35b5b | Time: 2025-07-19T14:50:07.131Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 0b8c4fb6-68b5-41b5-b3fb-2496e5395358 | Time: 2025-07-19T14:50:12.465Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 40ecc3a0-0639-4de8-9ffd-b1e97521cc33 | Time: 2025-07-19T15:24:01.480Z | Name: TypeError | Cause: Cannot read properties of undefined (reading '0')
+ID: 394dd663-5b11-4372-876f-ddb30a18c66a | Time: 2025-07-19T15:27:04.146Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `page`.
