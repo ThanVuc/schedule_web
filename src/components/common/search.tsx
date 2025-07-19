@@ -1,0 +1,69 @@
+import { useState } from "react";
+import { Input } from "../ui";
+import { SearchIcon } from "lucide-react";
+import { useDebounce } from "@/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
+
+export interface AppSearchProps {
+    onSearch: (query: string) => void;
+    placeholder?: string;
+    className?: string;
+}
+
+export const AppSearchSimple = (
+    { onSearch, placeholder = "Tìm kiếm...", className }: AppSearchProps
+) => {
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        onSearch(query);
+    };
+
+    return (
+        <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                type="text"
+                className={`pl-10 ${className}`}
+                placeholder={placeholder}
+                value={searchQuery}
+                onChange={handleSearch}
+            />
+        </div>
+    );
+}
+
+export const AppSearch = (
+    { placeholder = "Tìm kiếm...", className }: AppSearchProps
+) => {
+    const [searchString, setSearchString] = useState("");
+    const searchParam = useSearchParams();
+    const router = useRouter();
+    const debouncedValue = useDebounce(searchString, 300);
+
+    const handleSearch = (query: string) => {
+        setSearchString(query);
+        const params = new URLSearchParams(searchParam.toString());
+        if (debouncedValue) {
+            params.set("search", debouncedValue as string);
+            router.push(`?${params.toString()}`);
+        } else {
+            params.delete("search");
+        }
+    };
+
+    return (
+        <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                type="text"
+                className={`pl-10 ${className}`}
+                placeholder={placeholder}
+                value={searchString}
+                onChange={(e) => handleSearch(e.target.value)}
+            />
+        </div>
+    )
+}
