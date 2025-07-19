@@ -26,10 +26,11 @@ export interface SidebarProp {
     AppSidebar: SidebarItem[];
     title: string;
     headerTitle: string;
+    headerurl: string;
     icon: React.ComponentType<{ className?: string }>;
     currentPage: string;
 }
-const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPage }: SidebarProp & { children: ReactNode }) => {
+const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPage, headerurl }: SidebarProp & { children: ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
     return (
@@ -83,7 +84,7 @@ const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPag
                                 <BreadcrumbItem>
                                     <BreadcrumbPage
                                         className="text-sm text-gray-600 flex"
-                                        onClick={() => router.push("/admin/users")}
+                                        onClick={() => router.push(headerurl)}
                                     >
                                         {headerTitle}
                                     </BreadcrumbPage>
