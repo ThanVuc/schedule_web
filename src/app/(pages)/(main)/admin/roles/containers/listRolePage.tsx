@@ -68,7 +68,6 @@ export const ListRolePage = () => {
                     </div>
                 )
             }
-
         ]);
     }, [currentPage]);
 
@@ -141,14 +140,19 @@ export const ListRolePage = () => {
                 <div className="body">
                     <Cards cards={roleCardItems} />
                 </div>
-                <div>
-                    <AppPagination
-                        page={3}
-                        total_pages={10}
-                        has_next={true}
-                        has_prev={false}
-                    />
-                </div>
+                {
+                    roleCardItems.length !== 0 && (
+                        <div>
+                            <AppPagination
+                                page={3}
+                                total_pages={10}
+                                has_next={true}
+                                has_prev={false}
+                            />
+                        </div>
+                    )
+                }
+
             </div>
         </>
     );
