@@ -1,7 +1,9 @@
 "use client";
 import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon, AdminIcon } from "@/components/icon";
+
 import AppSideBar from "@/components/common/sidebar";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 const SidebarAdmin = ({ children }: { children: ReactNode }) => {
     const menuItems = [
         {
@@ -25,8 +27,16 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
             icon: AssignmentIcon,
         },
     ];
+    const pathname = usePathname();
+    const getName = () => {
+        if (pathname.startsWith("/admin/users")) return "Danh sách người dùng";
+        if (pathname.startsWith("/admin/roles")) return "Danh sách vai trò";
+        if (pathname.startsWith("/admin/permissions")) return "Quyền hạn";
+        return "";
+    };
+    const currentPage = getName();
     return (<>
-        <AppSideBar AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
+        <AppSideBar currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
             {children}
         </AppSideBar>
     </>);

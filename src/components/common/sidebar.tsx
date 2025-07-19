@@ -27,16 +27,10 @@ export interface SidebarProp {
     title: string;
     headerTitle: string;
     icon: React.ComponentType<{ className?: string }>;
+    currentPage: string;
 }
-const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon }: SidebarProp & { children: ReactNode }) => {
+const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPage }: SidebarProp & { children: ReactNode }) => {
     const pathname = usePathname();
-    const getName = () => {
-        if (pathname.startsWith("/admin/users")) return "Danh sách người dùng";
-        if (pathname.startsWith("/admin/roles")) return "Danh sách vai trò";
-        if (pathname.startsWith("/admin/permissions")) return "Quyền hạn";
-        return "";
-    };
-    const currentPage = getName();
     const router = useRouter();
     return (
         <SidebarProvider>
