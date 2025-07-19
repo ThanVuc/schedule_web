@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui";
 import { SearchIcon } from "lucide-react";
 import { useDebounce } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export interface AppSearchProps {
-    onSearch: (query: string) => void;
+    onSearch?: (query: string) => void;
     placeholder?: string;
     className?: string;
 }
@@ -18,7 +18,9 @@ export const AppSearchSimple = (
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
         setSearchQuery(query);
-        onSearch(query);
+        if (onSearch) {
+            onSearch(query);
+        }
     };
 
     return (
@@ -43,23 +45,27 @@ export const AppSearch = (
     const router = useRouter();
     const debouncedValue = useDebounce(searchString, 300);
 
-    const handleSearch = (query: string) => {
-        setSearchString(query);
+    useEffect(() => {
         const params = new URLSearchParams(searchParam.toString());
         if (debouncedValue) {
             params.set("search", debouncedValue as string);
-            router.push(`?${params.toString()}`);
         } else {
             params.delete("search");
         }
+        router.push(`?${params.toString()}`);
+    }, [debouncedValue]);
+
+    const handleSearch = (query: string) => {
+        setSearchString(query);
     };
+
 
     return (
         <div className="relative">
             <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
                 type="text"
-                className={`pl-10 ${className}`}
+                className={`pl-10 min-w-[15rem] ${className}`}
                 placeholder={placeholder}
                 value={searchString}
                 onChange={(e) => handleSearch(e.target.value)}

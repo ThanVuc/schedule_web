@@ -1,4 +1,4 @@
-import { AppPagination, H2, Muted } from "@/components/common";
+import { AppAlertDialog, AppPagination, AppSearch, H2, Muted } from "@/components/common";
 import { Statistic } from "../../_components/statistic";
 import { EyeIcon, PencilIcon, RoleIcon, ShieldIcon, TrashIcon, UserIcon } from "@/components/icon";
 import { CardItem, Cards } from "../../_components/cards";
@@ -21,6 +21,7 @@ export const ListRolePage = () => {
     const searchParams = useSearchParams();
     const currentPage = parseInt(searchParams.get("page") || "1", 10);
     const [roleCardItems, SetRoleCardItems] = useState<CardItem[]>([]);
+    const [openAlertDialog, setOpenAlertDialog] = useState(false);
 
     const statisticCardOptions = [
         {
@@ -72,22 +73,48 @@ export const ListRolePage = () => {
     }, [currentPage]);
 
 
-
     const actionCardOptions = [
-        <ActionButton key="view" variant="outline" buttonText="Xem" icon={<EyeIcon className="w-4 h-4" />} />,
-        <ActionButton key="edit" variant="outline" buttonText="Chỉnh sửa" icon={<PencilIcon className="w-4 h-4" />} />,
-        <ActionButton key="delete" variant="destructive" buttonText="Xóa" icon={<TrashIcon className="w-4 h-4" />}
-            onClick={() => confirm("Bạn có chắc chắn muốn xóa vai trò này?") ? setToast({
-                title: "Xóa vai trò thành công",
-                message: "Vai trò đã được xóa khỏi hệ thống",
-                variant: "success"
-            }) : null}
+        <UpsertRole
+            key="view"
+            trigger={
+                <ActionButton key="view-trigger" variant="outline" buttonText="Xem" icon={<EyeIcon className="w-4 h-4" />} />
+            }
+            action="view"
+        />,
+        <UpsertRole
+            key="edit"
+            trigger={
+                <ActionButton key="edit" variant="outline" buttonText="Chỉnh sửa" icon={<PencilIcon className="w-4 h-4" />} />
+            }
+            action="upsert"
+        />,
+        <ActionButton
+            key="delete"
+            variant="destructive"
+            buttonText="Xóa"
+            icon={<TrashIcon className="w-4 h-4" />}
+            onClick={() => setOpenAlertDialog(true)}
         />
     ]
 
 
     return (
         <>
+            <AppAlertDialog
+                title="Xác nhận xóa vai trò"
+                description="Bạn có chắc chắn muốn xóa vai trò này?"
+                open={openAlertDialog}
+                setOpen={setOpenAlertDialog}
+                submitText="Xóa"
+                onSubmit={() => {
+                    setOpenAlertDialog(false);
+                    setToast({
+                        title: "Xóa thành công",
+                        message: "Vai trò đã được xóa thành công",
+                        variant: "success"
+                    });
+                }}
+            />
             <div className="p-2 flex flex-col gap-4">
                 <div className="header">
                     <div className="title">
@@ -97,10 +124,15 @@ export const ListRolePage = () => {
                 </div>
                 <Statistic statisticOptions={statisticCardOptions} />
 
-                <div className="flex justify-end">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <AppSearch
+                        key="search-role"
+                        placeholder="Tìm kiếm vai trò..."
+                        className="w-full sm:w-1/3"
+                    />
                     <UpsertRole
                         trigger={
-                            <Button className="w-fit bg-blue-600 hover:bg-blue-500 cursor-pointer">Thêm Vai Trò</Button>
+                            <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 cursor-pointer">Thêm Vai Trò</Button>
                         }
                         action="upsert"
                     />

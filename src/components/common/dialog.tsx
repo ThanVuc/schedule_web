@@ -23,7 +23,7 @@ export interface AppDialogProps {
   children?: React.ReactNode;
   width?: "large" | "medium" | "small";
   height?: "large" | "medium" | "small";
-  submitButtonText?: string;
+  submitButtonText?: string | null;
   cancelButtonText?: string;
 }
 
@@ -38,7 +38,7 @@ export const AppDialog = ({
   width = "large",
   height = "large",
   open = false,
-  setOpen = () => {},
+  setOpen = () => { },
   submitButtonText = "Lưu",
   cancelButtonText = "Hủy Bỏ",
 }: AppDialogProps) => {
@@ -57,25 +57,29 @@ export const AppDialog = ({
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className={`z-160 ${dialogWidthClass} ${dialogHeightClass} !max-w-none max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${className}`}>
-        <DialogHeader>
-          <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">{dialogTitle}</DialogTitle>
-          <DialogDescription>
-            {dialogDescription}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="p-2">
-          {children}
+      <DialogContent className={`z-160 flex flex-col justify-between ${dialogWidthClass} ${dialogHeightClass} !max-w-none max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${className}`}>
+        <div>
+          <DialogHeader className="mb-4">
+            <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">{dialogTitle}</DialogTitle>
+            <DialogDescription>
+              {dialogDescription}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-2">
+            {children}
+          </div>
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">{cancelButtonText}</Button>
           </DialogClose>
-          <Button type="button" onClick={() => {
-            if (onSubmit) {
-              onSubmit({});
-            }
-          }}>{submitButtonText}</Button>
+          {submitButtonText && (
+            <Button type="button" onClick={() => {
+              if (onSubmit) {
+                onSubmit({});
+              }
+            }}>{submitButtonText}</Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
