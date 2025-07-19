@@ -50,11 +50,11 @@ const permissionsExample = [
 export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRoleFormProps) => {
     const [availablePermissions] = useState(permissions ?? permissionsExample);
     const [filteredPermissions, setFilteredPermissions] = useState(availablePermissions);
-    const { setPage, startIndex, endIndex, pageIndex, hasNextPage, hasPreviousPage, totalPages } = useIndexPagination(filteredPermissions.length, 1, 6);
+    const { setPage, startIndex, endIndex, pageIndex, hasNextPage, hasPreviousPage, totalPages } = useIndexPagination(filteredPermissions.length, 1, 8);
 
     return (
-        <div className="flex justify-between gap-4">
-            <div className="role w-[40%] flex flex-col gap-4">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+            <div className="flex flex-col gap-4 w-full lg:w-2/5">
                 <H4>Thông tin vai trò</H4>
                 <FormField
                     control={form.control}
@@ -76,15 +76,15 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                         <FormItem>
                             <FormLabel>Mô tả vai trò</FormLabel>
                             <FormControl>
-                                <Textarea disabled={isDisabled} placeholder="Mô tả vai trò" {...field} />
+                                <Textarea maxLength={256} disabled={isDisabled} placeholder="Mô tả vai trò" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
             </div>
-            <div className="permissions w-[55%] flex flex-col gap-4">
-                <div className="header flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 w-full lg:w-3/5">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <H4 className="text-base sm:text-lg">Quyền hạn</H4>
                     <AppSearchSimple
                         placeholder="Tìm kiếm quyền hạn..."
@@ -100,7 +100,7 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                         className="w-full sm:max-w-[15rem] flex-shrink-0"
                     />
                 </div>
-                <div className="grid grid-cols-2 gap-6 border-b-1 border-gray-300 pb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b pb-4">
                     {
                         filteredPermissions.slice(startIndex, endIndex)?.map((permission) => (
                             <FormField
@@ -122,7 +122,7 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                                         </FormControl>
                                         <div>
                                             <FormLabel>{permission.name}</FormLabel>
-                                            <FormDescription>{permission.description}</FormDescription>
+                                            <FormDescription className="line-clamp-1">{permission.description}</FormDescription>
                                         </div>
                                         <FormMessage />
                                     </FormItem>
@@ -131,7 +131,7 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                         ))
                     }
                 </div>
-                <div className="pagination flex justify-end gap-4 items-center">
+                <div className="flex items-center justify-end gap-4">
                     <Button type="button" disabled={!hasPreviousPage} variant="ghost" size="sm"
                         onClick={() => setPage(pageIndex - 1)}
                     >Trước</Button>

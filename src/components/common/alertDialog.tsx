@@ -50,7 +50,11 @@ export function AppAlertDialog(
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       {trigger && (
         <AlertDialogTrigger asChild>
-          <Button variant="outline">{trigger}</Button>
+          {typeof trigger === "string" ? (
+            <Button variant="destructive" className="w-full">{trigger}</Button>
+          ) : (
+            trigger
+          )}
         </AlertDialogTrigger>
       )}
 

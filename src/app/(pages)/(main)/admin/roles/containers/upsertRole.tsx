@@ -70,6 +70,7 @@ export const UpsertRole = ({
                     // Trigger form validation and submission
                     form.handleSubmit(onSubmit, onError)();
                 }}
+                submitButtonText={isDisabled ? null : "Lưu"}
             >
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
