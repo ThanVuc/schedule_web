@@ -1,12 +1,13 @@
 import { AppPagination, H2, Muted } from "@/components/common";
 import { Statistic } from "../../_components/statistic";
-import { EyeIcon, PencilIcon, ShieldIcon, TrashIcon, UserIcon } from "lucide-react";
-import { RoleIcon } from "@/components/icon";
+import { EyeIcon, PencilIcon, RoleIcon, ShieldIcon, TrashIcon, UserIcon } from "@/components/icon";
 import { CardItem, Cards } from "../../_components/cards";
 import { ActionButton } from "../../_components";
 import useToastState from "@/hooks/useToasts";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui";
+import { UpsertRole } from "../containers/upsertRole";
 
 
 export const metadata = {
@@ -31,19 +32,18 @@ export const ListRolePage = () => {
         {
             title: "Vai trò gốc",
             value: 10,
-            icon: <ShieldIcon className="w-8 h-8 fill-blue-100" />,
+            icon: <ShieldIcon className="w-8 h-8 text-blue-700" />,
             description: "Vai trò không thể chỉnh sửa"
         },
         {
             title: "Vai trò bình thường",
             value: 123,
-            icon: <UserIcon className="w-8 h-8 fill-amber-100" />,
+            icon: <UserIcon className="w-8 h-8" />,
             description: "Vai trò có thể chỉnh sửa và xóa",
         }
     ]
 
     useEffect(() => {
-        // fetch(`/api/roles?page=${currentPage}`)
         SetRoleCardItems([
             {
                 title: "Quản trị viên",
@@ -96,6 +96,16 @@ export const ListRolePage = () => {
                     </div>
                 </div>
                 <Statistic statisticOptions={statisticCardOptions} />
+
+                <div className="flex justify-end">
+                    <UpsertRole
+                        trigger={
+                            <Button className="w-fit bg-blue-600 hover:bg-blue-500 cursor-pointer">Thêm Vai Trò</Button>
+                        }
+                        action="upsert"
+                    />
+                </div>
+
                 <div className="body">
                     <Cards cards={roleCardItems} />
                 </div>

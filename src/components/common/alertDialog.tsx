@@ -12,41 +12,58 @@ import {
 import { Button } from "@/components/ui/button"
 
 export interface AlertDialogProps {
-    title: string
-    description?: string
-    trigger: string | React.ReactNode
-    onSubmit?: () => void
-    submitText?: string
-    cancelText?: string
-    className?: string
+  title: string
+  description?: string
+  trigger?: string | React.ReactNode
+  onSubmit?: () => void
+  submitText?: string
+  cancelText?: string
+  className?: string
+  open?: boolean
+  setOpen?: (open: boolean) => void
+  onClose?: () => void
 }
 
 export function AppAlertDialog(
-    {
-        title,
-        description,
-        trigger,
-        submitText = "Continue",
-        cancelText = "Cancel",
-        className = "",
-        onSubmit,
-    }: AlertDialogProps
+  {
+    title,
+    description,
+    trigger,
+    submitText = "Tiếp Tục",
+    cancelText = "Hủy Bỏ",
+    className = "",
+    onSubmit,
+    open = false,
+    setOpen = () => {},
+    onClose,
+  }: AlertDialogProps
 ) {
+
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  }
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">{trigger}</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent className={className}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+      {trigger && (
+        <AlertDialogTrigger asChild>
+          <Button variant="outline">{trigger}</Button>
+        </AlertDialogTrigger>
+      )}
+
+      <AlertDialogContent className={`z-200 ${className}`}>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogTitle >{title}</AlertDialogTitle>
           <AlertDialogDescription>
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onSubmit} >{submitText}</AlertDialogAction>
+          <AlertDialogAction onClick={() => onSubmit && onSubmit()} >{submitText}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

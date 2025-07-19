@@ -76,7 +76,7 @@ export const AppPagination: React.FC<PaginationComponentProps> = ({
         {showStartEllipsis && (
           <>
             <PaginationItem>
-              <PaginationLink onClick={() => onPageChange(1)}>1</PaginationLink>
+              <PaginationLink className="cursor-pointer" onClick={() => onPageChange(1)}>1</PaginationLink>
             </PaginationItem>
             <PaginationItem>
               <PaginationEllipsis />
@@ -87,6 +87,7 @@ export const AppPagination: React.FC<PaginationComponentProps> = ({
         {pageNumbers.map((pageNum) => (
           <PaginationItem key={pageNum}>
             <PaginationLink
+              className="cursor-pointer"
               isActive={pageNum === page}
               onClick={() => onPageChange(pageNum)}
             >
@@ -101,7 +102,7 @@ export const AppPagination: React.FC<PaginationComponentProps> = ({
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink onClick={() => onPageChange(total_pages)}>{total_pages}</PaginationLink>
+              <PaginationLink className="cursor-pointer" onClick={() => onPageChange(total_pages)}>{total_pages}</PaginationLink>
             </PaginationItem>
           </>
         )}
