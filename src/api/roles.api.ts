@@ -3,12 +3,12 @@ import { globalConfig } from '../global/global'
 
 const createAPI = (url: string) => `${globalConfig.ApiUrlBase}${url}`;
 
-const roleApiUrl = {
+export const roleApiUrl = {
     createRole: createAPI('roles'),
-    updateRole: (id: string) => createAPI(`roles/${id}`),
-    deleteRole: (id: string) => createAPI(`roles/${id}`),
+    updateRole: createAPI('roles'),
+    deleteRole: createAPI('roles'),
     getRoles: createAPI('roles'),
-    getRoleById: (id: string) => createAPI(`roles/${id}`),
+    getRoleById: createAPI('roles'),
 }
 
 export default roleApiUrl

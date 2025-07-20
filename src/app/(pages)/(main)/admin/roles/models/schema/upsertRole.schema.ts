@@ -6,5 +6,5 @@ export const UpsertRoleSchema = z.object({
     description: z.string()
     .max(512, "Mô tả vai trò không được quá 512 ký tự")
     .optional(),
-    permissions: z.array(z.string()).optional(),
+    permission_ids: z.array(z.string()).optional(),
 })

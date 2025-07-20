@@ -5,6 +5,7 @@ type ToastProp = {
     title?: string;
     message: string;
     variant?: "default" | "success" | "error" | "warning";
+    closeable?: boolean;
 };
 export default function useToastState() {
     const [toastState, setToastState] = useState<ToastProp | null>(null);
@@ -15,15 +16,18 @@ export default function useToastState() {
                 title = "Thông báo",
                 message,
                 variant = "default",
+                closeable = true,
             } = toastState;
-
             const toastOptions = {
                 description: message,
-                action: {
-                    label: "X",
-                    onClick: () => {},
-                },
-            };
+                action: closeable
+                    ? {
+                        label: "X",
+                        onClick: () => toast.dismiss(),
+                    }
+                    : undefined,
+                duration: 3000,
+            }
 
             switch (variant) {
                 case "success":

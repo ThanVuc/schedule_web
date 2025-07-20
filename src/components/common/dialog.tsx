@@ -57,7 +57,9 @@ export const AppDialog = ({
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className={`z-160 flex flex-col justify-between ${dialogWidthClass} ${dialogHeightClass} !max-w-none max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${className}`}>
+      <DialogContent
+        className={`z-160 flex flex-col justify-between ${dialogWidthClass} ${dialogHeightClass} !max-w-none max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${className}`}
+      >
         <div>
           <DialogHeader className="mb-4">
             <DialogTitle className="scroll-m-20 text-2xl font-semibold tracking-tight">{dialogTitle}</DialogTitle>
