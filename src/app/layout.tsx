@@ -29,9 +29,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ErrorBoundary>{children}
-          <Toaster richColors position="top-right" theme="light" />
-        </ErrorBoundary>
+        <ErrorBoundary>{children}</ErrorBoundary>
+        <Toaster richColors position="top-right" expand={false} theme="light" className="app-toaster" />
       </body>
     </html>
   );

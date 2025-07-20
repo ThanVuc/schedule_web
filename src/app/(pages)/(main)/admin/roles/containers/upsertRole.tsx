@@ -1,7 +1,7 @@
 "use client";
 import { AppAlertDialog, AppDialog } from "@/components/common";
 import useToastState from "@/hooks/useToasts";
-import { UpsertRoleSchema } from "../models"
+import { CreateRoleMutationResponseType, UpsertRoleSchema } from "../models"
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,30 +9,39 @@ import { FieldErrors } from "react-hook-form";
 import { useState } from "react";
 import { UpsertRoleForm } from "../components";
 import { Form } from "@/components/ui";
+import { useAxiousMutation } from "@/hooks";
+import { roleApiUrl } from "@/api"
 
 export interface AddRoleProps {
     trigger?: React.ReactNode;
     action: "upsert" | "view"
     id?: string;
+    refetch?: () => void;
 }
 
 export const UpsertRole = ({
     trigger,
-    action = "view"
+    action = "view",
+    refetch,
 }: AddRoleProps) => {
     const { setToast } = useToastState();
     const [openDialog, setOpenDialog] = useState(false);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const isDisabled = action === "view";
-
-    
+    const { data, sendRequest, error } = useAxiousMutation<CreateRoleMutationResponseType ,z.infer<typeof UpsertRoleSchema>>({
+        method: "POST",
+        url: roleApiUrl.createRole,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
 
     const form = useForm<z.infer<typeof UpsertRoleSchema>>({
         resolver: zodResolver(UpsertRoleSchema),
         defaultValues: {
             name: "",
             description: "",
-            permissions: ['1','2','3']
+            permission_ids: []
         }
     });
     // validation passed
@@ -45,17 +54,39 @@ export const UpsertRole = ({
         console.warn("Validation errors:", errors);
     }
     // handle save action after confirmation
-    const onSave = () => {
+    const onSave = async () => {
+        await sendRequest(form.getValues());
+        if (error) {
+            setToast({
+                title: "Lỗi hệ thống",
+                message: "Không thể thêm vai trò mới",
+                variant: "error",
+                closeable: false
+            });
+            return;
+        }
+
+        if (data?.is_success) {
+            setToast({
+                title: "Thành công",
+                message: "Vai trò đã được thêm thành công",
+                variant: "success",
+                closeable: false
+            });
+        }
+
         setOpenDialog(false);
         setOpenAlertDialog(false);
-        const vals = form.getValues();
-        console.log("Saving role:", vals);
         form.reset();
         setToast({
             title: "Thành công",
             message: "Vai trò đã được thêm thành công",
-            variant: "success"
+            variant: "success",
+            closeable: true
         });
+        if (refetch) {
+            refetch();
+        }
     }
 
     return (

@@ -106,7 +106,7 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                             <FormField
                                 key={permission.id}
                                 control={form.control}
-                                name="permissions"
+                                name="permission_ids"
                                 render={({ field }) => (
                                     <FormItem className="flex items-center gap-2">
                                         <FormControl>

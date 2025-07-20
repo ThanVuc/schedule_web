@@ -16,7 +16,7 @@ export const Card: React.FC<CardProps> = ({
     description,
     isRoot,
     iconIsRoot,
-    actions ,
+    actions,
 }) => {
     return (
         <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-xl p-4 bg-white  shadow-sm border mb-4 gap-3">

@@ -16,12 +16,14 @@ export interface PaginationComponentProps {
   has_next: boolean;
   has_prev: boolean;
   total_pages: number;
+  size?: number;
 }
 
 export const AppPagination: React.FC<PaginationComponentProps> = ({
   has_next,
   has_prev,
   total_pages,
+  size = 10,
 }) => {
   const maxVisible = 5;
   const router = useRouter();
@@ -34,6 +36,7 @@ export const AppPagination: React.FC<PaginationComponentProps> = ({
     const clamped = Math.max(1, Math.min(newPage, total_pages));
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", clamped.toString());
+    params.set("page_size", size.toString());
     router.push(`?${params.toString()}`);
   };
 
