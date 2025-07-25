@@ -48,6 +48,7 @@ interface DateInputProps {
   onChange?: (date: Date | undefined) => void
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>
+  label?: string | React.ReactNode
 }
 
 export function DateInput({
@@ -57,6 +58,7 @@ export function DateInput({
   inputProps,
   className = "",
   disabled = false,
+  label = "Subscription Date",
 }: DateInputProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(
@@ -68,7 +70,7 @@ export function DateInput({
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       <Label htmlFor="date" className="px-1">
-        Subscription Date
+        {label}
       </Label>
       <div className="relative flex gap-2">
         <Input
