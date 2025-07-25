@@ -7,12 +7,12 @@ body,
   height: 100%;
   font-size: clamp(12px, 1vw + 0.5rem, 16px);
   scrollbar-width: thin;
-  scrollbar-color: rgba(100, 100, 100, 0.5) transparent;
+  scrollbar-color: transparent;
 }
 
 body {
   scrollbar-width: auto;
-  scrollbar-color: rgba(100, 100, 100, 0.5) transparent;
+  scrollbar-color: transparent;
 }
 
 body::-webkit-scrollbar {
@@ -20,7 +20,7 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 100, 0.5);
+  background-color: transparent;
   border-radius: 6px;
 }
 

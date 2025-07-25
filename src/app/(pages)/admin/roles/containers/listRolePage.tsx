@@ -7,7 +7,7 @@ import useToastState from "@/hooks/useToasts";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui";
-import { UpsertRole } from "../containers/upsertRole";
+import { UpsertRole } from "./upsertRole";
 import { useAxios, useAlertDialog } from "@/hooks";
 import { roleApiUrl } from "@/api";
 import { RolesResponse } from "../models";
