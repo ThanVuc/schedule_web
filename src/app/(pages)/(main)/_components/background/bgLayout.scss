@@ -1,27 +1,13 @@
-#star-background {
+.star {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #0b1120;
-  overflow: hidden;
-  z-index: -10;
-
-  .star {
-    background: white;
-    border-radius: 50%;
-    position: absolute;
-    animation: sparkle 2s infinite ease-in-out;
-  }
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 4s infinite;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-@keyframes sparkle {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.4);
-  }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
