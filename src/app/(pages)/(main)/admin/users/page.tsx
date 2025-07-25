@@ -8,10 +8,12 @@ const UsersPage = () => {
         <>
             <DateInput
                 className="w-64"
-                defaultValue="01/01/2023"
-                placeholder="dd/MM/yyyy"
                 onChange={(date) => console.log("Selected date:", date)}
                 onKeyDown={(e) => console.log("Key pressed:", e.key)}
+                inputProps={{
+                    placeholder: "dd/MM/yyyy",
+                    disabled: true,
+                }}
             />
         </>
     );
