@@ -44,6 +44,7 @@ function parseDate(input: string): Date | undefined {
 interface DateInputProps {
   className?: string
   defaultValue?: string
+  disabled?: boolean
   onChange?: (date: Date | undefined) => void
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>
@@ -55,6 +56,7 @@ export function DateInput({
   onKeyDown,
   inputProps,
   className = "",
+  disabled = false,
 }: DateInputProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(
@@ -71,6 +73,7 @@ export function DateInput({
       <div className="relative flex gap-2">
         <Input
           {...inputProps}
+          disabled={disabled}
           id="date"
           value={value}
           placeholder="dd/MM/yyyy"
@@ -104,6 +107,7 @@ export function DateInput({
               id="date-picker"
               variant="ghost"
               className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+              disabled={disabled}
             >
               <CalendarIcon className="size-3.5" />
               <span className="sr-only">Select date</span>
