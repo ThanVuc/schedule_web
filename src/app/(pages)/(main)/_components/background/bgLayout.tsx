@@ -5,16 +5,21 @@ import './bgLayout.scss';
 
 export const StarBackground = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const observerTimeout = useRef<NodeJS.Timeout | null>(null);
   const hasGeneratedRef = useRef(false);
 
   const generateStars = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const pageHeight = window.innerHeight;
+    // Use the total scrollable height for stars
+    const pageHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      window.innerHeight
+    );
+
     const pageWidth = window.innerWidth;
-    const numberOfStars = 50;
+    const numberOfStars = 150; // more stars for bigger scroll area
 
     const fragment = document.createDocumentFragment();
 
@@ -40,6 +45,9 @@ export const StarBackground = () => {
     container.innerHTML = '';
     container.appendChild(fragment);
 
+    // Make sure container height covers the entire scroll height
+    container.style.height = `${pageHeight}px`;
+
     hasGeneratedRef.current = true;
   }, []);
 
@@ -48,20 +56,19 @@ export const StarBackground = () => {
       requestAnimationFrame(generateStars);
     }
 
-    const observer = new ResizeObserver(() => {
-      if (observerTimeout.current) clearTimeout(observerTimeout.current);
+    const onResizeOrScrollHeightChange = () => {
+      hasGeneratedRef.current = false;
+      requestAnimationFrame(generateStars);
+    };
 
-      observerTimeout.current = setTimeout(() => {
-        hasGeneratedRef.current = false;
-        requestAnimationFrame(generateStars);
-      }, 300);
-    });
-
+    const observer = new ResizeObserver(onResizeOrScrollHeightChange);
     observer.observe(document.body);
+
+    window.addEventListener('resize', onResizeOrScrollHeightChange);
 
     return () => {
       observer.disconnect();
-      if (observerTimeout.current) clearTimeout(observerTimeout.current);
+      window.removeEventListener('resize', onResizeOrScrollHeightChange);
     };
   }, [generateStars]);
 
@@ -69,7 +76,7 @@ export const StarBackground = () => {
     <div
       id="star-background"
       ref={containerRef}
-      className="absolute top-0 left-0 h-screen w-full -z-10 overflow-hidden pointer-events-none bg-[#0B1120]"
+      className="absolute top-0 left-0 w-full -z-10 overflow-hidden pointer-events-none bg-[#0B1120]"
     />
   );
 };

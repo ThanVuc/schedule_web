@@ -91,3 +91,24 @@ ID: 98811a9d-fa24-4f26-aa5d-fba6f317d443 | Time: 2025-07-15T15:41:17.171Z | Name
 ID: cfcf1b6a-9970-4fd9-aec6-98b0b4b6df9d | Time: 2025-07-15T15:43:56.528Z | Name: ReferenceError | Cause: conte is not defined
 ID: caadc1f0-3504-4049-bc5e-10c211df746c | Time: 2025-07-15T15:43:57.108Z | Name: ReferenceError | Cause: conte is not defined
 ID: 65a5ec10-ee2c-43ce-b902-db2b8f14f121 | Time: 2025-07-16T15:20:24.295Z | Name: ReferenceError | Cause: H2 is not defined
+ID: 7d5bf45c-ea16-40b4-b84d-83f9b6fe4378 | Time: 2025-07-25T11:58:19.312Z | Name: NotFoundError | Cause: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+ID: 25d80306-cff5-46e4-890f-eb3ab319dbfb | Time: 2025-07-25T12:06:18.507Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+ID: bb4eb59c-8106-4485-8948-eeae965b09f5 | Time: 2025-07-25T12:06:19.680Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+ID: 15603e05-0f0c-404b-be41-cff7a1b05c94 | Time: 2025-07-25T12:06:35.211Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+ID: f9729e6a-db2d-4736-9ef2-07dea80cffbd | Time: 2025-07-25T12:06:36.243Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+ID: 341e91ad-ff2e-40ab-8a20-37ce0a675339 | Time: 2025-07-25T12:06:56.367Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
