@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cn } from "@/lib/utils";
 
 function formatDate(date: Date | undefined, formatStr = "dd/MM/yyyy"): string {
   if (!date) return ""
@@ -79,7 +80,7 @@ export function DateInput({
           id="date"
           value={value}
           placeholder="dd/MM/yyyy"
-          className="bg-background pr-10"
+          className={cn("pr-10 bg-background", inputProps?.className)}
           onChange={(e) => {
             const input = e.target.value
             setValue(input)
