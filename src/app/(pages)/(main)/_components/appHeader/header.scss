@@ -1,0 +1,40 @@
+.app-header {
+    background: linear-gradient(to bottom, #0b1120 0%, #0b1120 80%, rgba(11, 17, 32, 0.4) 95%, transparent 100%);
+}
+
+.home {
+    &:hover {
+        background-color: transparent;
+        cursor: pointer;
+    }
+}
+
+.nav-item {
+    color: rgba(#bde6ee, 0.6);
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #38bdf8;
+        background-color: transparent;
+    }
+
+    &:first-child {
+        border-left: 1px solid rgba(#bde6ee, 0.2);
+        border-radius: 0;
+    }
+
+    .link-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: inherit;
+
+        &:hover {
+            color: #38bdf8;
+        }
+    }
+}

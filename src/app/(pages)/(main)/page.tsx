@@ -1,5 +1,5 @@
 export const metadata = {
-    title: 'Schedule For You',
+    title: 'Schedulr',
     description: 'Ứng dụng lịch trình của bạn',
 };
 

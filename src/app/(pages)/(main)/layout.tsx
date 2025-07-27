@@ -1,6 +1,6 @@
 "use client";
 import { ThemeProvider } from "@/components/common/themeProvider";
-import { StarBackground } from "./_components";
+import { AppHeader, StarBackground } from "./_components";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -12,7 +12,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 disableTransitionOnChange
             >
                 <StarBackground>
-                    {children}
+                    <div className="pt-20">
+                        <AppHeader />
+                        {children}
+                    </div>
                 </StarBackground>
             </ThemeProvider>
 
