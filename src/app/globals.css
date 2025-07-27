@@ -13,6 +13,7 @@ body,
 body {
   scrollbar-width: auto;
   scrollbar-color: transparent;
+  font-family: 'Poppins', sans-serif;
 }
 
 body::-webkit-scrollbar {

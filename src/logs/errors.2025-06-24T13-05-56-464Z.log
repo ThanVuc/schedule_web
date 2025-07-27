@@ -112,3 +112,5 @@ ID: 341e91ad-ff2e-40ab-8a20-37ce0a675339 | Time: 2025-07-25T12:06:56.367Z | Name
   <button onClick={function onClick} children=...>
                   ^^^^^^^^^^^^^^^^^^
 If you need interactivity, consider converting part of this to a Client Component.
+ID: 592ceb4b-3143-449d-8cac-b240807763c3 | Time: 2025-07-27T05:34:25.563Z | Name: ReferenceError | Cause: useState is not defined
+ID: 8c13fc26-8430-4d7f-bc4a-16b5f3f7223d | Time: 2025-07-27T05:34:27.112Z | Name: ReferenceError | Cause: useState is not defined

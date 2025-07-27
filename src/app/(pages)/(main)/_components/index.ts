@@ -1,3 +1,3 @@
-export * from './header';
+export * from './appHeader';
 export * from './footer';
 export * from './background';

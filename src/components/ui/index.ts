@@ -11,3 +11,5 @@ export * from "./card";
 export * from "./form";
 export * from "./command";
 export * from "./popover";
+export * from "./hover-card";
+export * from "./avatar";
