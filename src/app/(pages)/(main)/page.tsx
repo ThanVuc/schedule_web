@@ -1,15 +1,11 @@
-import { DateInput } from "@/components/common";
-
 export const metadata = {
-    title: 'Your Schedule',
-    description: 'Quản lý vai trò của người dùng trong hệ thống',
+    title: 'Schedule For You',
+    description: 'Ứng dụng lịch trình của bạn',
 };
 
 const RootPage = () => {
     return (
-        <>
-            <DateInput />
-        </>
+        <></>
     );
 }
 

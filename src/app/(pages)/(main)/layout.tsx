@@ -11,10 +11,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 enableSystem
                 disableTransitionOnChange
             >
-                <StarBackground />
-                <div className="relative z-0 min-h-screen">
+                <StarBackground>
                     {children}
-                </div>
+                </StarBackground>
             </ThemeProvider>
 
         </>
