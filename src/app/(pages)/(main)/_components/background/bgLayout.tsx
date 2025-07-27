@@ -1,82 +1,42 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import './bgLayout.scss';
 
-export const StarBackground = () => {
+export const StarBackground = ({ children }: { children: React.ReactNode }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const hasGeneratedRef = useRef(false);
 
-  const generateStars = useCallback(() => {
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Use the total scrollable height for stars
-    const pageHeight = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      window.innerHeight
-    );
+    container.querySelectorAll(".star").forEach((el) => el.remove());
 
-    const pageWidth = window.innerWidth;
-    const numberOfStars = 150; // more stars for bigger scroll area
+    const numStars = 100;
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
 
-    const fragment = document.createDocumentFragment();
+      const size = Math.random() * 2 + 1 + "px";
+      const top = Math.random() * 100 + "%";
+      const left = Math.random() * 100 + "%";
+      const duration = 3 + Math.random() * 3 + "s";
+      const delay = Math.random() * 5 + "s";
 
-    for (let i = 0; i < numberOfStars; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
+      star.style.width = size;
+      star.style.height = size;
+      star.style.top = top;
+      star.style.left = left;
+      star.style.animationDuration = duration;
+      star.style.animationDelay = delay;
 
-      const top = Math.random() * pageHeight;
-      const left = Math.random() * pageWidth;
-      const size = Math.random() * 2 + 1;
-
-      star.style.top = `${top}px`;
-      star.style.left = `${left}px`;
-      star.style.width = `${size}px`;
-      star.style.height = `${size}px`;
-
-      star.style.setProperty('--delay', `${Math.random() * 4}s`);
-      star.style.setProperty('--opacity', `${Math.random() * 0.5 + 0.3}`);
-
-      fragment.appendChild(star);
+      container.appendChild(star);
     }
-
-    container.innerHTML = '';
-    container.appendChild(fragment);
-
-    // Make sure container height covers the entire scroll height
-    container.style.height = `${pageHeight}px`;
-
-    hasGeneratedRef.current = true;
   }, []);
 
-  useEffect(() => {
-    if (!hasGeneratedRef.current) {
-      requestAnimationFrame(generateStars);
-    }
-
-    const onResizeOrScrollHeightChange = () => {
-      hasGeneratedRef.current = false;
-      requestAnimationFrame(generateStars);
-    };
-
-    const observer = new ResizeObserver(onResizeOrScrollHeightChange);
-    observer.observe(document.body);
-
-    window.addEventListener('resize', onResizeOrScrollHeightChange);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', onResizeOrScrollHeightChange);
-    };
-  }, [generateStars]);
-
   return (
-    <div
-      id="star-background"
-      ref={containerRef}
-      className="absolute top-0 left-0 w-full -z-10 overflow-hidden pointer-events-none bg-[#0B1120]"
-    />
+    <div className="star-background relative overflow-hidden min-h-screen w-[100%]" ref={containerRef}>
+      {children}
+    </div>
   );
 };
