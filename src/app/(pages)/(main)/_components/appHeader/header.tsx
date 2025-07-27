@@ -51,7 +51,7 @@ export const AppHeader = () => {
                         </Avatar>
                     }
                     content={<UserCardContent />}
-                    className="w-80"
+                    className="w-60"
                 />
             </div>
         </div>
