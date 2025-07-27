@@ -12,7 +12,7 @@ const userActions = [
 export const UserCardContent = () => {
     return (
         <div>
-            <div className="avt flex items-center gap-4 justify-center pb-2 border-b-2">
+            <div className="avt flex items-center gap-4 justify-center pb-2 border-b-2 mb-2">
                 <Avatar>
                     <AvatarImage src={avtImg.src} />
                     <AvatarFallback>N/A</AvatarFallback>
