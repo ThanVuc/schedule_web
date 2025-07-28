@@ -1,0 +1,28 @@
+.google-login {
+  width: clamp(10rem, 40vw, 14rem);
+  aspect-ratio: 2.5 / 1;
+  background-color: #ffffff;
+  border-radius: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-image: url('../../../../../../public/assets/stars.webp');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.18),
+    -1px -1px 8px 2px rgba(255, 255, 255, 0.4);
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #f7f7f7;
+    transform: translateY(-1.5px) scale(1.03);
+    box-shadow:
+      0 5px 14px rgba(0, 0, 0, 0.22),
+      -1px -1px 12px 3px rgba(255, 255, 255, 0.5);
+  }
+}
