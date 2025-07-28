@@ -63,12 +63,38 @@ export function DateInput({
   label = "Subscription Date",
   isBlurAfterDisabled = true
 }: DateInputProps) {
-  const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(
-    defaultValue ? parseDate(defaultValue) : undefined
-  )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
-  const [value, setValue] = React.useState(formatDate(date))
+  const [open, setOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  
+  const initialDate = useMemo(() => {
+    return defaultValue ? parseDate(defaultValue) : undefined
+  }, [defaultValue])
+  
+  const [date, setDate] = useState<Date | undefined>(initialDate)
+  const [month, setMonth] = useState<Date | undefined>(initialDate)
+  const [value, setValue] = useState(() => {
+    return defaultValue || ""
+  })
+
+  useEffect(() => {
+    setIsClient(true)
+    if (initialDate) {
+      setValue(formatDate(initialDate))
+    }
+  }, [initialDate])
+
+  useEffect(() => {
+    if (defaultValue) {
+      const parsed = parseDate(defaultValue)
+      setDate(parsed)
+      setMonth(parsed)
+      setValue(isClient ? formatDate(parsed) : defaultValue)
+    } else {
+      setDate(undefined)
+      setMonth(undefined)
+      setValue("")
+    }
+  }, [defaultValue, isClient])
 
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
@@ -134,6 +160,9 @@ export function DateInput({
                 setDate(selected)
                 setValue(formatDate(selected))
                 setOpen(false)
+                if (onChange) {
+                  onChange(selected)
+                }
               }}
             />
           </PopoverContent>
