@@ -12,7 +12,7 @@ export const StarBackground = ({ children }: { children: React.ReactNode }) => {
 
     container.querySelectorAll(".star").forEach((el) => el.remove());
 
-    const numStars = 100;
+    const numStars = 50;
     for (let i = 0; i < numStars; i++) {
       const star = document.createElement("div");
       star.className = "star";

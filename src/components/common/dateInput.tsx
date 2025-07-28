@@ -49,7 +49,8 @@ interface DateInputProps {
   onChange?: (date: Date | undefined) => void
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>
-  label?: string | React.ReactNode
+  label?: string | React.ReactNode,
+  isBlurAfterDisabled?: boolean
 }
 
 export function DateInput({
@@ -60,6 +61,7 @@ export function DateInput({
   className = "",
   disabled = false,
   label = "Subscription Date",
+  isBlurAfterDisabled = true
 }: DateInputProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(
@@ -80,7 +82,7 @@ export function DateInput({
           id="date"
           value={value}
           placeholder="dd/MM/yyyy"
-          className={cn("pr-10 bg-background", inputProps?.className)}
+          className={cn("pr-10 bg-background", inputProps?.className, isBlurAfterDisabled && disabled ? "" : "!opacity-100")}
           onChange={(e) => {
             const input = e.target.value
             setValue(input)
@@ -109,10 +111,10 @@ export function DateInput({
             <Button
               id="date-picker"
               variant="ghost"
-              className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+              className={cn("absolute top-1/2 right-2 size-6 -translate-y-1/2 opacity-100", isBlurAfterDisabled && disabled ? "" : "!opacity-100")}
               disabled={disabled}
             >
-              <CalendarIcon className="size-3.5" />
+              <CalendarIcon />
               <span className="sr-only">Select date</span>
             </Button>
           </PopoverTrigger>
