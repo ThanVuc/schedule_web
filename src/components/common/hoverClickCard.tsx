@@ -1,3 +1,5 @@
+"use client";
+
 import { useIsMobile } from "@/hooks";
 import { AppClickCard } from "./clickCardMobile";
 import { AppHoverCard } from "./hoverCard";
