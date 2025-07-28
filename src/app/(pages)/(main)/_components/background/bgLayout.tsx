@@ -1,42 +1,64 @@
-'use client';
+'use client'
 
-import { useEffect, useRef } from 'react';
-import './bgLayout.scss';
+import { useEffect, useState } from 'react'
+import './bgLayout.scss'
+
+interface Star {
+  id: number
+  size: number
+  top: number
+  left: number
+  duration: number
+  delay: number
+}
 
 export const StarBackground = ({ children }: { children: React.ReactNode }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [stars, setStars] = useState<Star[] | null>(null)
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.querySelectorAll(".star").forEach((el) => el.remove());
+    const cached = localStorage.getItem('stars');
+    if (cached) {
+      try {
+        setStars(JSON.parse(cached));
+        return;
+      } catch {
+        
+      }
+    }
 
     const numStars = 50;
-    for (let i = 0; i < numStars; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
+    const generated = Array.from({ length: numStars }, (_, i) => ({
+      id: i,
+      size: Math.random() * 2 + 1,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      duration: 3 + Math.random() * 3,
+      delay: Math.random() * 5,
+    }));
 
-      const size = Math.random() * 2 + 1 + "px";
-      const top = Math.random() * 100 + "%";
-      const left = Math.random() * 100 + "%";
-      const duration = 3 + Math.random() * 3 + "s";
-      const delay = Math.random() * 5 + "s";
+    setStars(generated);
+    localStorage.setItem('stars', JSON.stringify(generated));
 
-      star.style.width = size;
-      star.style.height = size;
-      star.style.top = top;
-      star.style.left = left;
-      star.style.animationDuration = duration;
-      star.style.animationDelay = delay;
-
-      container.appendChild(star);
-    }
-  }, []);
+  }, [])
 
   return (
-    <div className="star-background relative overflow-hidden min-h-screen w-[100%]" ref={containerRef}>
+    <div className="star-background relative overflow-hidden min-h-screen w-[100%]">
+      {stars &&
+        stars.map((star) => (
+          <div
+            key={star.id}
+            className="star"
+            style={{
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              top: `${star.top}%`,
+              left: `${star.left}%`,
+              animationDuration: `${star.duration}s`,
+              animationDelay: `${star.delay}s`,
+            }}
+          />
+        ))}
       {children}
     </div>
-  );
-};
+  )
+}
