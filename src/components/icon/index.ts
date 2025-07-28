@@ -24,3 +24,4 @@ export * from "./setting";
 export * from "./schedule";
 export * from "./team";
 export * from "./help";
+export * from "./google";

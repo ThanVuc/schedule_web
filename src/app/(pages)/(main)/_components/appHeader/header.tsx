@@ -17,6 +17,7 @@ const NavItemData = [
 
 export const AppHeader = () => {
     const isMobile = useIsMobile();
+    const isLoggedIn = false;
 
     return (
         <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-[#0B1120] z-50">
@@ -35,7 +36,7 @@ export const AppHeader = () => {
                                 gap-2 text-blue-300 hover:text-blue-500 transition-colors duration-200"
                                 href={item.href}>
                                 {item.icon}
-                                { isMobile ? null : <span className="hidden md:inline">{item.label}</span> }
+                                {isMobile ? null : <span className="hidden md:inline">{item.label}</span>}
                             </Link>
                         </Button>
                     ))}
@@ -43,16 +44,22 @@ export const AppHeader = () => {
             </div>
 
             <div className="user ml-auto">
-                <AppHoverClickCard 
-                    trigger={
-                        <Avatar className="cursor-pointer">
-                            <AvatarImage src={img.src} />
-                            <AvatarFallback>N/A</AvatarFallback>
-                        </Avatar>
-                    }
-                    content={<UserCardContent />}
-                    className="w-60"
-                />
+                {isLoggedIn ? (
+                    <AppHoverClickCard
+                        trigger={
+                            <Avatar className="cursor-pointer">
+                                <AvatarImage src={img.src} />
+                                <AvatarFallback>N/A</AvatarFallback>
+                            </Avatar>
+                        }
+                        content={<UserCardContent />}
+                        className="w-60"
+                    />
+                ) : (
+                    <Button variant="default" className="login">
+                        <Link href="/login">Đăng Nhập</Link>
+                    </Button>
+                )}
             </div>
         </div>
 

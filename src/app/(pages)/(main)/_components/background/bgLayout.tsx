@@ -38,7 +38,6 @@ export const StarBackground = ({ children }: { children: React.ReactNode }) => {
 
     setStars(generated);
     localStorage.setItem('stars', JSON.stringify(generated));
-
   }, [])
 
   return (
