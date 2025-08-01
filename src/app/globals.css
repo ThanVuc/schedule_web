@@ -375,3 +375,23 @@ body::-webkit-scrollbar-track {
     opacity: 0;
   }
 }
+@layer utilities {
+  .progress-bar {
+    height: 10px;
+    border-radius: 9999px;
+    background-color: #22c55e; 
+    transition: width 0.5s ease;
+  }
+
+  .progress-0  { width: 0%; }
+  .progress-10 { width: 10%; }
+  .progress-20 { width: 20%; }
+  .progress-30 { width: 30%; }
+  .progress-40 { width: 40%; }
+  .progress-50 { width: 50%; }
+  .progress-60 { width: 60%; }
+  .progress-70 { width: 70%; }
+  .progress-80 { width: 80%; }
+  .progress-90 { width: 90%; }
+  .progress-100 { width: 100%; }
+}

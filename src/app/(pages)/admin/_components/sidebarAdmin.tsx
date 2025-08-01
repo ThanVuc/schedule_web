@@ -1,15 +1,15 @@
 "use client";
-import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon, AdminIcon } from "@/components/icon";
+import { RoleIcon, CalendarIcon, AssignmentIcon, AdminIcon, ReturnUpBackToHomeIcon } from "@/components/icon";
 
 import AppSideBar from "@/components/common/sidebar";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { usePathname } from "next/navigation";
 const SidebarAdmin = ({ children }: { children: ReactNode }) => {
-    const menuItems = [
+    const menuItems = useMemo(() => [
         {
             title: "Trang chủ",
             url: "/",
-            icon: ReturnUpBackToHome,
+            icon: ReturnUpBackToHomeIcon,
         },
         {
             title: "Vai trò",
@@ -26,18 +26,17 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
             url: "/admin/permissions",
             icon: AssignmentIcon,
         },
-    ];
+    ], []);
     const pathname = usePathname();
-    const getName = () => {
+    const getName = useMemo(() => {
         if (pathname.startsWith("/admin/users")) return "Danh sách người dùng";
         if (pathname.startsWith("/admin/roles")) return "Danh sách vai trò";
         if (pathname.startsWith("/admin/permissions")) return "Quyền hạn";
         return "";
-    };
+    }, [pathname]);
     const headerurl = "/admin/users"
-    const currentPage = getName();
     return (<>
-        <AppSideBar headerurl={headerurl} currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
+        <AppSideBar headerurl={headerurl} currentPage={getName} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
             {children}
         </AppSideBar>
     </>);

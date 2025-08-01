@@ -12,9 +12,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 disableTransitionOnChange
             >
                 <StarBackground>
-                    <div className="pt-20">
+                    <div className="pt-25">
                         <AppHeader />
-                        {children}
+                        <div className="px-10">{children}</div>
                     </div>
                 </StarBackground>
             </ThemeProvider>

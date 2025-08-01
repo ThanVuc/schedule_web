@@ -16,6 +16,8 @@ export * from "./home";
 export * from "./calendar";
 export * from "./assignment";
 export * from "./next";
+export * from "./admin";
+export * from "./docs";
 export * from "./returnupbacktohome";
 export * from "./admin";
 export * from "./schedular";
@@ -25,3 +27,9 @@ export * from "./schedule";
 export * from "./team";
 export * from "./help";
 export * from "./google";
+export * from "./userId";
+export * from "./email";
+export * from "./name";
+export * from "./date";
+export * from "./gender"
+export * from "./link";
