@@ -65,7 +65,7 @@ type UseAxiosMutationResult<T, D = unknown> = {
     error?: AxiosError | null;
     loading?: boolean;
     header?: Record<string, string>;
-    sendRequest: (data?: D) => Promise<void>;
+    sendRequest: (data?: D, id?: string) => Promise<void>;
 };
 
 export const useAxiousMutation = <T = unknown, D = unknown>(

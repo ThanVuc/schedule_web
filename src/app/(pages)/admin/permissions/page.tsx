@@ -1,9 +1,14 @@
-const PermissionsPage = () => {
-    return (
-        <>
+"use client";
 
-        </>
+import {ListpermissionsPage} from "./containers"
+
+const PermissionPage = () => {
+
+    return (
+        <div>
+            <ListpermissionsPage />
+        </div>
     );
 }
 
-export default PermissionsPage;
+export default PermissionPage
