@@ -9,7 +9,7 @@ import { FieldErrors } from "react-hook-form";
 import { useState } from "react";
 import { UpsertRoleForm } from "../components";
 import { Form } from "@/components/ui";
-import { useAxiousMutation } from "@/hooks";
+import { useAxiosMutation } from "@/hooks";
 import { roleApiUrl } from "@/api"
 
 export interface AddRoleProps {
@@ -28,7 +28,7 @@ export const UpsertRole = ({
     const [openDialog, setOpenDialog] = useState(false);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const isDisabled = action === "view";
-    const { data, sendRequest, error } = useAxiousMutation<CreateRoleMutationResponseType ,z.infer<typeof UpsertRoleSchema>>({
+    const { data, sendRequest, error } = useAxiosMutation<CreateRoleMutationResponseType ,z.infer<typeof UpsertRoleSchema>>({
         method: "POST",
         url: roleApiUrl.createRole,
         headers: {

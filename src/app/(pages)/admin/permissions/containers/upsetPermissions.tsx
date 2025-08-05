@@ -7,7 +7,7 @@ import { CreatePermissionMutationResponseType, UpsertPermissionSchema } from "..
 import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui";
-import { useAxiousMutation } from "@/hooks";
+import { useAxiosMutation } from "@/hooks";
 import { permissionApiUrl } from "@/api";
 import { UpsertPermissionForm } from "../components";
 import { z } from "zod";
@@ -57,7 +57,7 @@ export const UpsertPermission: React.FC<AddPermissionProps> = ({
         data: createData,
         error: createError,
         sendRequest: createPermission,
-    } = useAxiousMutation<CreatePermissionMutationResponseType, CreatePermissionPayload>({
+    } = useAxiosMutation<CreatePermissionMutationResponseType, CreatePermissionPayload>({
         method: "POST",
         url: permissionApiUrl.createPermission,
         headers: { "Content-Type": "application/json" },
@@ -67,7 +67,7 @@ export const UpsertPermission: React.FC<AddPermissionProps> = ({
         data: updateData,
         error: updateError,
         sendRequest: updatePermission,
-    } = useAxiousMutation<CreatePermissionMutationResponseType, CreatePermissionPayload>({
+    } = useAxiosMutation<CreatePermissionMutationResponseType, CreatePermissionPayload>({
         method: "PUT",
         url: id ? `${permissionApiUrl.updatePermission}/${id}` : "",
         headers: { "Content-Type": "application/json" },
