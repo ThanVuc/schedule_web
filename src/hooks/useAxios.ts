@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
 import { ApiResponse } from "@/models/response";
 
@@ -7,12 +7,15 @@ type UseAxiosResult<T> = {
     error?: AxiosError | null;
     loading?: boolean;
     header?: Record<string, string>;
-    refetch: () => void;
+    refetch?: () => void;
+    fetchData?: (id?: string) => Promise<void>;
 };
 
+// This hook is used for GET requests that will be called immediately
 export const useAxios = <T = unknown>(
     config: AxiosRequestConfig,
-    dependencies: unknown[] = []
+    dependencies: unknown[] = [],
+    skip?: boolean,
 ): UseAxiosResult<T> => {
     const [data, setData] = useState<T | null>(null);
     const [header, setHeader] = useState<Record<string, string>>({});
@@ -27,6 +30,8 @@ export const useAxios = <T = unknown>(
     }, []);
 
     useEffect(() => {
+        if (skip) return;
+
         const controller = new AbortController();
         const fetchData = async () => {
             setLoading(true);
@@ -55,11 +60,58 @@ export const useAxios = <T = unknown>(
             controller.abort();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [...dependencies, trigger, stableConfig]);
+    }, [...dependencies, trigger, stableConfig, skip]);
 
     return { data, error, loading, refetch, header };
 }
 
+// This hook is used for GET requests that require call the fetchData function to get the data
+export const useAxiosWaitCall = <T = unknown>(
+    config: AxiosRequestConfig,
+): UseAxiosResult<T> => {
+    const [data, setData] = useState<T | null>(null);
+    const [header, setHeader] = useState<Record<string, string>>({});
+    const [error, setError] = useState<AxiosError | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const controllerRef = useRef<AbortController | null>(null);
+
+    const fetchData = useCallback(async (id?: string) => {
+        controllerRef.current?.abort();
+        const controller = new AbortController();
+        controllerRef.current = controller;
+
+        setLoading(true);
+        try {
+            const response: AxiosResponse<ApiResponse<T>> = await axios({
+                ...config,
+                url: id ? `${config.url}/${id}` : config.url,
+                signal: controller.signal,
+            });
+
+            setData(response.data.metadata || null);
+            setHeader(
+                Object.fromEntries(
+                    Object.entries(response.headers).map(([key, value]) => [
+                        key,
+                        String(value),
+                    ])
+                )
+            );
+            setError(null);
+        } catch (err) {
+            if (!axios.isCancel(err)) {
+                setError(err as AxiosError);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [config]);
+
+    return { data, error, loading, fetchData, header };
+};
+
+// This hook is used for POST, PUT, DELETE requests
 type UseAxiosMutationResult<T, D = unknown> = {
     data: T | null;
     error?: AxiosError | null;
@@ -68,7 +120,7 @@ type UseAxiosMutationResult<T, D = unknown> = {
     sendRequest: (data?: D, id?: string) => Promise<void>;
 };
 
-export const useAxiousMutation = <T = unknown, D = unknown>(
+export const useAxiosMutation = <T = unknown, D = unknown>(
     config: AxiosRequestConfig
 ): UseAxiosMutationResult<T, D> => {
     const [data, setData] = useState<T | null>(null);
