@@ -45,6 +45,7 @@ export function AppAlertDialog(
     if (!open && onClose) {
       onClose();
     }
+
   }
 
   return (
