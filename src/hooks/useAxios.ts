@@ -127,7 +127,6 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
     const [error, setError] = useState<AxiosError | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [header, setHeader] = useState<Record<string, string>>({});
-
     const sendRequest = async (payload?: D, id?: string) => {
         setLoading(true);
         try {

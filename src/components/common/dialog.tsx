@@ -34,14 +34,14 @@ export const AppDialog = ({
   className = "",
   dialogTitle = "",
   dialogDescription = "",
-  children,
   width = "large",
   height = "large",
   open = false,
   setOpen = () => { },
   submitButtonText = "Lưu",
   cancelButtonText = "Hủy Bỏ",
-}: AppDialogProps) => {
+  children,
+}: AppDialogProps & { children: React.ReactNode }) => {
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open);

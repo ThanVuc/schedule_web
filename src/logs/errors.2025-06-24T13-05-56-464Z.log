@@ -1,118 +1,75 @@
-ID: fd09f154-e824-48f6-bb26-cb774540df1e | Time: 2025-06-24T13:05:56.306Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 94c72383-8309-412b-93c6-a364891e21cb | Time: 2025-06-24T13:05:56.305Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: bacf4ad0-3587-456a-ba60-67dc674727d9 | Time: 2025-06-25T15:22:42.881Z | Name: TypeError | Cause: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
-ID: 5283116a-417e-4871-930c-9405dcc19552 | Time: 2025-06-25T15:22:46.575Z | Name: ReferenceError | Cause: Ima is not defined
-ID: 6de168e9-d19c-4a9d-b5ca-3fa239491abc | Time: 2025-06-26T10:27:50.567Z | Name: ReferenceError | Cause: a is not defined
-ID: a69ef59d-4afb-4654-b8e8-f86b993566a4 | Time: 2025-06-26T10:28:00.945Z | Name: ReferenceError | Cause: a is not defined
-ID: b92e667d-14a6-43ab-a189-0da7ff591397 | Time: 2025-06-26T10:28:07.823Z | Name: ReferenceError | Cause: ava is not defined
-ID: fb823b28-6bdc-4cd5-a61a-c05e13b9fd01 | Time: 2025-06-26T13:41:54.896Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 15bb0e44-fd2d-4c92-a90a-ae43723e1af3 | Time: 2025-06-26T13:49:30.248Z | Name: ReferenceError | Cause: statuses is not defined
-ID: d0b0caff-3b43-45c6-ada1-e9f6418e5dc3 | Time: 2025-06-26T13:49:37.365Z | Name: ReferenceError | Cause: statuses is not defined
-ID: 2d51b69e-c0f3-45f6-b1b7-eed08f4d68f5 | Time: 2025-06-26T13:49:48.077Z | Name: ReferenceError | Cause: statuses is not defined
-ID: 76635f31-12da-43cc-b0ed-051d5c8a8546 | Time: 2025-06-26T13:49:58.174Z | Name: ReferenceError | Cause: statuses is not defined
-ID: 05d698e9-9493-448d-9194-9d498d12a756 | Time: 2025-06-26T13:54:26.789Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: bd95dcd0-b9a7-4da8-b89e-649c41e8083e | Time: 2025-06-29T03:34:59.933Z | Name: ReferenceError | Cause: fetchData is not defined
-ID: f16ce5d4-3c8f-43de-9890-74fd8882e2e5 | Time: 2025-06-29T03:42:16.886Z | Name: ReferenceError | Cause: fetchData is not defined
-ID: 380d30dc-14eb-45db-83b8-5ea443d70cc9 | Time: 2025-06-29T03:42:22.865Z | Name: ReferenceError | Cause: fetchData is not defined
-ID: 5f0e8c65-dca4-40c7-88aa-c4c665ecac3e | Time: 2025-06-29T03:42:49.213Z | Name: ReferenceError | Cause: totalPages is not defined
-ID: cf5fc47f-9732-4149-a588-953aecd67c4f | Time: 2025-06-29T07:41:05.210Z | Name: TypeError | Cause: Failed to construct 'Headers': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
-ID: aa9cc121-81ae-456a-aff7-22c5c0b54708 | Time: 2025-06-29T07:41:30.176Z | Name: ReferenceError | Cause: im is not defined
-ID: d27d3bfb-36f1-40cb-9f6c-5345d8777f0d | Time: 2025-06-29T11:10:44.438Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: 9bb307be-4c95-470e-a791-69a06e73dff7 | Time: 2025-06-29T11:11:00.888Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: a0c25383-e57e-41f1-a365-4aaa87266cf6 | Time: 2025-06-29T11:11:17.238Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: 0c4c2ca4-d184-4280-ac42-2c73dd515d5d | Time: 2025-06-29T11:11:24.131Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: 8d345d08-803f-4672-bcac-6cb740923f14 | Time: 2025-06-29T11:11:39.159Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: af523983-fb8e-403f-99b1-047e1157122b | Time: 2025-06-29T11:11:41.170Z | Name: ReferenceError | Cause: endpoints is not defined
-ID: 82c18e13-e207-4611-a818-d46480757177 | Time: 2025-06-29T11:18:26.391Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object.
-
-Check the render method of `Header`.
-ID: a6407a94-7dfe-432f-8ce7-d6dbb47d2d0a | Time: 2025-06-29T11:22:56.943Z | Name: ReferenceError | Cause: FontAwesomeIcon is not defined
-ID: e087a6ed-6d8f-4759-8536-04420df33863 | Time: 2025-06-29T11:28:31.985Z | Name: ReferenceError | Cause: faUser is not defined
-ID: bd7bd21e-9453-4d9c-8843-1132382005cd | Time: 2025-06-29T11:28:35.715Z | Name: ReferenceError | Cause: faUser is not defined
-ID: e4a52771-9863-4ba0-b6d1-d6dcf26c6412 | Time: 2025-07-06T07:52:33.460Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: fdf07d81-60e0-44b5-bc07-0396801141fc | Time: 2025-07-06T08:12:39.241Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `EditRoleModal`.
-ID: 1e777f4c-a98d-431b-9e29-9b7dfec492fe | Time: 2025-07-06T08:13:46.710Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: 3bc71517-ab08-4b17-b322-fa955e03bc7e | Time: 2025-07-06T08:14:57.331Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 561c52e2-c227-4859-89dc-cad5e0b2ffe3 | Time: 2025-07-06T08:29:08.967Z | Name: ReferenceError | Cause: Sidebar is not defined
-ID: 5b169437-07ea-442e-82e7-f2f1364c3f8c | Time: 2025-07-06T08:40:50.992Z | Name: ReferenceError | Cause: kfjei is not defined
-ID: 4e74174f-d382-467b-881e-93c3543b648e | Time: 2025-07-06T08:42:54.516Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 90d1e430-b66f-447d-ad78-dd3ace9cc17d | Time: 2025-07-06T09:40:11.680Z | Name: ReferenceError | Cause: WatchPermissionModal is not defined
-ID: cfa3ce64-10b4-47a5-8dc6-c525a3d3b2fa | Time: 2025-07-06T09:40:17.516Z | Name: ReferenceError | Cause: note is not defined
-ID: aa91570f-a78c-4d9c-aae5-02f0d24c2d37 | Time: 2025-07-06T09:40:25.762Z | Name: ReferenceError | Cause: note is not defined
-ID: 856646b5-081a-42b5-af85-e7e343d146f7 | Time: 2025-07-06T09:40:26.881Z | Name: ReferenceError | Cause: note is not defined
-ID: 2de6251e-942a-48bf-9e40-b6bfd5aa3e3d | Time: 2025-07-06T09:41:27.826Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 6b236dd4-fb6b-4111-9f65-dcf8aa462acf | Time: 2025-07-06T10:18:25.197Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RolesList`.
-ID: 4efd2236-7db3-4f5f-9f84-20a13d4b144a | Time: 2025-07-06T10:24:16.550Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: 8a5945f6-bc30-4617-b5e7-249cfd22c2c9 | Time: 2025-07-06T10:28:30.994Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: 41e7fa44-24cc-4a93-8c1b-7793d8559f14 | Time: 2025-07-06T10:34:22.973Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: a84a77c7-d036-4dbc-acca-a9ed74d3c0da | Time: 2025-07-06T10:37:54.017Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RoleItem`.
-ID: cd445e84-40fd-4c8f-ab08-64f52e44947f | Time: 2025-07-06T11:33:42.167Z | Name: ReferenceError | Cause: mockPermissions is not defined
-ID: a9146a7c-26c7-479f-9865-6fef4683ec30 | Time: 2025-07-06T11:47:31.041Z | Name: ReferenceError | Cause: color is not defined
-ID: bb3ebc34-e982-4455-9175-4a668cc71a4d | Time: 2025-07-13T09:06:32.229Z | Name: ReferenceError | Cause: submitText is not defined
-ID: 804d66ef-b3c0-4a54-ab2a-c50207dd7f77 | Time: 2025-07-15T14:39:39.501Z | Name: Error | Cause: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `RootLayout`.
-ID: 509fa253-7dfa-4e19-9a43-b5b2e5dd64c0 | Time: 2025-07-15T14:52:09.724Z | Name: Error | Cause: Invalid redirect arguments. Please use a single argument URL, e.g. res.redirect('/destination') or use a status code and URL, e.g. res.redirect(307, '/destination').
-ID: 7ece077d-4f1d-4154-8ebc-c41cb4eea5a6 | Time: 2025-07-15T15:16:48.034Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <... onClick={function onClick} children=...>
-               ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: 98811a9d-fa24-4f26-aa5d-fba6f317d443 | Time: 2025-07-15T15:41:17.171Z | Name: ReferenceError | Cause: conte is not defined
-ID: cfcf1b6a-9970-4fd9-aec6-98b0b4b6df9d | Time: 2025-07-15T15:43:56.528Z | Name: ReferenceError | Cause: conte is not defined
-ID: caadc1f0-3504-4049-bc5e-10c211df746c | Time: 2025-07-15T15:43:57.108Z | Name: ReferenceError | Cause: conte is not defined
-ID: 65a5ec10-ee2c-43ce-b902-db2b8f14f121 | Time: 2025-07-16T15:20:24.295Z | Name: ReferenceError | Cause: H2 is not defined
-ID: 7d5bf45c-ea16-40b4-b84d-83f9b6fe4378 | Time: 2025-07-25T11:58:19.312Z | Name: NotFoundError | Cause: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
-ID: 25d80306-cff5-46e4-890f-eb3ab319dbfb | Time: 2025-07-25T12:06:18.507Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: bb4eb59c-8106-4485-8948-eeae965b09f5 | Time: 2025-07-25T12:06:19.680Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: 15603e05-0f0c-404b-be41-cff7a1b05c94 | Time: 2025-07-25T12:06:35.211Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: f9729e6a-db2d-4736-9ef2-07dea80cffbd | Time: 2025-07-25T12:06:36.243Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: 341e91ad-ff2e-40ab-8a20-37ce0a675339 | Time: 2025-07-25T12:06:56.367Z | Name: Error | Cause: Event handlers cannot be passed to Client Component props.
-  <button onClick={function onClick} children=...>
-                  ^^^^^^^^^^^^^^^^^^
-If you need interactivity, consider converting part of this to a Client Component.
-ID: 592ceb4b-3143-449d-8cac-b240807763c3 | Time: 2025-07-27T05:34:25.563Z | Name: ReferenceError | Cause: useState is not defined
-ID: 8c13fc26-8430-4d7f-bc4a-16b5f3f7223d | Time: 2025-07-27T05:34:27.112Z | Name: ReferenceError | Cause: useState is not defined
-ID: 7144d30d-09af-4b13-a337-1dec1eb0813e | Time: 2025-07-28T13:17:30.552Z | Name: ReferenceError | Cause: useState is not defined
-ID: 9ec36225-6454-430b-8625-de9677839ab9 | Time: 2025-07-28T13:17:31.746Z | Name: ReferenceError | Cause: useState is not defined
+ID: 86d700fd-c46c-4fca-bfeb-76140f1b28d8 | Time: 2025-08-01T06:50:44.309Z | Name: ReferenceError | Cause: ex is not defined
+ID: cc54a6c9-6736-40f1-857d-c742edcc1e1e | Time: 2025-08-01T06:50:58.249Z | Name: TypeError | Cause: Illegal constructor
+ID: 733d0db4-b838-4065-9254-9bb92a81774e | Time: 2025-08-01T06:51:00.298Z | Name: ReferenceError | Cause: LockIc is not defined
+ID: 1a750b49-badf-4169-8d34-961d9fbb3f55 | Time: 2025-08-01T06:58:20.552Z | Name: ReferenceError | Cause: va is not defined
+ID: 64a3449a-b73c-429a-a3f1-609eaf5e0063 | Time: 2025-08-01T07:16:00.678Z | Name: ReferenceError | Cause: ghostClass is not defined
+ID: 09475493-5ff6-49c9-bffe-c0274abb4886 | Time: 2025-08-01T07:16:12.076Z | Name: ReferenceError | Cause: ghostClass is not defined
+ID: cc7b3d4b-2f73-4b2c-84ab-ac6fcaeee8a3 | Time: 2025-08-01T08:26:09.193Z | Name: ReferenceError | Cause: data is not defined
+ID: ae2405dc-d30c-47dd-b428-0e413502d3b7 | Time: 2025-08-02T03:41:48.975Z | Name: ReferenceError | Cause: useAxios is not defined
+ID: 36ad5e4e-9293-4017-a8d5-3cc6fd4c0409 | Time: 2025-08-02T03:54:52.363Z | Name: ReferenceError | Cause: id is not defined
+ID: d6e5424b-4c1d-43ac-a877-51490421bc14 | Time: 2025-08-02T03:55:18.586Z | Name: ReferenceError | Cause: id is not defined
+ID: 901ab7f7-988a-4d7b-844f-153798f60db7 | Time: 2025-08-02T07:07:05.737Z | Name: Error | Cause: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.
+ID: d7b384c6-02fe-4bd1-9a0c-db37d8aa3cfa | Time: 2025-08-02T07:59:06.542Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: 1670ec23-6f08-46e9-82dc-f4d3b095be90 | Time: 2025-08-02T07:59:20.024Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: f53440ee-4008-4e0a-8fe2-ce7f95a46f70 | Time: 2025-08-02T08:02:33.608Z | Name: TypeError | Cause: destroy is not a function
+ID: 60b6ebdf-04d8-42ef-bd0c-2615c1fed5c1 | Time: 2025-08-02T08:02:33.619Z | Name: TypeError | Cause: destroy is not a function
+ID: f8532948-d428-451b-a751-1a725519d17e | Time: 2025-08-02T08:02:33.619Z | Name: TypeError | Cause: destroy is not a function
+ID: e93c8e3a-ce22-4c3a-9f48-c24c359b302a | Time: 2025-08-02T08:02:33.620Z | Name: TypeError | Cause: destroy is not a function
+ID: 1cb511d0-ec02-4d12-aa46-24580ac4593f | Time: 2025-08-02T08:02:33.620Z | Name: TypeError | Cause: destroy is not a function
+ID: 5dfd57a3-58f2-4982-a212-49a4d1d723aa | Time: 2025-08-02T08:02:33.621Z | Name: TypeError | Cause: destroy is not a function
+ID: df912670-513b-47d5-9900-21ab57d40a2b | Time: 2025-08-02T08:02:33.621Z | Name: TypeError | Cause: destroy is not a function
+ID: 623a1874-f18e-46c7-acab-2d858d13f245 | Time: 2025-08-02T08:02:33.622Z | Name: TypeError | Cause: destroy is not a function
+ID: d0ab9340-4343-4571-98be-c8593de0a612 | Time: 2025-08-02T08:19:34.734Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: a383f8ef-adfa-4135-b916-74a2a7677571 | Time: 2025-08-02T08:19:38.139Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: f52f75be-622c-44c9-b0a5-f953cd8b228d | Time: 2025-08-02T08:19:40.124Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 9235b829-6f7a-485e-8066-671ebfa6fa1e | Time: 2025-08-02T08:20:03.997Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 4a3ff1ee-82ca-410a-869c-34c726222417 | Time: 2025-08-02T08:20:04.549Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 7d7b51cf-2b2b-40fb-9643-05594ede8499 | Time: 2025-08-02T08:20:07.078Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: d50c8ed7-3169-4432-9777-99414104c6fa | Time: 2025-08-02T08:20:29.487Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 825d8918-b8e5-413f-852e-0f7c986360b0 | Time: 2025-08-02T08:28:01.206Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 86959441-62ee-40ca-8297-2bf3b3245124 | Time: 2025-08-02T08:28:03.723Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 2c31467c-d208-4e35-9def-6b5a8b47a612 | Time: 2025-08-02T08:31:51.147Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: eef7eb92-c65f-4cae-b2e7-7628572d094f | Time: 2025-08-02T08:31:52.234Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: 1e6d1762-0fa0-4b5d-b567-944bf27f593d | Time: 2025-08-02T08:32:09.486Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: 585d2aea-bed4-4485-9a29-40be8181b41c | Time: 2025-08-03T07:26:49.120Z | Name: ReferenceError | Cause: dataById is not defined
+ID: c8f0ac53-b5a1-4afd-ae99-c60e90f002ea | Time: 2025-08-03T14:56:59.395Z | Name: Error | Cause: Missing required parameter client_id.
+ID: 8e4fb7b5-4873-47dd-b632-400ea003499e | Time: 2025-08-03T14:57:08.029Z | Name: Error | Cause: Missing required parameter client_id.
+ID: 5c2becc9-695e-4edc-8520-7381b9d3a5c3 | Time: 2025-08-04T06:50:57.753Z | Name: TypeError | Cause: function is not iterable (cannot read property Symbol(Symbol.iterator))
+ID: 4f58fc1a-17de-4a78-9c6f-c53853853429 | Time: 2025-08-04T06:51:11.417Z | Name: TypeError | Cause: function is not iterable (cannot read property Symbol(Symbol.iterator))
+ID: e263dde7-864f-4aad-bc53-fa52e9a650b4 | Time: 2025-08-04T06:51:43.998Z | Name: TypeError | Cause: function is not iterable (cannot read property Symbol(Symbol.iterator))
+ID: 94fe0c98-48da-4b2c-a667-a33dec0c7ab5 | Time: 2025-08-04T10:06:57.714Z | Name: ReferenceError | Cause: nst is not defined
+ID: 994d17a4-2442-42b2-9927-d5d5feeb157a | Time: 2025-08-04T15:55:31.309Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'map')
+ID: 518e99ac-66e6-47ad-9f67-31e7a5b1b918 | Time: 2025-08-04T15:57:50.053Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'map')
+ID: c098468c-b0ef-4973-9225-2c78f5a67020 | Time: 2025-08-04T16:32:54.984Z | Name: ReferenceError | Cause: permissionsExample is not defined
+ID: 1593da59-2763-4901-97e3-5c825ef2a1e2 | Time: 2025-08-05T03:53:00.320Z | Name: ReferenceError | Cause: permissionsExample is not defined
+ID: a0dd7a05-f76e-4077-8b88-b4a550fa5958 | Time: 2025-08-05T04:06:09.699Z | Name: ReferenceError | Cause: params is not defined
+ID: 3e05d019-a2a7-43c1-ab1f-19bb5630f551 | Time: 2025-08-05T04:20:36.358Z | Name: ReferenceError | Cause: permissionsError is not defined
+ID: a91327f2-7434-4763-a7df-12d0820b08c0 | Time: 2025-08-05T06:42:20.033Z | Name: TypeError | Cause: permissionsData.map is not a function
+ID: eff0698d-7b6a-41cd-b725-026e9dfa5800 | Time: 2025-08-05T06:42:29.088Z | Name: TypeError | Cause: permissionsData.map is not a function
+ID: 247f2a74-9598-4453-afed-13f535ed66f6 | Time: 2025-08-05T15:47:29.844Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'name')
+ID: b1a432d8-43ca-4dfe-b585-fe6e91ef9bac | Time: 2025-08-05T15:47:31.944Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'name')
+ID: 2ee96db1-b728-4b6b-a1f6-711fdf4014a6 | Time: 2025-08-05T15:47:44.934Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'name')
+ID: 5d9ed478-643e-4e42-9635-0e7b903e1317 | Time: 2025-08-05T15:49:13.428Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 52d4e466-2c3c-4372-9ddf-2227fe583f3e | Time: 2025-08-05T15:49:20.089Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 85510ef6-6e2d-48af-bca2-56eabe7e0d1e | Time: 2025-08-05T15:49:27.460Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 8028c7b8-8ac6-41f2-99e0-e0acf08b277f | Time: 2025-08-05T15:49:43.766Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 45487943-5d9d-4b8f-8f91-54d984518361 | Time: 2025-08-05T15:54:54.853Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 953048e2-3914-42b8-90c6-dfb17734c9d0 | Time: 2025-08-05T15:54:59.110Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: e81de715-bfd7-452f-964e-c9cc762a7614 | Time: 2025-08-05T15:59:59.533Z | Name: TypeError | Cause: Cannot read properties of null (reading 'name')
+ID: 2be83eec-c456-48cf-8214-75c1f6eaaf83 | Time: 2025-08-05T16:04:39.780Z | Name: ReferenceError | Cause: getByIdData is not defined
+ID: 9c799a58-442d-4fff-b509-f53422aa269d | Time: 2025-08-05T16:07:01.690Z | Name: Error | Cause: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+ID: 796c76df-21c5-4b62-861e-2909bd869fda | Time: 2025-08-05T16:08:49.075Z | Name: Error | Cause: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+ID: a80abbad-c786-433b-b207-01f33deac964 | Time: 2025-08-05T16:24:35.511Z | Name: TypeError | Cause: Cannot read properties of null (reading 'description')
+ID: ff391814-be7d-490c-be69-5a68678265e1 | Time: 2025-08-05T16:24:43.462Z | Name: TypeError | Cause: Cannot read properties of null (reading 'description')
+ID: 9c759654-329b-4f1d-a506-6b8d38a63aac | Time: 2025-08-06T06:10:51.545Z | Name: ReferenceError | Cause: option is not defined
+ID: 348e5da2-53bc-4dbc-825e-58d8d5283bfa | Time: 2025-08-06T06:16:31.315Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'permissions')
+ID: bd1be250-e064-4dbd-ab04-205cf3d83d47 | Time: 2025-08-06T06:16:45.680Z | Name: TypeError | Cause: Cannot read properties of undefined (reading 'permissions')
+ID: 29a7dc82-3d6b-480a-9c93-26f9eb397946 | Time: 2025-08-06T11:37:10.534Z | Name: ReferenceError | Cause: isActivate is not defined

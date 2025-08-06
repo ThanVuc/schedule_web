@@ -17,15 +17,16 @@ export const Statistic = (
         statisticOptions?: StatisticCardOption[];
     }
 ) => {
+     const totalValue = statisticOptions.reduce((sum, option) => option.value, 0);
     return (
         <div className="statistic flex flex-col md:flex-row gap-4 py-2 px-4 bg-white rounded-lg shadow-md border border-gray-200">
-            {/* Circle Section */}
             <div className="w-full md:w-[20%] flex justify-center items-center shrink-0">
                 <div className="w-30 aspect-square rounded-full border-10 border-amber-300 flex items-center justify-center text-base font-bold">
-                    <H1>133</H1>
+                    <H1>
+                        {totalValue}
+                    </H1>
                 </div>
             </div>
-            {/* Cards Section */}
             <div className="w-full md:w-[80%] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {statisticOptions.map((option, index) => (
                     <Card key={index} className="w-full py-2">
