@@ -12,7 +12,7 @@ import {
 import { DialogTitle } from "@radix-ui/react-dialog";
 
 export interface AppDialogProps {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   onSubmit?: (data: unknown) => void;
   onClose?: () => void;
   setOpen?: (open: boolean) => void;
