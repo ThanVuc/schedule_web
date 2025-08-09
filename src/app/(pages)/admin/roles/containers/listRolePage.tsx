@@ -23,21 +23,23 @@ export const ListRolePage = () => {
     const { setToast } = useToastState();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const currentPage = parseInt(searchParams.get("page") || "1", 10);
-    const [roleCardItems, SetRoleCardItems] = useState<CardItem[]>([]);
+    const [roleCardItems, setRoleCardItems] = useState<CardItem[]>([]);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const params = useMemo(() => Object.fromEntries(searchParams.entries()), [searchParams]);
+    const listParams = useMemo(() => {
+        const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
+        return Object.fromEntries(entries);
+    }, [searchParams]);
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
 
     const { data, error, refetch } = useAxios<RolesResponse>({
         method: "GET",
         url: roleApiUrl.getRoles,
-        params: { ...params, page: currentPage },
+        params: { ...listParams },
     });
 
     useEffect(() => {
         if (data && data.items) {
-            SetRoleCardItems(
+            setRoleCardItems(
                 data.items.map(role => ({
                     title: role.name,
                     description: role.description || "Không có mô tả",
@@ -48,7 +50,7 @@ export const ListRolePage = () => {
                 }))
             );
         } else {
-            SetRoleCardItems([]);
+            setRoleCardItems([]);
         }
     }, [data]);
 
@@ -92,7 +94,7 @@ export const ListRolePage = () => {
             params.delete("id");
         }
 
-        router.push(`/admin/roles?${params.toString()}`, {scroll: false});
+        router.push(`/admin/roles?${params.toString()}`, { scroll: false });
     }
 
     const setActionCardOptions = (id: string) => [
