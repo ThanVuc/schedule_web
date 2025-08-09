@@ -1,15 +1,13 @@
 "use client";
-import { AppAlertDialog, AppDialog } from "@/components/common";
+import { AppDialog } from "@/components/common";
 import useToastState from "@/hooks/useToasts";
 import { CreateRoleMutationResponseType, UpsertRoleSchema } from "../models"
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors } from "react-hook-form";
-import { useEffect, useMemo, useState } from "react";
 import { UpsertRoleForm } from "../components";
 import { Form } from "@/components/ui";
-import { useAxiosMutation, } from "@/hooks";
+import { useAxiosMutation, useConfirmDialog, } from "@/hooks";
 import { roleApiUrl } from "@/api"
 import { useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../hooks";
@@ -46,27 +44,13 @@ export const UpsertRole = ({
     const router = useRouter();
     const searchParams = useSearchParams();
     const { mode, id } = useModalParams();
-    const [openDialog, setOpenDialog] = useState(mode === "create" || mode === "edit" || mode === "view");
+    const openDialog = mode === "create" || mode === "edit" || mode === "view";
     const isDisabled = mode === "view";
-    const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const buttonData = useMemo(() => {
-        switch (mode) {
-            case "create":
-                return buttonProps.create;
-            case "edit":
-                return buttonProps.edit;
-            case "view":
-                return buttonProps.view;
-            default:
-                return buttonProps.create;
-        }
-    }, [mode]);
+    const { confirm, dialog } = useConfirmDialog();
 
-    useEffect(() => {
-        setOpenDialog(!!mode || mode === "create" || mode === "edit" || mode === "view");
-    }, [mode]);
+    const buttonData = buttonProps[mode as keyof typeof buttonProps] ?? buttonProps.create;
 
-    const { data, sendRequest, error } = useAxiosMutation<CreateRoleMutationResponseType, z.infer<typeof UpsertRoleSchema>>({
+    const { sendRequest } = useAxiosMutation<CreateRoleMutationResponseType, z.infer<typeof UpsertRoleSchema>>({
         method: "POST",
         url: roleApiUrl.createRole,
         headers: {
@@ -78,8 +62,9 @@ export const UpsertRole = ({
         const params = new URLSearchParams(searchParams.toString());
         params.delete("mode");
         params.delete("id");
-
-        router.push(`/admin/roles?${params.toString()}`, {scroll: false});
+        router.push(`/admin/roles?${params.toString()}`, { scroll: false });
+        form.reset();
+        form.clearErrors();
     }
 
     const form = useForm<z.infer<typeof UpsertRoleSchema>>({
@@ -90,18 +75,13 @@ export const UpsertRole = ({
             permission_ids: []
         }
     });
-    // validation passed
-    const onSubmit = (values: z.infer<typeof UpsertRoleSchema>) => {
-        console.log("Form submitted with values:", values);
-        setOpenAlertDialog(true);
-    }
-    // validation failed
-    const onError = (errors: FieldErrors<z.infer<typeof UpsertRoleSchema>>) => {
-        console.warn("Validation errors:", errors);
-    }
-    // handle save action after confirmation
-    const onSave = async () => {
-        await sendRequest(form.getValues());
+
+    const onSubmit = async (values: z.infer<typeof UpsertRoleSchema>) => {
+        if (isDisabled) return;
+        const isConfirmed = await confirm();
+        if (!isConfirmed) return;
+        const { data, error } = await sendRequest(values);
+
         if (error) {
             setToast({
                 title: "Lỗi hệ thống",
@@ -113,25 +93,17 @@ export const UpsertRole = ({
         }
 
         if (data?.is_success) {
+            closeModal();
+            form.reset();
             setToast({
                 title: "Thành công",
                 message: "Vai trò đã được thêm thành công",
                 variant: "success",
-                closeable: false
+                closeable: true
             });
-        }
-
-        setOpenDialog(false);
-        setOpenAlertDialog(false);
-        form.reset();
-        setToast({
-            title: "Thành công",
-            message: "Vai trò đã được thêm thành công",
-            variant: "success",
-            closeable: true
-        });
-        if (refetch) {
-            refetch();
+            if (refetch) {
+                refetch();
+            }
         }
     }
 
@@ -141,10 +113,9 @@ export const UpsertRole = ({
                 dialogTitle={buttonData.title}
                 dialogDescription={buttonData.description}
                 open={openDialog}
-                setOpen={setOpenDialog}
                 onClose={closeModal}
                 onSubmit={() => {
-                    form.handleSubmit(onSubmit, onError)();
+                    form.handleSubmit(onSubmit)();
                 }}
                 submitButtonText={isDisabled ? null : buttonData.submitButtonText}
                 cancelButtonText={buttonData.cancelButtonText}
@@ -155,13 +126,7 @@ export const UpsertRole = ({
                     </form>
                 </Form>
             </AppDialog>
-            <AppAlertDialog
-                title="Xác nhận"
-                description="Bạn có chắc chắn muốn lưu các thay đổi này?"
-                open={openAlertDialog}
-                setOpen={setOpenAlertDialog}
-                onSubmit={onSave}
-            />
+            {dialog}
         </>
     );
 }

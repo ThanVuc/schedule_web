@@ -65,42 +65,34 @@ export const useAxios = <T = unknown>(
     return { data, error, loading, refetch, header };
 }
 
-// This hook is used for POST, PUT, DELETE requests
-type UseAxiosMutationResult<T, D = unknown> = {
-    data: T | null;
-    error?: AxiosError | null;
-    loading?: boolean;
-    header?: Record<string, string>;
-    sendRequest: (data?: D, id?: string) => Promise<void>;
-};
-
 export const useAxiosMutation = <T = unknown, D = unknown>(
-    config: AxiosRequestConfig
-): UseAxiosMutationResult<T, D> => {
-    const [data, setData] = useState<T | null>(null);
-    const [error, setError] = useState<AxiosError | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [header, setHeader] = useState<Record<string, string>>({});
+  config: AxiosRequestConfig
+) => {
+  const sendRequest = async (payload?: D, id?: string): Promise<{
+    data?: T | null;
+    error?: AxiosError | null;
+    headers?: Record<string, string>;
+  }> => {
+    try {
+      const response: AxiosResponse<ApiResponse<T>> = await axios({
+        ...config,
+        url: id ? `${config.url}/${id}` : config.url,
+        data: payload,
+      });
 
-    const sendRequest = async (payload?: D, id?: string) => {
-        setLoading(true);
-        try {
-            const response: AxiosResponse<ApiResponse<T>> = await axios({
-                ...config,
-                url: id ? `${config.url}/${id}` : config.url,
-                data: payload,
-            });
-            setData(response.data.metadata || null);
-            setHeader(Object.fromEntries(
-                Object.entries(response.headers).map(([key, value]) => [key, String(value)])
-            ));
-            setError(null);
-        } catch (err) {
-            setError(err as AxiosError);
-        } finally {
-            setLoading(false);
-        }
-    };
+      const headers = Object.fromEntries(
+        Object.entries(response.headers).map(([key, value]) => [key, String(value)])
+      );
 
-    return { data, error, loading, sendRequest, header };
-}
+      return {
+        data: response.data.metadata || null,
+        error: null,
+        headers,
+      };
+    } catch (err) {
+      return { data: null, error: err as AxiosError };
+    }
+  };
+
+  return { sendRequest };
+};
