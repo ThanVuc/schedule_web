@@ -6,35 +6,81 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UpsertRoleForm } from "../components";
 import { Form } from "@/components/ui";
-import { useAxiosMutation } from "@/hooks";
+import { useAxiosMutation, } from "@/hooks";
 import { roleApiUrl } from "@/api"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useModalParams } from "../hooks";
 
 export interface AddRoleProps {
-    trigger?: React.ReactNode;
-    action: "upsert" | "view"
-    id?: string;
     refetch?: () => void;
 }
 
+const buttonProps = {
+    create: {
+        title: "Thêm Vai Trò Mới",
+        description: "Nhập thông tin vai trò mới và lưu lại",
+        submitButtonText: "Lưu",
+        cancelButtonText: "Hủy Bỏ",
+    },
+    edit: {
+        title: "Chỉnh Sửa Vai Trò",
+        description: "Cập nhật thông tin vai trò",
+        submitButtonText: "Cập Nhật",
+        cancelButtonText: "Hủy Bỏ",
+    },
+    view: {
+        title: "Xem Vai Trò",
+        description: "Thông tin chi tiết về vai trò",
+        submitButtonText: null,
+        cancelButtonText: "Đóng",
+    },
+};
+
 export const UpsertRole = ({
-    trigger,
-    action = "view",
     refetch,
 }: AddRoleProps) => {
     const { setToast } = useToastState();
-    const [openDialog, setOpenDialog] = useState(false);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { mode, id } = useModalParams();
+    const [openDialog, setOpenDialog] = useState(mode === "create" || mode === "edit" || mode === "view");
+    const isDisabled = mode === "view";
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const isDisabled = action === "view";
-    const { data, sendRequest, error } = useAxiosMutation<CreateRoleMutationResponseType ,z.infer<typeof UpsertRoleSchema>>({
+    const buttonData = useMemo(() => {
+        switch (mode) {
+            case "create":
+                return buttonProps.create;
+            case "edit":
+                return buttonProps.edit;
+            case "view":
+                return buttonProps.view;
+            default:
+                return buttonProps.create;
+        }
+    }, [mode]);
+
+    useEffect(() => {
+        setOpenDialog(!!mode || mode === "create" || mode === "edit" || mode === "view");
+    }, [mode]);
+
+    const { data, sendRequest, error } = useAxiosMutation<CreateRoleMutationResponseType, z.infer<typeof UpsertRoleSchema>>({
         method: "POST",
         url: roleApiUrl.createRole,
         headers: {
             "Content-Type": "application/json"
         }
     });
+
+    const closeModal = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("mode");
+        params.delete("id");
+
+        router.push(`/admin/roles?${params.toString()}`, {scroll: false});
+    }
 
     const form = useForm<z.infer<typeof UpsertRoleSchema>>({
         resolver: zodResolver(UpsertRoleSchema),
@@ -92,16 +138,16 @@ export const UpsertRole = ({
     return (
         <>
             <AppDialog
-                trigger={trigger}
-                dialogTitle="Thêm Vai Trò Mới"
-                dialogDescription="Nhập thông tin vai trò mới và lưu lại"
+                dialogTitle={buttonData.title}
+                dialogDescription={buttonData.description}
                 open={openDialog}
                 setOpen={setOpenDialog}
+                onClose={closeModal}
                 onSubmit={() => {
-                    // Trigger form validation and submission
                     form.handleSubmit(onSubmit, onError)();
                 }}
-                submitButtonText={isDisabled ? null : "Lưu"}
+                submitButtonText={isDisabled ? null : buttonData.submitButtonText}
+                cancelButtonText={buttonData.cancelButtonText}
             >
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
