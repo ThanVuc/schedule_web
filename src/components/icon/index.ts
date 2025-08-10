@@ -25,3 +25,5 @@ export * from "./schedule";
 export * from "./team";
 export * from "./help";
 export * from "./google";
+export * from "./lock";
+export * from "./unlock";

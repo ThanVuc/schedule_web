@@ -116,3 +116,9 @@ ID: 592ceb4b-3143-449d-8cac-b240807763c3 | Time: 2025-07-27T05:34:25.563Z | Name
 ID: 8c13fc26-8430-4d7f-bc4a-16b5f3f7223d | Time: 2025-07-27T05:34:27.112Z | Name: ReferenceError | Cause: useState is not defined
 ID: 7144d30d-09af-4b13-a337-1dec1eb0813e | Time: 2025-07-28T13:17:30.552Z | Name: ReferenceError | Cause: useState is not defined
 ID: 9ec36225-6454-430b-8625-de9677839ab9 | Time: 2025-07-28T13:17:31.746Z | Name: ReferenceError | Cause: useState is not defined
+ID: 8a261a33-ac03-445f-b1fb-12ed00f1648f | Time: 2025-08-10T07:40:58.507Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 1b53eca0-eae0-4044-b223-33cf87cc86e0 | Time: 2025-08-10T07:41:03.223Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: 07911e58-3dcb-4706-8278-581ff2f12a68 | Time: 2025-08-10T07:42:10.726Z | Name: Error | Cause: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+ID: ad72e413-5ed3-4ec0-b49b-c88c84c06e3b | Time: 2025-08-10T08:03:12.081Z | Name: ReferenceError | Cause: is_Activated is not defined
+ID: 919e04c1-0d89-4f98-bd21-0ceb14d5c7e9 | Time: 2025-08-10T08:25:29.805Z | Name: ReferenceError | Cause: permissionsExample is not defined
+ID: bd04b6f6-475c-4ef5-a9a2-b685be5617a5 | Time: 2025-08-10T08:27:04.786Z | Name: ReferenceError | Cause: permissionsExample is not defined

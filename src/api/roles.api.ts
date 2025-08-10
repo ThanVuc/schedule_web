@@ -9,6 +9,7 @@ export const roleApiUrl = {
     deleteRole: createAPI('roles'),
     getRoles: createAPI('roles'),
     getRoleById: createAPI('roles'),
+    disableOrEnableRole: createAPI('roles')
 }
 
 export default roleApiUrl
