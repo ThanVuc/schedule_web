@@ -1,6 +1,6 @@
 import { AppAlertDialog, AppPagination, AppSearch, H2, Muted } from "@/components/common";
 import { Statistic } from "../../_components/statistic";
-import { EyeIcon, PencilIcon, RoleIcon, ShieldIcon, TrashIcon, UserIcon } from "@/components/icon";
+import { EyeIcon, LockIcon, PencilIcon, RoleIcon, ShieldIcon, TrashIcon, UnLockIcon, UserIcon } from "@/components/icon";
 import { CardItem, Cards } from "../../_components/cards";
 import { ActionButton } from "../../_components";
 import useToastState from "@/hooks/useToasts";
@@ -8,9 +8,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui";
 import { UpsertRole } from "./upsertRole";
-import { useAxios, useAlertDialog } from "@/hooks";
+import { useAxios, useAlertDialog, useAxiosMutation } from "@/hooks";
 import { roleApiUrl } from "@/api";
-import { RolesResponse } from "../models";
+import { RoleModel, RolesResponse } from "../models";
 
 
 export const metadata = {
@@ -30,11 +30,26 @@ export const ListRolePage = () => {
         return Object.fromEntries(entries);
     }, [searchParams]);
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
-
+    const [is_Activated, setIs_Activated] = useState(false);
     const { data, error, refetch } = useAxios<RolesResponse>({
         method: "GET",
         url: roleApiUrl.getRoles,
         params: { ...listParams },
+    });
+
+    const { sendRequest: sendRequestDelete } = useAxiosMutation<RoleModel>({
+        method: "DELETE",
+        url: roleApiUrl.deleteRole,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const { sendRequest: sendRequestDisableOrEnable } = useAxiosMutation<RoleModel>({
+        method: "PUT",
+        url: roleApiUrl.disableOrEnableRole,
+        headers: {
+            "Content-Type": "application/json"
+        }
     });
 
     useEffect(() => {
@@ -46,7 +61,7 @@ export const ListRolePage = () => {
                     icon: role.is_root ? <RoleIcon className="w-8 h-8" /> : <UserIcon className="w-8 h-8 fill-amber-100" />,
                     isRoot: role.is_root,
                     iconIsRoot: <ShieldIcon className="w-4 h-4 fill-blue-100" />,
-                    actions: <div className="flex gap-2">{setActionCardOptions(role.role_id)}</div>,
+                    actions: <div className="flex gap-2">{setActionCardOptions(role)}</div>,
                 }))
             );
         } else {
@@ -97,21 +112,78 @@ export const ListRolePage = () => {
         router.push(`/admin/roles?${params.toString()}`, { scroll: false });
     }
 
-    const setActionCardOptions = (id: string) => [
+    const setActionCardOptions = (role: RoleModel) => {
+        const {role_id, is_active} = role;
+        return [
         <ActionButton
             key="view-trigger"
             variant="outline"
             buttonText="Xem"
             icon={<EyeIcon className="w-4 h-4" />}
-            onClick={() => handlePageQueryToModal("view", id)}
+            onClick={() => handlePageQueryToModal("view", role_id)}
         />,
         <ActionButton
             key="edit"
             variant="outline"
             buttonText="Chỉnh sửa"
             icon={<PencilIcon className="w-4 h-4" />}
-            onClick={() => handlePageQueryToModal("edit", id)}
+            onClick={() => handlePageQueryToModal("edit", role_id)}
         />,
+
+        !is_active ? (<ActionButton
+            key="disable"
+            className="bg-green-600 hover:bg-green-500"
+            buttonText="Kích hoạt"
+            icon={<UnLockIcon className="w-4 h-4" />}
+            onClick={() => {
+                setAlertDialogProps({
+                    title: "Xác nhận kích hoạt vai trò",
+                    description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
+                    submitText: "Kích hoạt",
+                    onSubmit: async () => {
+                        await sendRequestDisableOrEnable({ is_Activated: true }, `${role_id}/disable-or-enable`);
+                        setToast({
+                            title: "Kích hoạt vai trò",
+                            message: "Đang kích hoạt vai trò, vui lòng đợi...",
+                            variant: "default",
+                        });
+                        refetch?.();
+                    },
+                    open: true,
+                    setOpen: setOpenAlertDialog,
+                });
+                setOpenAlertDialog(true);
+            }}
+        />) : (
+            <ActionButton
+                key="activate"
+                variant="outline"
+                buttonText="Vô hiệu hóa"
+                icon={<LockIcon className="w-4 h-4" />}
+                onClick={() => {
+                    setAlertDialogProps({
+                        title: "Xác nhận vô hiệu hóa vai trò",
+                        description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
+                        submitText: "Vô hiệu hóa",
+                        onSubmit: async () => {
+                            await sendRequestDisableOrEnable({ is_active: false }, `${role_id}/disable-or-enable`);
+
+                            setToast({
+                                title: "Vô hiệu hóa vai trò",
+                                message: "Đang vô hiệu hóa vai trò, vui lòng đợi...",
+                                variant: "default",
+                            });
+                            refetch?.();
+                        },
+                        open: true,
+                        setOpen: setOpenAlertDialog,
+                    });
+                    setOpenAlertDialog(true);
+                }}
+            />
+        ),
+
+
         <ActionButton
             key="delete"
             variant="destructive"
@@ -122,12 +194,14 @@ export const ListRolePage = () => {
                     title: "Xác nhận xóa vai trò",
                     description: "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
                     submitText: "Xóa",
-                    onSubmit: () => {
+                    onSubmit: async () => {
+                        await sendRequestDelete(undefined, role_id);
                         setToast({
                             title: "Xóa vai trò",
                             message: "Đang xóa vai trò, vui lòng đợi...",
                             variant: "default",
                         });
+                        refetch?.();
                     },
                     open: true,
                     setOpen: setOpenAlertDialog,
@@ -135,7 +209,8 @@ export const ListRolePage = () => {
                 setOpenAlertDialog(true);
             }}
         />
-    ]
+        ]
+    }
 
     return (
         <>

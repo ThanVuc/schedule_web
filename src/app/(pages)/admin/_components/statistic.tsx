@@ -22,7 +22,7 @@ export const Statistic = (
             {/* Circle Section */}
             <div className="w-full md:w-[20%] flex justify-center items-center shrink-0">
                 <div className="w-30 aspect-square rounded-full border-10 border-amber-300 flex items-center justify-center text-base font-bold">
-                    <H1>133</H1>
+                    <H1>{statisticOptions[0]?.value}</H1>
                 </div>
             </div>
             {/* Cards Section */}

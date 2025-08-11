@@ -4,7 +4,7 @@ export interface RoleModel {
     name: string;
     description?: string;
     is_root: boolean;
-    permissions: string[];
+    permissions: PermissionModel[];
     created_at: string;
     updated_at: string;
     total_users: number;
@@ -25,3 +25,9 @@ export interface RolesResponse {
     has_prev: boolean;
     has_next: boolean;
 }
+export interface PermissionModel {
+    perm_id: string;
+    perm_name: string;
+    description: string;
+}
+
