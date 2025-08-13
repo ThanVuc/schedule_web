@@ -4,8 +4,14 @@ export interface PermissionModel {
     perm_name: string;
     description?: string;
     is_root: boolean;
-    resource: string; 
-    actions :string[];
+    resource: {
+        id: string;
+        name: string;
+    };
+    actions: {
+        id: string;
+        name: string;
+    }[];
     created_at: string;
     updated_at: string;
 }

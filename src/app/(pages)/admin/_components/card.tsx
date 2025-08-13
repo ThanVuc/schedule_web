@@ -26,7 +26,12 @@ export const Card: React.FC<CardProps> = ({
             <div className="flex-1">
                 <div>
                     <div className="flex items-center space-x-2">
-                        <span className="font-medium">{title}</span>
+                        <span className="font-medium">{
+                                title.length > 30
+                                    ? `${title.slice(0, 30)}...`
+                                    : title
+                            }
+                            </span>
                     {isRoot && (
                         <span className="text-gray-500 flex">
                             {iconIsRoot}
@@ -34,7 +39,11 @@ export const Card: React.FC<CardProps> = ({
                     )}
                     </div>
                     {description && (
-                        <div className="text-sm text-gray-500">{description}</div>
+                        <div className="text-sm text-gray-500">{
+                            description.length > 50
+                                ? `${description.slice(0, 50)}...`
+                                : description
+                        }</div>
                     )}
                 </div>
             </div>
