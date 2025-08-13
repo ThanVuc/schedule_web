@@ -6,55 +6,79 @@ import { permissionApiUrl } from "@/api";
 import { useAxios } from "@/hooks";
 import { UpsertPermissionSchema } from "../models";
 import { z } from "zod";
+import { useModalParams } from "../hooks";
 
-interface UpsertPermissionFormProps {
-  form: UseFormReturn<UpsertPermissionInput>;
+
+type AddPermissionForm = z.infer<typeof UpsertPermissionSchema>;
+
+interface AddPermissionFormProps {
+  form: UseFormReturn<AddPermissionForm>;
   isDisabled?: boolean;
+  onActionsLoaded?: (id: string[]) => void
 }
 
-type UpsertPermissionInput = z.infer<typeof UpsertPermissionSchema>;
-export const UpsertPermissionForm: React.FC<UpsertPermissionFormProps> = ({
+export const UpsertPermissionForm = ({
   form,
   isDisabled = false,
-}) => {
+  onActionsLoaded,
+}: AddPermissionFormProps) => {
+
   const {
     data: resourcesData,
     loading: resourcesLoading,
-    error: resourcesError ,
   } = useAxios<{ id: string; name: string }[]>(
     { url: permissionApiUrl.getResource, method: "GET" },
     []
   );
 
-  const resourceOptions =
-    resourcesData?.map((r) => ({ value: r.id, label: r.name })) ?? [];
+  const resourceOptions = resourcesData?.map((r) => ({ value: r.id, label: r.name })) ?? [];
+  const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null);
+  const { mode, id } = useModalParams();
 
-  const selectedResourceId = form.watch("resource_id");
   const {
     data: actionsMeta,
     loading: actionsLoading,
-    error: actionsError,
   } = useAxios<{ actions: { id: string; name: string }[] }>(
     {
-      url: `${permissionApiUrl.getActions}?resource_id=${selectedResourceId}`,
+      url: permissionApiUrl.getActions,
       method: "GET",
       params: { resource_id: selectedResourceId },
     },
-    [selectedResourceId]
+    [selectedResourceId],
+    // !id === null || mode === "create"
+    !selectedResourceId
   );
 
-  const actionOptions =
-    actionsMeta?.actions.map((a) => ({ value: a.id, label: a.name })) ?? [];
+  const actionOptions = actionsMeta?.actions.map((a) => ({ value: a.id, label: a.name })) ?? [];
 
   const [searchQuery, setSearchQuery] = useState("");
+
   const filteredActions = actionOptions.filter((opt) =>
     opt.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
-    form.setValue("actions_ids", []);
-    setSearchQuery("");
-  }, [selectedResourceId, form]);
+    if (id !== null && mode !== "create") {
+      setSelectedResourceId(form.getValues("resource_id") || null);
+    }
+  }, [form.getValues("resource_id")])
+
+  useEffect(() => {
+    if (actionsMeta?.actions && onActionsLoaded) {
+      onActionsLoaded(actionsMeta.actions.map(a => a.id));
+    }
+  }, [actionsMeta, onActionsLoaded]);
+
+  useEffect(() => {
+    if (mode === "create") {
+      form.reset({
+        name: "",
+        description: "",
+        resource_id: "",
+        actions_ids: [],
+      });
+    }
+  }, [mode]);;
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
@@ -70,13 +94,15 @@ export const UpsertPermissionForm: React.FC<UpsertPermissionFormProps> = ({
                 <AppComboBox
                   items={resourceOptions}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setSelectedResourceId(value);
+                    console.log(value);
+                  }}
                   placeholder={
                     resourcesLoading
                       ? "Đang tải..."
-                      : resourcesError
-                        ? "Lỗi khi tải resource"
-                        : "Chọn resource..."
+                      : "Chọn resource..."
                   }
                   emptyText="Không tìm thấy resource"
                 />
@@ -115,7 +141,7 @@ export const UpsertPermissionForm: React.FC<UpsertPermissionFormProps> = ({
         />
       </div>
 
-      {/* Right: Actions */}
+
       <div className="flex flex-col gap-4 w-full lg:w-3/5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <H4 className="text-base sm:text-lg">Hành động</H4>
@@ -123,9 +149,7 @@ export const UpsertPermissionForm: React.FC<UpsertPermissionFormProps> = ({
             placeholder={
               actionsLoading
                 ? "Đang tải..."
-                : actionsError
-                  ? "Lỗi khi tải actions"
-                  : "Tìm hành động..."
+                : "Tìm hành động..."
             }
             className="w-full sm:max-w-[15rem]"
             onSearch={setSearchQuery}
