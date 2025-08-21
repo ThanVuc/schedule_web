@@ -50,7 +50,7 @@ export function AppComboBox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[510px] justify-between"
+          className="w-full justify-between"
           type="button"
         >
           {value
@@ -59,7 +59,7 @@ export function AppComboBox({
           <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4 shrink-0" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[510px] p-0 z-200">
+      <PopoverContent className="w-full p-0 z-200">
         <Command>
           <CommandInput placeholder={placeholder} className="h-9" />
           <CommandList>

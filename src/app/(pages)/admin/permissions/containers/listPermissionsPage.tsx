@@ -177,7 +177,7 @@ export const ListpermissionsPage = () => {
         />,
         <ActionButton
             key="delete"
-            variant="outline"
+            variant="destructive"
             buttonText="Xóa"
             icon={<TrashIcon className="w-4 h-4" />}
             onClick={() => {
