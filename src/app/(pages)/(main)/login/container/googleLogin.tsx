@@ -37,7 +37,7 @@ export const GoogleLoginContainer = () => {
 
       <div className="flex flex-col items-center gap-4 text-center px-4">
         <blockquote className="text-sm sm:text-base max-w-md italic text-gray-300 leading-relaxed">
-          “It’s so easy to be great nowadays because everyone else is weak.”
+          “It’s so easy to be great nowadays, my friend, because everyone else is weak”
         </blockquote>
 
         <figcaption className="text-gray-500 text-xs sm:text-sm">
@@ -45,7 +45,7 @@ export const GoogleLoginContainer = () => {
         </figcaption>
 
         <p className="text-sm sm:text-base max-w-md font-semibold text-blue-400">
-          Come here. Login — and outwork them.
+          Đăng Nhập để cùng nhau chinh phục những đỉnh cao mới!
         </p>
       </div>
     </div>

@@ -4,6 +4,6 @@ interface GlobalConfig {
 }
 
 export const globalConfig: GlobalConfig = {
-    ApiUrlBase: process.env.API_URL_BASE || 'https://qa-api.eplatform.online/api/v1/',
-    AppName: process.env.APP_NAME || 'Schedule For You',
+    ApiUrlBase: process.env.NEXT_PUBLIC_API_URL_BASE ?? "123",//|| 'https://qa-api.eplatform.online/api/v1/',
+    AppName: process.env.APP_NAME || 'Schedulr',
 };

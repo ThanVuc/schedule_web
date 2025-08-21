@@ -1,7 +1,12 @@
-"use client";
 import { ReactNode } from "react";
 import SidebarAdmin from "./_components/sidebarAdmin";
 import { ThemeProvider } from "@/components/common/themeProvider";
+
+export const metadata = {
+    title: "Quản Trị | Schedulr",
+    description: "Quản lý người dùng và cài đặt hệ thống",
+};
+
 const AdminLayout = ({ children }: { children: ReactNode }) => {
     return (
         <ThemeProvider
