@@ -1,5 +1,10 @@
 # 🧩 Dự án Web App – Cấu trúc thư mục & Hướng dẫn phát triển
 
+# Hướng Dẫn Cài Đặt Môi Trường:
+- Cài đặt các file config: .env.development, .env.local
+- Cài đặt mkcert để thiết lập https cho localhost
+- run: npm run dev
+- run 2: npm run proxy
 ## 📂 Cấu trúc thư mục chính
 
 ```

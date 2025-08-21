@@ -1,0 +1,4 @@
+localhost:3000 {
+    reverse_proxy localhost:3001
+    tls C:\projects\certs\localhost+2.pem C:\projects\certs\localhost+2-key.pem
+}

@@ -11,18 +11,18 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
             url: "/",
             icon: ReturnUpBackToHome,
         },
-        {
-            title: "Vai trò",
-            url: "/admin/roles",
-            icon: RoleIcon,
-        },
-        {
-            title: "Danh sách người dùng",
+                {
+            title: "Quản Lý Người dùng",
             url: "/admin/users",
             icon: CalendarIcon,
         },
         {
-            title: "Quyền hạn",
+            title: "Quản Lý Vai trò",
+            url: "/admin/roles",
+            icon: RoleIcon,
+        },
+        {
+            title: "Quản Lý Quyền hạn",
             url: "/admin/permissions",
             icon: AssignmentIcon,
         },

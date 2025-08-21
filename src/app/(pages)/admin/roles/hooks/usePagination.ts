@@ -7,6 +7,10 @@ export const useIndexPagination = (totalItems: number, page = 1, size = 6) => {
     const endIndex = startIndex + size;
 
     const setPage = (newPage: number) => {
+        if (totalPages === 0) {
+            setPageIndex(0);
+            return;
+        }
         if (newPage < 1 || newPage > totalPages) return;
         setPageIndex(newPage);
     }

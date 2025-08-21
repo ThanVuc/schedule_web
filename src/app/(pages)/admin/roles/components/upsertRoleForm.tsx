@@ -2,7 +2,7 @@ import { Button, Checkbox, FormControl, FormDescription, FormField, FormItem, Fo
 import z from "zod"
 import { UpsertRoleSchema } from "../models"
 import { UseFormReturn } from "react-hook-form"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useIndexPagination } from "../hooks"
 import { H4, Muted, AppSearchSimple } from "@/components/common"
 
@@ -112,7 +112,7 @@ export const UpsertRoleForm = ({ form, permissions, isDisabled = false }: AddRol
                     <Button type="button" disabled={!hasPreviousPage} variant="ghost" size="sm"
                         onClick={() => setPage(pageIndex - 1)}
                     >Trước</Button>
-                    <Muted className="text-sm">Trang {pageIndex}/{totalPages}</Muted>
+                    <Muted className="text-sm">Trang {totalPages !== 0 ? pageIndex : 0}/{totalPages}</Muted>
                     <Button type="button" disabled={!hasNextPage} variant="ghost" size="sm"
                         onClick={() => setPage(pageIndex + 1)}
                     >Sau</Button>
