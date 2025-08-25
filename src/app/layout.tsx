@@ -3,7 +3,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { Toaster } from "@/components/ui/sonner";
 import { CsrfProvider } from "@/context/csrf.context";
 import { getCSRFToken } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -52,7 +51,6 @@ export default function RootLayout({
       >
         <CsrfProvider token={csrfToken}>
           <ErrorBoundary>{children}</ErrorBoundary>
-          <Toaster richColors position="top-right" expand={false} theme="light" className="app-toaster" />
         </CsrfProvider>
       </body>
     </html>

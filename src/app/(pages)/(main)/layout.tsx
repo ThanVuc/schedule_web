@@ -1,6 +1,7 @@
 "use client";
 import { ThemeProvider } from "@/components/common/themeProvider";
 import { AppHeader, StarBackground } from "./_components";
+import { Toaster } from "@/components/ui/sonner";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -11,6 +12,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 enableSystem
                 disableTransitionOnChange
             >
+                <Toaster richColors position="top-right" expand={false} theme="dark" className="app-toaster" />
                 <StarBackground>
                     <div className="pt-20">
                         <AppHeader />

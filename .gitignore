@@ -42,4 +42,5 @@ next-env.d.ts
 
 # logs
 /src/logs/
-*.log
+*.log/
+./src/logs/*

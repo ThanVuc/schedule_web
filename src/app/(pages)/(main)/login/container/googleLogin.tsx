@@ -3,16 +3,44 @@ import { GoogleIcon } from '@/components/icon';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import "./googleLogin.scss";
 import "@/../public/assets/stars.webp";
+import { useAxiosMutation } from '@/hooks';
+import { authApiUrl } from '@/api';
+import { useRouter } from 'next/navigation';
+import useToastState from '@/hooks/useToasts';
 
 export const GoogleLoginContainer = () => {
-  const handleLoginSuccess = (credentialResponse: TokenResponse) => {
+  const { sendRequest } = useAxiosMutation(
+    {
+      method: 'POST',
+      url: authApiUrl.loginWithGoogle,
+    }
+  );
+  const router = useRouter();
+  const { setToast } = useToastState();
+
+  const handleLoginSuccess = async (credentialResponse: TokenResponse) => {
     const accessToken = credentialResponse.access_token;
     if (!accessToken) {
       console.error('No ID token received');
       return;
     }
 
-    console.log('Login Successful', accessToken);
+    const { error } = await sendRequest({
+      google_access_token: accessToken
+    })
+
+    if (error) {
+      console.error('Login failed:', error);
+      return;
+    }
+
+    setToast({ 
+      variant: 'success',
+      message: 'Đăng nhập thành công!',
+      title: 'Thành công',
+      closeable: true,
+     });
+    router.push('/');
   };
 
   const handleLoginError = () => {
