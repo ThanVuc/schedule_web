@@ -7,6 +7,7 @@ import { AppHoverClickCard } from "@/components/common";
 import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { UserCardContent } from "./userCardContent";
 import { useIsMobile } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 const NavItemData = [
     { href: "/", label: "Trang Chủ", icon: <HomeIcon /> },
@@ -18,6 +19,7 @@ const NavItemData = [
 export const AppHeader = () => {
     const isMobile = useIsMobile();
     const isLoggedIn = false;
+    const router = useRouter();
 
     return (
         <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-[#0B1120] z-50">
@@ -56,8 +58,10 @@ export const AppHeader = () => {
                         className="w-60"
                     />
                 ) : (
-                    <Button variant="default" className="login">
-                        <Link href="/login">Đăng Nhập</Link>
+                    <Button variant="default" className="login hover:cursor-pointer"
+                        onClick={() => router.push('/login')}
+                    >
+                        Đăng Nhập
                     </Button>
                 )}
             </div>
