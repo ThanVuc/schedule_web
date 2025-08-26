@@ -8,6 +8,7 @@ import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { UserCardContent } from "./userCardContent";
 import { useIsMobile } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const NavItemData = [
     { href: "/", label: "Trang Chủ", icon: <HomeIcon /> },
@@ -18,7 +19,7 @@ const NavItemData = [
 
 export const AppHeader = () => {
     const isMobile = useIsMobile();
-    const isLoggedIn = false;
+    const [isLogged] = useState(false);
     const router = useRouter();
 
     return (
@@ -46,7 +47,7 @@ export const AppHeader = () => {
             </div>
 
             <div className="user ml-auto">
-                {isLoggedIn ? (
+                {!isLogged ? (
                     <AppHoverClickCard
                         trigger={
                             <Avatar className="cursor-pointer">
@@ -58,11 +59,16 @@ export const AppHeader = () => {
                         className="w-60"
                     />
                 ) : (
-                    <Button variant="default" className="login hover:cursor-pointer"
-                        onClick={() => router.push('/login')}
-                    >
-                        Đăng Nhập
-                    </Button>
+                    <div>
+                        <Button variant="default" className="login hover:cursor-pointer"
+                            onClick={() => {
+                                router.push('/login');
+                            }}
+                        >
+                            Đăng Nhập
+                        </Button>
+                    </div>
+
                 )}
             </div>
         </div>

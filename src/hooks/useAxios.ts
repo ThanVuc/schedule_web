@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
 import { ApiResponse } from "@/models/response";
 import { useCsrfToken } from "@/context/csrf.context";
+import { authApiUrl } from "@/api";
+import { useRouter } from "next/navigation";
 
 type UseAxiosResult<T> = {
   data: T | null;
@@ -72,22 +74,50 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
   config: AxiosRequestConfig
 ) => {
   const csrfToken = useCsrfToken();
+  const router = useRouter();
+
   const sendRequest = async (payload?: D, id?: string): Promise<{
     data?: T | null;
     error?: AxiosError | null;
     headers?: Record<string, string>;
   }> => {
-    try {
-      const response: AxiosResponse<ApiResponse<T>> = await axios({
+    const makeRequest = async () => {
+      return await axios({
         ...config,
         url: id ? `${config.url}/${id}` : config.url,
-        data: payload,
+        ...(payload && { data: payload }),
         headers: {
           ...config.headers,
           'X-CSRF-Token': csrfToken,
         },
         withCredentials: true,
       });
+    };
+
+    try {
+      let response = await makeRequest();
+
+      if (response.status === 401) {
+        // Try refresh token
+        try {
+          const refreshResponse = await axios({
+            method: 'POST',
+            url: authApiUrl.refreshToken,
+            withCredentials: true,
+            headers: { 'X-CSRF-Token': csrfToken },
+          });
+
+          if (refreshResponse.status === 200) {
+            response = await makeRequest();
+          } else {
+            router.push('/login');
+            return { data: null, error: new Error('Unauthorized') as AxiosError, headers: {} };
+          }
+        } catch (refreshError) {
+          router.push('/login');
+          return { data: null, error: refreshError as AxiosError, headers: {} };
+        }
+      }
 
       const headers = Object.fromEntries(
         Object.entries(response.headers).map(([key, value]) => [key, String(value)])
@@ -99,7 +129,7 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
         headers,
       };
     } catch (err) {
-      return { data: null, error: err as AxiosError };
+      return { data: null, error: err as AxiosError, headers: {} };
     }
   };
 

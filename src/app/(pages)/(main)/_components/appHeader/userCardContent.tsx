@@ -1,7 +1,10 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui"
 import avtImg from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { LogoutIcon, SettingsGearIcon, UserIcon } from "@/components/icon";
 import Link from "next/link";
+import { useLogout } from "@/hooks";
 
 const userActions = [
     { href: "/profile", label: "Hồ sơ cá nhân", icon: <UserIcon className="w-4 h-4 mr-2" /> },
@@ -10,6 +13,8 @@ const userActions = [
 ]
 
 export const UserCardContent = () => {
+    const { logout } = useLogout();
+
     return (
         <div>
             <div className="avt flex items-center gap-4 justify-center pb-2 border-b-2 mb-2">
@@ -22,10 +27,21 @@ export const UserCardContent = () => {
             <div className="actions">
                 {userActions.map((action, index) => (
                     <Button key={index} variant="ghost" className="w-full text-left justify-start">
-                        <Link href={action.href} className="flex gap-2 transition-colors duration-200">
-                            {action.icon}
-                            <span>{action.label}</span>
-                        </Link>
+                        {
+                            action.href === '/logout' ?
+                                <Link href={'/'} className="flex gap-2 transition-colors duration-200"
+                                    onClick={() => {
+                                        logout();
+                                    }}
+                                >
+                                    {action.icon}
+                                    <span>{action.label}</span>
+                                </Link> :
+                                <Link href={action.href} className="flex gap-2 transition-colors duration-200">
+                                    {action.icon}
+                                    <span>{action.label}</span>
+                                </Link>
+                        }
                     </Button>
                 ))}
             </div>
