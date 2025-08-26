@@ -11,7 +11,7 @@ import { useAxios, useAxiosMutation, useConfirmDialog, } from "@/hooks";
 import { permissionApiUrl, roleApiUrl } from "@/api"
 import { useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../hooks";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface AddRoleProps {
     refetch?: () => void;

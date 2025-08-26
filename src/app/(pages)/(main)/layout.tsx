@@ -1,4 +1,3 @@
-"use client";
 import { ThemeProvider } from "@/components/common/themeProvider";
 import { AppHeader, StarBackground } from "./_components";
 import { Toaster } from "@/components/ui/sonner";

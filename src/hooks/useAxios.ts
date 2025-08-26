@@ -44,6 +44,7 @@ export const useAxios = <T = unknown>(
         const response: AxiosResponse<ApiResponse<T>> = await axios({
           ...config,
           signal: controller.signal,
+          withCredentials: true,
         });
         setData(response.data.metadata || null);
         setHeader(Object.fromEntries(
@@ -95,29 +96,7 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
     };
 
     try {
-      let response = await makeRequest();
-
-      if (response.status === 401) {
-        // Try refresh token
-        try {
-          const refreshResponse = await axios({
-            method: 'POST',
-            url: authApiUrl.refreshToken,
-            withCredentials: true,
-            headers: { 'X-CSRF-Token': csrfToken },
-          });
-
-          if (refreshResponse.status === 200) {
-            response = await makeRequest();
-          } else {
-            router.push('/login');
-            return { data: null, error: new Error('Unauthorized') as AxiosError, headers: {} };
-          }
-        } catch (refreshError) {
-          router.push('/login');
-          return { data: null, error: refreshError as AxiosError, headers: {} };
-        }
-      }
+      const response = await makeRequest();
 
       const headers = Object.fromEntries(
         Object.entries(response.headers).map(([key, value]) => [key, String(value)])
@@ -129,7 +108,30 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
         headers,
       };
     } catch (err) {
-      return { data: null, error: err as AxiosError, headers: {} };
+      const axiosErr = err as AxiosError;
+
+      if (axiosErr.response?.status === 401) {
+        try {
+          const refreshResponse = await axios({
+            method: 'POST',
+            url: authApiUrl.refreshToken,
+            withCredentials: true,
+            headers: { 'X-CSRF-Token': csrfToken },
+          });
+
+          if (refreshResponse.status === 200) {
+            return await sendRequest(payload, id);
+          } else {
+            router.push('/login');
+            return { data: null, error: axiosErr, headers: {} };
+          }
+        } catch (refreshError) {
+          router.push('/login');
+          return { data: null, error: refreshError as AxiosError, headers: {} };
+        }
+      }
+
+      return { data: null, error: axiosErr, headers: {} };
     }
   };
 
