@@ -30,7 +30,6 @@ export const ListRolePage = () => {
         return Object.fromEntries(entries);
     }, [searchParams]);
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
-    const [is_Activated, setIs_Activated] = useState(false);
     const { data, error, refetch } = useAxios<RolesResponse>({
         method: "GET",
         url: roleApiUrl.getRoles,
@@ -68,7 +67,6 @@ export const ListRolePage = () => {
             setRoleCardItems([]);
         }
     }, [data]);
-
     useEffect(() => {
         if (error) {
             setToast({
@@ -113,7 +111,7 @@ export const ListRolePage = () => {
     }
 
     const setActionCardOptions = (role: RoleModel) => {
-        const {role_id, is_active} = role;
+        const {role_id, is_active, is_root} = role;
         return [
         <ActionButton
             key="view-trigger"
@@ -141,11 +139,12 @@ export const ListRolePage = () => {
                     description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
                     submitText: "Kích hoạt",
                     onSubmit: async () => {
+                       
                         await sendRequestDisableOrEnable({ is_Activated: true }, `${role_id}/disable-or-enable`);
                         setToast({
                             title: "Kích hoạt vai trò",
                             message: "Đang kích hoạt vai trò, vui lòng đợi...",
-                            variant: "default",
+                            variant: "success",
                         });
                         refetch?.();
                     },
@@ -171,7 +170,7 @@ export const ListRolePage = () => {
                             setToast({
                                 title: "Vô hiệu hóa vai trò",
                                 message: "Đang vô hiệu hóa vai trò, vui lòng đợi...",
-                                variant: "default",
+                                variant: "success",
                             });
                             refetch?.();
                         },
@@ -195,11 +194,20 @@ export const ListRolePage = () => {
                     description: "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
                     submitText: "Xóa",
                     onSubmit: async () => {
+                         if (is_root) {
+                            setToast({
+                                title: "Lỗi",
+                                message: "Không thể xóa vai trò gốc",
+                                variant: "error",
+                            });
+                            return;
+                        }
+
                         await sendRequestDelete(undefined, role_id);
                         setToast({
                             title: "Xóa vai trò",
                             message: "Đang xóa vai trò, vui lòng đợi...",
-                            variant: "default",
+                            variant: "success",
                         });
                         refetch?.();
                     },
