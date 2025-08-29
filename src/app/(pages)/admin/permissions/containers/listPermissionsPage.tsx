@@ -50,7 +50,7 @@ export const ListpermissionsPage = () => {
                     icon: <RoleIcon className="w-8 h-8" />,
                     isRoot: permission.is_root,
                     iconIsRoot: <ShieldIcon className="w-4 h-4 fill-blue-100" />,
-                    actions: <div className="flex gap-2">{setActionCardOptions(permission.perm_id)}</div>,
+                    actions: <div className="flex gap-2">{setActionCardOptions(permission.perm_id, permission.is_root)}</div>,
                 }))
             );
         } else {
@@ -160,7 +160,6 @@ export const ListpermissionsPage = () => {
     }, [mode, id]);
 
     const setActionCardOptions = (id: string, isRoot?: boolean) => [
-
         <ActionButton
             key="view-trigger"
             variant="outline"
