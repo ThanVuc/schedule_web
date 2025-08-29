@@ -130,7 +130,7 @@ export const ListRolePage = () => {
 
         !is_active ? (<ActionButton
             key="disable"
-            className="bg-green-600 hover:bg-green-500"
+            className="bg-green-600 hover:bg-green-500 text-white"
             buttonText="Kích hoạt"
             icon={<UnLockIcon className="w-4 h-4" />}
             onClick={() => {
@@ -143,7 +143,7 @@ export const ListRolePage = () => {
                         await sendRequestDisableOrEnable({ is_Activated: true }, `${role_id}/disable-or-enable`);
                         setToast({
                             title: "Kích hoạt vai trò",
-                            message: "Đang kích hoạt vai trò, vui lòng đợi...",
+                            message: "Đã kích hoạt vai trò thành công",
                             variant: "success",
                         });
                         refetch?.();
@@ -165,11 +165,21 @@ export const ListRolePage = () => {
                         description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
                         submitText: "Vô hiệu hóa",
                         onSubmit: async () => {
+
+                            if (is_root) {
+                            setToast({
+                                title: "Lỗi",
+                                message: "Không thể vô hiệu hóa vai trò gốc",
+                                variant: "error",
+                            });
+                            return;
+                        }
+
                             await sendRequestDisableOrEnable({ is_active: false }, `${role_id}/disable-or-enable`);
 
                             setToast({
                                 title: "Vô hiệu hóa vai trò",
-                                message: "Đang vô hiệu hóa vai trò, vui lòng đợi...",
+                                message: "Đã vô hiệu hóa vai trò thành công",
                                 variant: "success",
                             });
                             refetch?.();
@@ -206,7 +216,7 @@ export const ListRolePage = () => {
                         await sendRequestDelete(undefined, role_id);
                         setToast({
                             title: "Xóa vai trò",
-                            message: "Đang xóa vai trò, vui lòng đợi...",
+                            message: "đã xoá vai trò thành công",
                             variant: "success",
                         });
                         refetch?.();
