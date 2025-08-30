@@ -106,7 +106,7 @@ export const UpsertRole = ({
         defaultValues: {
             name: "",
             description: "",
-            permission_ids: [dataGetById?.role?.permissions.map(permission => permission.perm_id) || []].flat(),
+            permission_ids: [],
         }
     });
     useEffect(() => {
@@ -114,7 +114,7 @@ export const UpsertRole = ({
             form.reset({
                 name: dataGetById.role.name,
                 description: dataGetById.role.description || "",
-                permission_ids: [dataGetById?.role?.permissions.map(permission => permission.perm_id) || []].flat(),
+                permission_ids: dataGetById?.role?.permissions?.map(p => p.perm_id) ?? [],
             });
         }
     }, [mode,dataGetById]);
@@ -159,11 +159,11 @@ export const UpsertRole = ({
     };
 
     const handleEdit = async (values: z.infer<typeof UpsertRoleSchema>) => {
-        const { data, error } = await sendUpdateRequest(values);
+        const { data, error } = await sendUpdateRequest(values, id ?? undefined);
          if (error) {
             setToast({
                 title: "Lỗi hệ thống",
-                message: "Không thể cập nhật vai trò mới",
+                message: "Không thể cập nhật vai trò này",
                 variant: "error",
                 closeable: false
             });
