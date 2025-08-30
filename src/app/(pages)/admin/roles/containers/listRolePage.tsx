@@ -8,9 +8,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui";
 import { UpsertRole } from "./upsertRole";
-import { useAxios, useAlertDialog, useAxiosMutation } from "@/hooks";
+import { useAxios, useAlertDialog, useAxiosMutation, useHasPermission } from "@/hooks";
 import { roleApiUrl } from "@/api";
 import { RoleModel, RolesResponse } from "../models";
+import APP_RESOURCES from "@/constant/resourceACL";
+import { APP_ACTIONS } from "@/constant";
 
 
 export const metadata = {
@@ -25,6 +27,11 @@ export const ListRolePage = () => {
     const router = useRouter();
     const [roleCardItems, setRoleCardItems] = useState<CardItem[]>([]);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
+    const [ canDeleteRole, canEnableAndDisable ] = useHasPermission([
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.DELETE},
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.ENABLE_AND_DISABLE},
+    ])
+
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
         return Object.fromEntries(entries);
@@ -88,7 +95,7 @@ export const ListRolePage = () => {
             title: "Vai trò gốc",
             value: data?.root || 0,
             icon: <ShieldIcon className="w-8 h-8 text-blue-700" />,
-            description: "Vai trò không thể chỉnh sửa"
+            description: "Vai trò không thể xóa hay vô hiệu hóa"
         },
         {
             title: "Vai trò bình thường",
@@ -127,10 +134,10 @@ export const ListRolePage = () => {
             icon={<PencilIcon className="w-4 h-4" />}
             onClick={() => handlePageQueryToModal("edit", role_id)}
         />,
-
+        canEnableAndDisable && (
         !is_active ? (<ActionButton
             key="disable"
-            className="bg-green-600 hover:bg-green-500 text-white"
+            className="bg-green-600 hover:bg-green-500 text-white hover:text-white"
             buttonText="Kích hoạt"
             icon={<UnLockIcon className="w-4 h-4" />}
             onClick={() => {
@@ -192,9 +199,8 @@ export const ListRolePage = () => {
                     setOpenAlertDialog(true);
                 }}
             />
-        ),
-
-
+        )),
+        canDeleteRole &&
         <ActionButton
             key="delete"
             variant="destructive"

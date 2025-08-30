@@ -5,6 +5,7 @@ import avtImg from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { LogoutIcon, SettingsGearIcon, UserIcon } from "@/components/icon";
 import Link from "next/link";
 import { useLogout } from "@/hooks";
+import { useMe } from "@/context/me.context";
 
 const userActions = [
     { href: "/profile", label: "Hồ sơ cá nhân", icon: <UserIcon className="w-4 h-4 mr-2" /> },
@@ -14,6 +15,7 @@ const userActions = [
 
 export const UserCardContent = () => {
     const { logout } = useLogout();
+    const meContext = useMe();
 
     return (
         <div>
@@ -30,8 +32,11 @@ export const UserCardContent = () => {
                         {
                             action.href === '/logout' ?
                                 <Link href={'/'} className="flex gap-2 transition-colors duration-200"
-                                    onClick={() => {
-                                        logout();
+                                    onClick={async () => {
+                                        await logout();
+                                        if (meContext && meContext.refetchMe) {
+                                            meContext.refetchMe();
+                                        }
                                     }}
                                 >
                                     {action.icon}

@@ -11,6 +11,5 @@ export async function getCSRFToken() {
   const res = await axios.get(utilsApiUrl.getCSRFToken, {
     withCredentials: true,
   })
-  console.log("CSRF Token:", res)
   return res.data?.csrf_token || ""
 }

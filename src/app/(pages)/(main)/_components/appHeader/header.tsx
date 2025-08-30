@@ -1,4 +1,3 @@
-"use client";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import "./header.scss";
 import { HelpIcon, HomeIcon, Schedular, ScheduleIcon, TeamIcon } from "@/components/icon";
@@ -8,7 +7,7 @@ import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { UserCardContent } from "./userCardContent";
 import { useIsMobile } from "@/hooks";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMe } from "@/context/me.context";
 
 const NavItemData = [
     { href: "/", label: "Trang Chủ", icon: <HomeIcon /> },
@@ -19,8 +18,8 @@ const NavItemData = [
 
 export const AppHeader = () => {
     const isMobile = useIsMobile();
-    const [isLogged] = useState(false);
     const router = useRouter();
+    const meContext = useMe();
 
     return (
         <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-[#0B1120] z-50">
@@ -47,7 +46,7 @@ export const AppHeader = () => {
             </div>
 
             <div className="user ml-auto">
-                {!isLogged ? (
+                {meContext?.me ? (
                     <AppHoverClickCard
                         trigger={
                             <Avatar className="cursor-pointer">

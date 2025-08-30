@@ -120,7 +120,7 @@ export const ListpermissionsPage = () => {
             title: "Quyền gốc",
             value: data?.root || 0,
             icon: <ShieldIcon className="w-8 h-8 text-blue-700" />,
-            description: "Quyền không thể chỉnh sửa"
+            description: "Quyền không thể xóa"
         },
         {
             title: "Quyền bình thường",

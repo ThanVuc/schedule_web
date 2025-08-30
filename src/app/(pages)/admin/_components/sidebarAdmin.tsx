@@ -1,32 +1,44 @@
 "use client";
 import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon, AdminIcon } from "@/components/icon";
 
-import AppSideBar from "@/components/common/sidebar";
+import AppSideBar, { SidebarItem } from "@/components/common/sidebar";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { useHasPermission } from "@/hooks";
+import APP_RESOURCES from "@/constant/resourceACL";
+import { APP_ACTIONS } from "@/constant";
 const SidebarAdmin = ({ children }: { children: ReactNode }) => {
+    const [hasAccessUser, hasAccessRole, hasAccessPermission] = useHasPermission([
+        { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ALL },
+    ]);
+
     const menuItems = [
         {
             title: "Trang chủ",
             url: "/",
             icon: ReturnUpBackToHome,
         },
-                {
+        hasAccessUser &&
+        {
             title: "Quản Lý Người dùng",
             url: "/admin/users",
             icon: CalendarIcon,
         },
+        hasAccessRole &&
         {
             title: "Quản Lý Vai trò",
             url: "/admin/roles",
             icon: RoleIcon,
         },
+        hasAccessPermission &&
         {
             title: "Quản Lý Quyền hạn",
             url: "/admin/permissions",
             icon: AssignmentIcon,
         },
-    ];
+    ].filter(Boolean) as SidebarItem[];
     const pathname = usePathname();
     const getName = () => {
         if (pathname.startsWith("/admin/users")) return "Danh sách người dùng";
