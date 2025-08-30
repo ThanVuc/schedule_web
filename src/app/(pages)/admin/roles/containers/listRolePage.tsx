@@ -73,7 +73,7 @@ export const ListRolePage = () => {
         } else {
             setRoleCardItems([]);
         }
-    }, [data]);
+    }, [data, canDeleteRole, canEnableAndDisable]);
     useEffect(() => {
         if (error) {
             setToast({

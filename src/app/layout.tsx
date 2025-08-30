@@ -1,5 +1,3 @@
-"use client";
-
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Head from "next/head";
