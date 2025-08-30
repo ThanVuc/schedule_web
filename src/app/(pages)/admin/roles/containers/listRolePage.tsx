@@ -140,7 +140,7 @@ export const ListRolePage = () => {
                     submitText: "Kích hoạt",
                     onSubmit: async () => {
                        
-                        await sendRequestDisableOrEnable({ is_Activated: true }, `${role_id}/disable-or-enable`);
+                        await sendRequestDisableOrEnable( `${role_id}/disable-or-enable`);
                         setToast({
                             title: "Kích hoạt vai trò",
                             message: "Đã kích hoạt vai trò thành công",
@@ -160,22 +160,24 @@ export const ListRolePage = () => {
                 buttonText="Vô hiệu hóa"
                 icon={<LockIcon className="w-4 h-4" />}
                 onClick={() => {
+                     if (is_root) {
+                            setToast({
+                                title: "Vô hiệu hóa vai trò",
+                                message: "Không thể vô hiệu hóa vai trò gốc",
+                                variant: "warning",
+                            });
+                            return;
+                        }
                     setAlertDialogProps({
                         title: "Xác nhận vô hiệu hóa vai trò",
                         description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
                         submitText: "Vô hiệu hóa",
+                        
                         onSubmit: async () => {
 
-                            if (is_root) {
-                            setToast({
-                                title: "Lỗi",
-                                message: "Không thể vô hiệu hóa vai trò gốc",
-                                variant: "error",
-                            });
-                            return;
-                        }
+                           
 
-                            await sendRequestDisableOrEnable({ is_active: false }, `${role_id}/disable-or-enable`);
+                            await sendRequestDisableOrEnable( `${role_id}/disable-or-enable`);
 
                             setToast({
                                 title: "Vô hiệu hóa vai trò",
@@ -199,24 +201,25 @@ export const ListRolePage = () => {
             buttonText="Xóa"
             icon={<TrashIcon className="w-4 h-4" />}
             onClick={() => {
+                  if (is_root) {
+                            setToast({
+                                title: "Xóa vai trò",
+                                message: "Không thể xóa vai trò gốc",
+                                variant: "warning",
+                            });
+                            return;
+                        }
                 setAlertDialogProps({
                     title: "Xác nhận xóa vai trò",
                     description: "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
                     submitText: "Xóa",
                     onSubmit: async () => {
-                         if (is_root) {
-                            setToast({
-                                title: "Lỗi",
-                                message: "Không thể xóa vai trò gốc",
-                                variant: "error",
-                            });
-                            return;
-                        }
+                       
 
                         await sendRequestDelete(undefined, role_id);
                         setToast({
                             title: "Xóa vai trò",
-                            message: "đã xoá vai trò thành công",
+                            message: "Xoá vai trò thành công",
                             variant: "success",
                         });
                         refetch?.();
