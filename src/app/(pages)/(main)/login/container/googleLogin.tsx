@@ -7,6 +7,7 @@ import { useAxiosMutation } from '@/hooks';
 import { authApiUrl } from '@/api';
 import { useRouter } from 'next/navigation';
 import useToastState from '@/hooks/useToasts';
+import { useMe } from '@/context/me.context';
 
 export const GoogleLoginContainer = () => {
   const { sendRequest } = useAxiosMutation(
@@ -17,6 +18,7 @@ export const GoogleLoginContainer = () => {
   );
   const router = useRouter();
   const { setToast } = useToastState();
+  const meContext = useMe();
 
   const handleLoginSuccess = async (credentialResponse: TokenResponse) => {
     const accessToken = credentialResponse.access_token;
@@ -34,12 +36,13 @@ export const GoogleLoginContainer = () => {
       return;
     }
 
-    setToast({ 
+    setToast({
       variant: 'success',
       message: 'Đăng nhập thành công!',
       title: 'Thành công',
       closeable: true,
-     });
+    });
+    meContext?.refetchMe();
     router.push('/');
   };
 

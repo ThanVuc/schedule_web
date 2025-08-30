@@ -9,5 +9,9 @@ export function CsrfProvider({ children, token }: { children: ReactNode; token: 
 }
 
 export function useCsrfToken() {
+  if (CsrfContext === null) {
+    throw new Error("useCsrfToken must be used within a CsrfProvider");
+  }
+
   return useContext(CsrfContext);
 }

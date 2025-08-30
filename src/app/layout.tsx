@@ -1,44 +1,15 @@
 "use client";
 
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { CsrfProvider } from "@/context/csrf.context";
-import { getCSRFToken } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import Head from "next/head";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { AppProvider } from "@/context/app.context";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
-  const [csrfToken, setCsrfToken] = useState<string>("");
-
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const token = await getCSRFToken();
-        setCsrfToken(token || "");
-      } catch (error) {
-        console.error("Failed to fetch CSRF token:", error);
-        setCsrfToken("");
-      }
-    };
-    fetchToken();
-  }, []);
-
-  
+}>) {  
   return (
     <html lang="en" suppressHydrationWarning >
       <Head>
@@ -47,12 +18,12 @@ export default function RootLayout({
       </Head>
 
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`antialiased`}
         suppressHydrationWarning
       >
-        <CsrfProvider token={csrfToken}>
+        <AppProvider>
           <ErrorBoundary>{children}</ErrorBoundary>
-        </CsrfProvider>
+        </AppProvider>
       </body>
     </html>
   );
