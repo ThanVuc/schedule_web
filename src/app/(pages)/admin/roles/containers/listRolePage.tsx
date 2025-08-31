@@ -146,8 +146,8 @@ export const ListRolePage = () => {
                             description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
                             submitText: "Kích hoạt",
                             onSubmit: async () => {
-                                const { error } = await sendRequestDisableOrEnable(`${role_id}/disable-or-enable`);
-                                if (!error) {
+                                    const { error } = await sendRequestDisableOrEnable({ is_active: true }, `${role_id}/disable-or-enable`);
+                                if (error) {
                                     setToast({
                                         title: "Kích hoạt vai trò",
                                         message: "Kích hoạt vai trò thất bại",
@@ -187,7 +187,7 @@ export const ListRolePage = () => {
                                 description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
                                 submitText: "Vô hiệu hóa",
                                 onSubmit: async () => {
-                                    const { error } = await sendRequestDisableOrEnable(`${role_id}/disable-or-enable`);
+                                    const { error } = await sendRequestDisableOrEnable({ is_active: false }, `${role_id}/disable-or-enable`);
                                     if (error) {
                                         setToast({
                                             title: "Vô hiệu hóa vai trò",
