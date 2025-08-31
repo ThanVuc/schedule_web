@@ -27,9 +27,9 @@ export const ListRolePage = () => {
     const router = useRouter();
     const [roleCardItems, setRoleCardItems] = useState<CardItem[]>([]);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const [ canDeleteRole, canEnableAndDisable ] = useHasPermission([
-        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.DELETE},
-        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.ENABLE_AND_DISABLE},
+    const [canDeleteRole, canEnableAndDisable] = useHasPermission([
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.DELETE },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.ENABLE_AND_DISABLE },
     ])
 
     const listParams = useMemo(() => {
@@ -118,77 +118,130 @@ export const ListRolePage = () => {
     }
 
     const setActionCardOptions = (role: RoleModel) => {
-        const {role_id, is_active, is_root} = role;
+        const { role_id, is_active, is_root } = role;
         return [
-        <ActionButton
-            key="view-trigger"
-            variant="outline"
-            buttonText="Xem"
-            icon={<EyeIcon className="w-4 h-4" />}
-            onClick={() => handlePageQueryToModal("view", role_id)}
-        />,
-        <ActionButton
-            key="edit"
-            variant="outline"
-            buttonText="Chỉnh sửa"
-            icon={<PencilIcon className="w-4 h-4" />}
-            onClick={() => handlePageQueryToModal("edit", role_id)}
-        />,
-        canEnableAndDisable && (
-        !is_active ? (<ActionButton
-            key="disable"
-            className="bg-green-600 hover:bg-green-500 text-white hover:text-white"
-            buttonText="Kích hoạt"
-            icon={<UnLockIcon className="w-4 h-4" />}
-            onClick={() => {
-                setAlertDialogProps({
-                    title: "Xác nhận kích hoạt vai trò",
-                    description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
-                    submitText: "Kích hoạt",
-                    onSubmit: async () => {
-                       
-                        await sendRequestDisableOrEnable( `${role_id}/disable-or-enable`);
-                        setToast({
-                            title: "Kích hoạt vai trò",
-                            message: "Đã kích hoạt vai trò thành công",
-                            variant: "success",
-                        });
-                        refetch?.();
-                    },
-                    open: true,
-                    setOpen: setOpenAlertDialog,
-                });
-                setOpenAlertDialog(true);
-            }}
-        />) : (
             <ActionButton
-                key="activate"
+                key="view-trigger"
                 variant="outline"
-                buttonText="Vô hiệu hóa"
-                icon={<LockIcon className="w-4 h-4" />}
-                onClick={() => {
-                     if (is_root) {
-                            setToast({
-                                title: "Vô hiệu hóa vai trò",
-                                message: "Không thể vô hiệu hóa vai trò gốc",
-                                variant: "warning",
+                buttonText="Xem"
+                icon={<EyeIcon className="w-4 h-4" />}
+                onClick={() => handlePageQueryToModal("view", role_id)}
+            />,
+            <ActionButton
+                key="edit"
+                variant="outline"
+                buttonText="Chỉnh sửa"
+                icon={<PencilIcon className="w-4 h-4" />}
+                onClick={() => handlePageQueryToModal("edit", role_id)}
+            />,
+            canEnableAndDisable && (
+                !is_active ? (<ActionButton
+                    key="disable"
+                    className="bg-green-600 hover:bg-green-500 text-white hover:text-white"
+                    buttonText="Kích hoạt"
+                    icon={<UnLockIcon className="w-4 h-4" />}
+                    onClick={() => {
+                        setAlertDialogProps({
+                            title: "Xác nhận kích hoạt vai trò",
+                            description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
+                            submitText: "Kích hoạt",
+                            onSubmit: async () => {
+                                const { error } = await sendRequestDisableOrEnable(`${role_id}/disable-or-enable`);
+                                if (!error) {
+                                    setToast({
+                                        title: "Kích hoạt vai trò",
+                                        message: "Kích hoạt vai trò thất bại",
+                                        variant: "error",
+                                    });
+                                    return;
+                                }
+                                setToast({
+                                    title: "Kích hoạt vai trò",
+                                    message: "Đã kích hoạt vai trò thành công",
+                                    variant: "success",
+                                });
+                                refetch?.();
+                            },
+                            open: true,
+                            setOpen: setOpenAlertDialog,
+                        });
+                        setOpenAlertDialog(true);
+                    }}
+                />) : (
+                    <ActionButton
+                        key="activate"
+                        variant="outline"
+                        buttonText="Vô hiệu hóa"
+                        icon={<LockIcon className="w-4 h-4" />}
+                        onClick={() => {
+                            if (is_root) {
+                                setToast({
+                                    title: "Vô hiệu hóa vai trò",
+                                    message: "Không thể vô hiệu hóa vai trò gốc",
+                                    variant: "warning",
+                                });
+                                return;
+                            }
+                            setAlertDialogProps({
+                                title: "Xác nhận vô hiệu hóa vai trò",
+                                description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
+                                submitText: "Vô hiệu hóa",
+                                onSubmit: async () => {
+                                    const { error } = await sendRequestDisableOrEnable(`${role_id}/disable-or-enable`);
+                                    if (error) {
+                                        setToast({
+                                            title: "Vô hiệu hóa vai trò",
+                                            message: "Vô hiệu hóa vai trò thất bại",
+                                            variant: "error",
+                                        });
+                                        return;
+                                    }
+                                    setToast({
+                                        title: "Vô hiệu hóa vai trò",
+                                        message: "Đã vô hiệu hóa vai trò thành công",
+                                        variant: "success",
+                                    });
+                                    refetch?.();
+                                },
+                                open: true,
+                                setOpen: setOpenAlertDialog,
                             });
-                            return;
-                        }
+                            setOpenAlertDialog(true);
+                        }}
+                    />
+                )),
+            canDeleteRole &&
+            <ActionButton
+                key="delete"
+                variant="destructive"
+                buttonText="Xóa"
+                icon={<TrashIcon className="w-4 h-4" />}
+                onClick={() => {
+                    if (is_root) {
+                        setToast({
+                            title: "Xóa vai trò",
+                            message: "Không thể xóa vai trò gốc",
+                            variant: "warning",
+                        });
+                        return;
+                    }
                     setAlertDialogProps({
-                        title: "Xác nhận vô hiệu hóa vai trò",
-                        description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
-                        submitText: "Vô hiệu hóa",
-                        
+                        title: "Xác nhận xóa vai trò",
+                        description: "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
+                        submitText: "Xóa",
                         onSubmit: async () => {
-
-                           
-
-                            await sendRequestDisableOrEnable( `${role_id}/disable-or-enable`);
-
+                            const { error } = await sendRequestDelete(undefined, role_id);
+                            if (error) {
+                                setToast({
+                                    title: "Xóa vai trò",
+                                    message: "Xóa vai trò thất bại",
+                                    variant: "error",
+                                });
+                                return;
+                            }
                             setToast({
-                                title: "Vô hiệu hóa vai trò",
-                                message: "Đã vô hiệu hóa vai trò thành công",
+                                title: "Xóa vai trò",
+                                message: "Xoá vai trò thành công",
                                 variant: "success",
                             });
                             refetch?.();
@@ -199,43 +252,6 @@ export const ListRolePage = () => {
                     setOpenAlertDialog(true);
                 }}
             />
-        )),
-        canDeleteRole &&
-        <ActionButton
-            key="delete"
-            variant="destructive"
-            buttonText="Xóa"
-            icon={<TrashIcon className="w-4 h-4" />}
-            onClick={() => {
-                  if (is_root) {
-                            setToast({
-                                title: "Xóa vai trò",
-                                message: "Không thể xóa vai trò gốc",
-                                variant: "warning",
-                            });
-                            return;
-                        }
-                setAlertDialogProps({
-                    title: "Xác nhận xóa vai trò",
-                    description: "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
-                    submitText: "Xóa",
-                    onSubmit: async () => {
-                       
-
-                        await sendRequestDelete(undefined, role_id);
-                        setToast({
-                            title: "Xóa vai trò",
-                            message: "Xoá vai trò thành công",
-                            variant: "success",
-                        });
-                        refetch?.();
-                    },
-                    open: true,
-                    setOpen: setOpenAlertDialog,
-                });
-                setOpenAlertDialog(true);
-            }}
-        />
         ]
     }
 

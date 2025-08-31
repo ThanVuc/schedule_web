@@ -57,7 +57,7 @@ export const UpsertRole = ({
             "Content-Type": "application/json"
         }
     });
-    const { data: dataGetById } = useAxios<{ role: RoleModel }>({
+    const { data: dataGetById, error: errorGetById } = useAxios<{ role: RoleModel }>({
         method: "GET",
         url: `${roleApiUrl.getRoleById}/${id}`,
     },
@@ -87,7 +87,6 @@ export const UpsertRole = ({
     useEffect(() => {
        if (permissionsData?.items) {
          setPermissionForm(transformPermissions(permissionsData.items));
-
        }
         
     }, [permissionsData]);
@@ -110,6 +109,16 @@ export const UpsertRole = ({
         }
     });
     useEffect(() => {
+        if (errorGetById) {
+            setToast({
+                title: "Lỗi hệ thống",
+                message: "Không thể tải thông tin vai trò",
+                variant: "error",
+            });
+        }
+    }, [errorGetById]);
+
+    useEffect(() => {
         if (mode !== "create" && dataGetById?.role) {
             form.reset({
                 name: dataGetById.role.name,
@@ -118,7 +127,6 @@ export const UpsertRole = ({
             });
         }
     }, [mode,dataGetById]);
-
       useEffect(() => {
         if (mode === "create") {
             form.reset(
@@ -130,10 +138,8 @@ export const UpsertRole = ({
             );
         }
     }, [mode]);
-
     const handleCreate = async (values: z.infer<typeof UpsertRoleSchema>) => {
         const { data, error } = await sendRequest(values);
-
         if (error) {
             setToast({
                 title: "Lỗi hệ thống",
@@ -143,7 +149,6 @@ export const UpsertRole = ({
             });
             return;
         }
-
         if (data?.is_success) {
             closeModal();
             setToast({
