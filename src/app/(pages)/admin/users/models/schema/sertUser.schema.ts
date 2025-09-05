@@ -7,9 +7,8 @@ export const UpsertUserSchema = z.object({
     email: z.string().min(1, "Email không được để trống")
     .max(100, "Email không được quá 100 ký tự")
     .email("Email không hợp lệ"),
-    role: z.string().min(1, "Vai trò không được để trống"),
-    state: z.string().min(1, "Trạng thái không được để trống"),
-    LastLoginAt: z.string().min(1, "Thời gian đăng nhập không được để trống"),
-    LastUpdateAt: z.string().min(1, "Thời gian cập nhật không được để trống"),
-    CreatedAt: z.string().min(1, "Thời gian tạo không được để trống"),
+    role: z.array(z.string()).min(1, "Vai trò không được để trống"),
+    lastLoginAt: z.string().min(1, "Thời gian đăng nhập không được để trống"),
+    lastUpdateAt: z.string().min(1, "Thời gian cập nhật không được để trống"),
+    createdAt: z.string().min(1, "Thời gian tạo không được để trống"),
 })

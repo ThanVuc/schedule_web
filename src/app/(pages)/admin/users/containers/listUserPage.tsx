@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ActionButton, CardItem, Cards } from "../../_components";
 import { AppAlertDialog, AppPagination, AppSearch, H2, Muted } from "@/components/common";
-import { useAlertDialog, useAxios } from "@/hooks";
+import { useAlertDialog, useAxios, useAxiosMutation } from "@/hooks";
 import { userApiUrl } from "@/api/users.api";
 import { UserModel, UsersResponse } from "../models/type/user.type";
 import useToastState from "@/hooks/useToasts";
@@ -11,6 +11,8 @@ import { UnLockIcon } from "@/components/icon/unlock";
 import { ShieldIcon } from "@/components/icon";
 import { UpsertUser } from "./upsertUser";
 import { GrantingPermission } from "./grantingPermission";
+import { LockUser } from "./lockUser";
+import { lockUsersMutationResponseType } from "../models";
 
 
 const ListUserPage = () => {
@@ -31,46 +33,54 @@ const ListUserPage = () => {
         url: userApiUrl.getUsers,
         params: { ...listParams },
     });
-    const  timeDiffFromNow = (inputTime: number) => {
-    // Nếu inputTime là dạng giây thì nhân 1000 thành mili-giây
-    const timestamp = inputTime.toString().length === 10 ? inputTime * 1000 : inputTime;
-    const now = Date.now();
-    const diffMs = now - timestamp;
-    const diffSec = Math.floor(diffMs / 1000);
+    const { sendRequest } = useAxiosMutation<lockUsersMutationResponseType>({
+        method: "PUT",
+        url: userApiUrl.lockUser,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
 
-    if (diffSec < 60) {
-        return `${diffSec} giây trước`;
+
+    const timeDiffFromNow = (inputTime: number) => {
+        const timestamp = inputTime.toString().length === 10 ? inputTime * 1000 : inputTime;
+        const now = Date.now();
+        const diffMs = now - timestamp;
+        const diffSec = Math.floor(diffMs / 1000);
+
+        if (diffSec < 60) {
+            return `${diffSec} giây trước`;
+        }
+
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) {
+            return `${diffMin} phút trước`;
+        }
+
+        const diffHour = Math.floor(diffMin / 60);
+        if (diffHour < 24) {
+            return `${diffHour} giờ trước`;
+        }
+
+        const diffDay = Math.floor(diffHour / 24);
+        if (diffDay < 30) {
+            return `${diffDay} ngày trước`;
+        }
+
+        const diffMonth = Math.floor(diffDay / 30);
+        if (diffMonth < 12) {
+            return `${diffMonth} tháng trước`;
+        }
+
+        const diffYear = Math.floor(diffMonth / 12);
+        return `${diffYear} năm trước`;
     }
-
-    const diffMin = Math.floor(diffSec / 60);
-    if (diffMin < 60) {
-        return `${diffMin} phút trước`;
-    }
-
-    const diffHour = Math.floor(diffMin / 60);
-    if (diffHour < 24) {
-        return `${diffHour} giờ trước`;
-    }
-
-    const diffDay = Math.floor(diffHour / 24);
-    if (diffDay < 30) {
-        return `${diffDay} ngày trước`;
-    }
-
-    const diffMonth = Math.floor(diffDay / 30);
-    if (diffMonth < 12) {
-        return `${diffMonth} tháng trước`;
-    }
-
-    const diffYear = Math.floor(diffMonth / 12);
-    return `${diffYear} năm trước`;
-}
     useEffect(() => {
         if (data && data.items) {
             setUsersCardItems(
                 data.items.map(user => ({
                     title: user.email,
-                    description: String('Đăng nhập vào: ' + timeDiffFromNow(user.last_login_at?? 0)),
+                    description: String('Đăng nhập vào: ' + timeDiffFromNow(user.last_login_at ?? 0)),
                     icon: <UserIcon className="w-8 h-8" />,
                     actions: <div className="flex gap-2">{setActionCardOptions(user)}</div>,
                 }))
@@ -103,8 +113,7 @@ const ListUserPage = () => {
 
     const setActionCardOptions = (users: UserModel) => {
         const { user_id, lock_end } = users;
-        const today = new Date();
-        const day = today.getDate();
+        const day = Math.floor(Date.now() / 1000);
         return [
             <ActionButton
                 key="view-trigger"
@@ -118,7 +127,7 @@ const ListUserPage = () => {
                 variant="outline"
                 buttonText="Cấp quyền"
                 icon={<ShieldIcon className="w-4 h-4" />}
-                onClick={() => handlePageQueryToModal("grantingPermission", user_id)}
+                onClick={() => handlePageQueryToModal("edit", user_id)}
             />,
             lock_end > day ? (<ActionButton
                 key="disable"
@@ -131,11 +140,19 @@ const ListUserPage = () => {
                         description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
                         submitText: "Kích hoạt",
                         onSubmit: async () => {
-
+                            const { error } = await sendRequest({ user_id, lock_reason: "" });
+                            if (error) {
+                                setToast({
+                                    title: "Kích hoạt vai trò",
+                                    message: "Không thể kích hoạt vai trò, vui lòng thử lại sau.",
+                                    variant: "error",
+                                });
+                                return;
+                            }
                             setToast({
                                 title: "Kích hoạt vai trò",
-                                message: "Đang kích hoạt vai trò, vui lòng đợi...",
-                                variant: "default",
+                                message: "Kích hoạt vai trò thành công.",
+                                variant: "success",
                             });
                             refetch?.();
                         },
@@ -150,24 +167,7 @@ const ListUserPage = () => {
                     variant="outline"
                     buttonText="Vô hiệu hóa"
                     icon={<LockIcon className="w-4 h-4" />}
-                    onClick={() => {
-                        setAlertDialogProps({
-                            title: "Xác nhận vô hiệu hóa vai trò",
-                            description: "Bạn có chắc chắn muốn vô hiệu hóa vai trò này? Hành động này không thể hoàn tác.",
-                            submitText: "Vô hiệu hóa",
-                            onSubmit: async () => {
-                                setToast({
-                                    title: "Vô hiệu hóa vai trò",
-                                    message: "Đang vô hiệu hóa vai trò, vui lòng đợi...",
-                                    variant: "default",
-                                });
-                                refetch?.();
-                            },
-                            open: true,
-                            setOpen: setOpenAlertDialog,
-                        });
-                        setOpenAlertDialog(true);
-                    }}
+                    onClick={() => handlePageQueryToModal("lock", user_id)}
                 />
             ),
         ]
@@ -203,6 +203,9 @@ const ListUserPage = () => {
                 refetch={refetch}
             />
             <GrantingPermission
+                refetch={refetch}
+            />
+            <LockUser
                 refetch={refetch}
             />
             {

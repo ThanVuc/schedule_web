@@ -11,7 +11,7 @@ type UserForm = z.infer<typeof GrantingSchema>
 interface GrantingFormProps {
     form: UseFormReturn<UserForm>,
     role?: {
-        role_id: string
+        role_id?: string
         name: string
         description: string
     }[]
@@ -33,11 +33,11 @@ export const GrantingForm = ({ form, role }: GrantingFormProps) => {
                     <FormField
                         control={form.control}
                         name="email"
-                        render={({ field }) => (
+                        render={({  }) => (
                             <FormItem className="flex justify-center">
                                 <FormLabel className="font-bold">Email:</FormLabel>
                                 <FormControl>
-                                    <p className="font-bold" {...field}>thaidaihuan@gmail.com</p>
+                                    <p className="font-bold" >thaidaihuan@gmail.com</p>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -45,12 +45,12 @@ export const GrantingForm = ({ form, role }: GrantingFormProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="userId"
-                        render={({ field }) => (
+                        name="user_id"
+                        render={({  }) => (
                             <FormItem className="flex justify-center">
                                 <FormLabel className="font-bold">ID người dùng:</FormLabel>
                                 <FormControl>
-                                    <p className="font-bold" {...field}>123e4567-e89b-12d3-a456-426614174000</p>
+                                    <p className="font-bold" >123e4567-e89b-12d3-a456-426614174000</p>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -80,12 +80,12 @@ export const GrantingForm = ({ form, role }: GrantingFormProps) => {
                                 <FormField
                                     key={role.role_id}
                                     control={form.control}
-                                    name="roleId"
+                                    name="role_ids"
                                     render={({ field }) => (
                                         <FormItem className="flex items-center gap-2">
                                             <FormControl>
                                                 <Checkbox className="h-5 w-5 border-gray-300"
-                                                    checked={field.value?.includes(role.role_id)}
+                                                    checked={field.value?.includes(role.role_id ?? "")}
                                                     onCheckedChange={(checked) => {
                                                         const newValue = checked
                                                             ? [...(field.value ?? []), role.role_id]

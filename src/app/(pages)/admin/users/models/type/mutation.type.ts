@@ -1,15 +1,9 @@
 
-export type CreateUsersMutationResponseType = {
-    is_success: boolean;
+export type assignRoleUsersMutationResponseType = {
+    success: boolean;
     message: string;
 }
-
-export type DeleteUsersMutationResponseType = {
-    is_success: boolean;
-    message: string;
-}
-
-export type UpdateUsersMutationResponseType = {
-    is_success: boolean;
+export type lockUsersMutationResponseType = {
+    success: boolean;
     message: string;
 }
