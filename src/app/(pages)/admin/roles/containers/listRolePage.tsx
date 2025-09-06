@@ -27,9 +27,14 @@ export const ListRolePage = () => {
     const router = useRouter();
     const [roleCardItems, setRoleCardItems] = useState<CardItem[]>([]);
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const [canDeleteRole, canEnableAndDisable] = useHasPermission([
+    const [canDeleteRole, canEnableAndDisable, canReadAllRole, canCreateRole, canUpdateRole, canReadOneRole] = useHasPermission([
         { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.DELETE },
         { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.ENABLE_AND_DISABLE },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.CREATE },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.UPDATE },
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ONE },
+
     ])
 
     const listParams = useMemo(() => {
@@ -74,6 +79,7 @@ export const ListRolePage = () => {
             setRoleCardItems([]);
         }
     }, [data, canDeleteRole, canEnableAndDisable]);
+
     useEffect(() => {
         if (error) {
             setToast({
@@ -120,20 +126,20 @@ export const ListRolePage = () => {
     const setActionCardOptions = (role: RoleModel) => {
         const { role_id, is_active, is_root } = role;
         return [
-            <ActionButton
+            canReadOneRole &&<ActionButton
                 key="view-trigger"
                 variant="outline"
                 buttonText="Xem"
                 icon={<EyeIcon className="w-4 h-4" />}
                 onClick={() => handlePageQueryToModal("view", role_id)}
             />,
-            <ActionButton
+            canUpdateRole &&(<ActionButton
                 key="edit"
                 variant="outline"
                 buttonText="Chỉnh sửa"
                 icon={<PencilIcon className="w-4 h-4" />}
                 onClick={() => handlePageQueryToModal("edit", role_id)}
-            />,
+            />),
             canEnableAndDisable && (
                 !is_active ? (<ActionButton
                     key="disable"
@@ -146,7 +152,7 @@ export const ListRolePage = () => {
                             description: "Bạn có chắc chắn muốn kích hoạt vai trò này? Hành động này không thể hoàn tác.",
                             submitText: "Kích hoạt",
                             onSubmit: async () => {
-                                    const { error } = await sendRequestDisableOrEnable({ is_active: true }, `${role_id}/disable-or-enable`);
+                                const { error } = await sendRequestDisableOrEnable({ is_active: true }, `${role_id}/disable-or-enable`);
                                 if (error) {
                                     setToast({
                                         title: "Kích hoạt vai trò",
@@ -280,15 +286,15 @@ export const ListRolePage = () => {
                         placeholder="Tìm kiếm vai trò..."
                         className="w-full sm:w-1/3"
                     />
-                    <Button
+                    {canCreateRole && (<Button
                         className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 cursor-pointer"
                         onClick={() => handlePageQueryToModal("create")}
-                    >Thêm Vai Trò</Button>
+                    >Thêm Vai Trò</Button>)}
                 </div>
 
-                <div className="body">
+                {canReadAllRole && (<div className="body">
                     <Cards cards={roleCardItems} />
-                </div>
+                </div>)}
 
                 <UpsertRole
                     refetch={refetch}

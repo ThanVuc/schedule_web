@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ActionButton, CardItem, Cards } from "../../_components";
 import { AppAlertDialog, AppPagination, AppSearch, H2, Muted } from "@/components/common";
-import { useAlertDialog, useAxios, useAxiosMutation } from "@/hooks";
+import { useAlertDialog, useAxios, useAxiosMutation, useHasPermission } from "@/hooks";
 import { userApiUrl } from "@/api/users.api";
 import { UserModel, UsersResponse } from "../models/type/user.type";
 import useToastState from "@/hooks/useToasts";
@@ -13,6 +13,8 @@ import { UpsertUser } from "./upsertUser";
 import { GrantingPermission } from "./grantingPermission";
 import { LockUser } from "./lockUser";
 import { lockUsersMutationResponseType } from "../models";
+import APP_RESOURCES from "@/constant/resourceACL";
+import { APP_ACTIONS } from "@/constant";
 
 
 const ListUserPage = () => {
@@ -23,6 +25,13 @@ const ListUserPage = () => {
     const [usersCardItems, setUsersCardItems] = useState<CardItem[]>([]);
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
+    const [ canReadAllUser, canReadOneUser, canLockUser, canAssignRole ] = useHasPermission([
+        { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.READ_ONE },
+        { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.LOCK_USER },
+        { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.ASSIGN_ROLE },
+    ])
+
 
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
@@ -88,7 +97,7 @@ const ListUserPage = () => {
         } else {
             setUsersCardItems([]);
         }
-    }, [data]);
+    }, [data, canReadOneUser, canLockUser, canAssignRole]);
     useEffect(() => {
         if (error) {
             setToast({
@@ -115,21 +124,21 @@ const ListUserPage = () => {
         const { user_id, lock_end } = users;
         const day = Math.floor(Date.now() / 1000);
         return [
-            <ActionButton
+            canReadOneUser && (<ActionButton
                 key="view-trigger"
                 variant="outline"
                 buttonText="Xem"
                 icon={<EyeIcon className="w-4 h-4" />}
                 onClick={() => handlePageQueryToModal("view", user_id)}
-            />,
-            <ActionButton
+            />),
+            canAssignRole && (<ActionButton
                 key="granting-permission-trigger"
                 variant="outline"
                 buttonText="Cấp quyền"
                 icon={<ShieldIcon className="w-4 h-4" />}
                 onClick={() => handlePageQueryToModal("edit", user_id)}
-            />,
-            lock_end > day ? (<ActionButton
+            />),
+            canLockUser && (lock_end > day ? (<ActionButton
                 key="disable"
                 className="bg-green-600 hover:bg-green-500 text-white"
                 buttonText="Kích hoạt"
@@ -169,7 +178,7 @@ const ListUserPage = () => {
                     icon={<LockIcon className="w-4 h-4" />}
                     onClick={() => handlePageQueryToModal("lock", user_id)}
                 />
-            ),
+            )),
         ]
     };
 
@@ -196,9 +205,9 @@ const ListUserPage = () => {
                     className="w-full sm:w-1/3"
                 />
             </div>
-            <div className="body">
+            {canReadAllUser && (<div className="body">
                 <Cards key={undefined} cards={usersCardItems} />
-            </div>
+            </div>)}
             <UpsertUser
                 refetch={refetch}
             />
