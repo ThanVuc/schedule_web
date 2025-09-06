@@ -4,9 +4,8 @@ import { globalConfig } from "@/global/global";
 const createAPI = (url: string) => `${globalConfig.ApiUrlBase}${url}`;
 
 export const userApiUrl = {
-    createUsers: createAPI('users'),
-    updateUsers: createAPI('users'),
-    deleteUsers: createAPI('users'),
+    assignRole: createAPI('users/assign-role'),
     getUsers: createAPI('users'),
-    getByIdUsers: createAPI('users')
+    getByIdUsers: createAPI('users'),
+    lockUser: createAPI('users/lock-user'),
 };

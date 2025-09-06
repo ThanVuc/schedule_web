@@ -5,21 +5,23 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui";
-import { useAxios, useConfirmDialog, } from "@/hooks";
+import { useAxios, useAxiosMutation, useConfirmDialog, } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../../permissions/hooks";
 import { GrantingForm } from "../components";
 import { GrantingSchema } from "../models/schema/granting.schema";
-import { useEffect, useState } from "react";
-import { Role } from "../models";
+import {  useEffect, useState } from "react";
+import { assignRoleUsersMutationResponseType, Role, UserModel } from "../models";
 import { roleApiUrl } from "@/api";
+import { userApiUrl } from "@/api/users.api";
+import { RoleSchema } from "../models/schema/listRole.schema";
 
 export interface AddUserProps {
     refetch?: () => void;
 }
 
 const buttonProps = {
-    grantingPermission: {
+    edit: {
         title: "Gán vai trò cho người dùng",
         description: "Chọn vai trò phù hợp cho người dùng trong hệ thống.",
         submitButtonText: "Xác nhận",
@@ -36,24 +38,40 @@ export const GrantingPermission = ({
     const router = useRouter();
     const searchParams = useSearchParams();
     const { mode, id } = useModalParams();
-    const openDialog = mode === "grantingPermission";
+    const openDialog = mode === "edit";
+    const isDisabled = mode === "view";
     const { confirm, dialog } = useConfirmDialog();
-    const buttonData = buttonProps.grantingPermission;
-        const [roleForm, setRoleForm] = useState<Role[]>([]);
-    
-    
-        const {data : RoleData} = useAxios<{items: Role[]}>({
-            method: "GET",
-            url: roleApiUrl.getRoles,
-            params: { page_ignore: true }
-        });
-    
-        useEffect(() => {
-            if (RoleData) {
-                setRoleForm(RoleData.items);
-            }
-        }, [RoleData]);
-    
+    const buttonData = buttonProps[mode as keyof typeof buttonProps] ?? buttonProps.edit;
+    const [roleForm, setRoleForm] = useState<Role[]>([]);
+    const { data: RoleData } = useAxios<{ items: Role[] }>({
+        method: "GET",
+        url: roleApiUrl.getRoles,
+        params: { page_ignore: true }
+    });
+    const { sendRequest } = useAxiosMutation<assignRoleUsersMutationResponseType, z.infer<typeof GrantingSchema>>({
+        method: "POST",
+        url: userApiUrl.assignRole,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const { data: dataGetById, error: errorGetById } = useAxios<UserModel>({
+        method: "GET",
+        url: `${userApiUrl.getByIdUsers}/${id}`,
+        headers: { "Content-Type": "application/json" },
+    },
+        [id],
+        id === null || mode === "view"
+    );
+
+
+
+    useEffect(() => {
+        if (RoleData) {
+            setRoleForm(RoleData.items);
+        }
+    }, [RoleData]);
+
 
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -64,18 +82,40 @@ export const GrantingPermission = ({
         form.clearErrors();
     }
 
-    const form = useForm<z.infer<typeof GrantingSchema>>({
-        resolver: zodResolver(GrantingSchema),
+    const form = useForm<z.infer<typeof RoleSchema>>({
+        resolver: zodResolver(RoleSchema),
         defaultValues: {
-            userId: "",
-            email: "",
-            nameRole: "",
-            description: "",
+            role_ids: []
         }
     });
 
-    const handleGranting = async (values: z.infer<typeof GrantingSchema>) => {
-        const { data, error } = await sendRequest(values, id ?? undefined);
+    useEffect(() => {
+        if (errorGetById) {
+            setToast({
+                title: "Lỗi hệ thống",
+                message: "Không tìm thấy người dùng",
+                variant: "error",
+                closeable: false
+            });
+            closeModal();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (dataGetById) {
+            const roleIds = dataGetById.roles ? dataGetById.roles.map((role) => role.role_id) : [];
+            form.reset({ role_ids: roleIds });
+        }
+    }, [dataGetById]);
+    const handleGranting = async (values: z.infer<typeof RoleSchema>, userId: string) => {
+
+        const valuesToSend = { ...values };
+        if (valuesToSend.role_ids && valuesToSend.role_ids.length === 0) {
+            valuesToSend.role_ids = [];
+        }
+
+        const { data, error } = await sendRequest({ ...values, user_id: userId });
+
         if (error) {
             setToast({
                 title: "Lỗi hệ thống",
@@ -85,8 +125,8 @@ export const GrantingPermission = ({
             });
             return;
         }
-
-        if (data?.is_success) {
+    
+        if (data?.success) {
             closeModal();
             form.reset();
             setToast({
@@ -101,11 +141,12 @@ export const GrantingPermission = ({
         }
 
     }
-    const onSubmit = async (values: z.infer<typeof GrantingSchema>) => {
+    const onSubmit = async (values: z.infer<typeof RoleSchema>) => {
+        if (isDisabled) return;
         const isConfirmed = await confirm();
         if (!isConfirmed) return;
-        if (mode === "grantingPermission") {
-            await handleGranting(values);
+        if (mode === "edit" && id) {
+            await handleGranting(values, id);
         }
     }
     return (
@@ -120,7 +161,7 @@ export const GrantingPermission = ({
                 onSubmit={() => {
                     form.handleSubmit(onSubmit)();
                 }}
-                submitButtonText={ buttonData.submitButtonText}
+                submitButtonText={buttonData.submitButtonText}
                 cancelButtonText={buttonData.cancelButtonText}
             >
                 <Form {...form}>

@@ -6,10 +6,10 @@ export interface UserModel {
     is_root: boolean;
     lock_reason?: string;
     roles: Role[];
-    last_login_at?: number;
+    last_login_at: number;
     failed_attempts?: number;
-    created_at: string;
-    updated_at: string;
+    created_at: number;
+    updated_at: number;
     total_users: number;
 }
 

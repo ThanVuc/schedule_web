@@ -2,7 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import z from "zod"
 import { UseFormReturn } from "react-hook-form"
 import { UpsertUserSchema } from "../models/schema/sertUser.schema"
-import {  ClockIcon, EmailIcon, RoleIcon, StatusIcon } from "@/components/icon"
+import {  ClockIcon, EmailIcon, RoleIcon } from "@/components/icon"
 
 type UserForm = z.infer<typeof UpsertUserSchema>
 interface AddUserFormProps {
@@ -31,7 +31,7 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                     render={({ field }) => (
                         <FormItem className="flex justify-center">
                             <FormControl>
-                                <p className="font-bold" {...field}>thai dai huan</p> 
+                                <p className="font-bold">{field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -44,7 +44,7 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                         <FormItem className="flex justify-between  border-b pb-4">
                             <FormLabel className="w-50"><EmailIcon/> Email</FormLabel>
                             <FormControl>
-                                <p className="font-bold" {...field}>thaidaihuan@gmail.com</p>
+                                <p className="font-bold">{field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -57,7 +57,7 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                         <FormItem className="flex justify-between  border-b pb-4">
                             <FormLabel className="w-50"><RoleIcon/> Vai trò</FormLabel>
                             <FormControl>
-                                <p className="font-bold w-70 text-right" {...field}>Người dùng</p>
+                                <p className="font-bold">{Array.isArray(field.value) ? field.value.join(", ") : field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -65,25 +65,12 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                 />
                 <FormField
                     control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                        <FormItem className="flex justify-between  border-b pb-4">
-                            <FormLabel className="w-50"><StatusIcon/> Trạng thái</FormLabel>
-                            <FormControl>
-                                <p className="font-bold" {...field}>Hoạt động</p>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="LastLoginAt"
+                    name="lastLoginAt"
                     render={({ field }) => (
                         <FormItem className="flex justify-between  border-b pb-4">
                             <FormLabel className="w-50"><ClockIcon/> Lần đăng nhập cuối</FormLabel>
                             <FormControl>
-                                <p className="font-bold" {...field}>3 giờ trước</p>
+                                <p className="font-bold">{field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -91,12 +78,12 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                 />
                 <FormField
                     control={form.control}
-                    name="LastUpdateAt"
+                    name="lastUpdateAt"
                     render={({ field }) => (
                         <FormItem className="flex justify-between  border-b pb-4">
                             <FormLabel className="w-50"> <ClockIcon/> Thời gian cập nhật cuối</FormLabel>
                             <FormControl>
-                                <p className="font-bold" {...field}>3 giờ trước</p>
+                                <p className="font-bold">{field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -104,12 +91,12 @@ export const UpsertUserForm = ({ form, }: AddUserFormProps) => {
                 />
                 <FormField
                     control={form.control}
-                    name="CreatedAt"
+                    name="createdAt"
                     render={({ field }) => (
                         <FormItem className="flex justify-between  border-b pb-4">
                             <FormLabel className="w-50"><ClockIcon/> Thời gian tạo</FormLabel>
                             <FormControl>
-                                <p className="font-bold" {...field}>3 giờ trước</p>
+                                <p className="font-bold">{field.value}</p>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
