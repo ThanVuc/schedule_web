@@ -7,12 +7,14 @@ import useToastState from "@/hooks/useToasts";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui";
-import { useAxios, useAlertDialog, useAxiosMutation } from "@/hooks";
+import { useAxios, useAlertDialog, useAxiosMutation, useHasPermission } from "@/hooks";
 import { permissionApiUrl } from "@/api";
 import { PermissionResponse } from "../models/type/permission.type";
 import { UpsertPermission } from "../containers/upsetPermissions";
 import { DeletePermissionMutationResponseType } from "../models";
 import { useModalParams } from "../hooks";
+import APP_RESOURCES from "@/constant/resourceACL";
+import { APP_ACTIONS } from "@/constant";
 
 
 export const metadata = {
@@ -28,6 +30,17 @@ export const ListpermissionsPage = () => {
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
     const { mode, id } = useModalParams();
+
+    const [canDeletePermission, canUpdatePermission, canCreatePermission,canReadAll, canReadOne,] = useHasPermission([
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.DELETE },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.UPDATE },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.CREATE },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_RESOURCES },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ACTIONS },
+       
+    ]);
+
+
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
         return Object.fromEntries(entries);
@@ -56,7 +69,7 @@ export const ListpermissionsPage = () => {
         } else {
             setPermissionCardItems([]);
         }
-    }, [data]);
+    }, [data, canUpdatePermission, canDeletePermission, canCreatePermission, canReadAll, canReadOne]);
 
     const {
         sendRequest: deletePermission
@@ -120,7 +133,7 @@ export const ListpermissionsPage = () => {
             title: "Quyền gốc",
             value: data?.root || 0,
             icon: <ShieldIcon className="w-8 h-8 text-blue-700" />,
-            description: "Quyền không thể xóa"
+            description: "Quyền không thể chỉnh sửa"
         },
         {
             title: "Quyền bình thường",
@@ -160,37 +173,43 @@ export const ListpermissionsPage = () => {
     }, [mode, id]);
 
     const setActionCardOptions = (id: string, isRoot?: boolean) => [
-        <ActionButton
+       canReadOne && (
+         <ActionButton
             key="view-trigger"
             variant="outline"
             buttonText="Xem"
             onClick={() => handlePageQueryToModal("view", id)}
             icon={<EyeIcon className="w-4 h-4" />}
-        />,
-        <ActionButton
-            key="edit"
-            variant="outline"
-            buttonText="Chỉnh sửa"
-            icon={<PencilIcon className="w-4 h-4" />}
-            onClick={() => handlePageQueryToModal("edit", id)}
-        />,
-        <ActionButton
-            key="delete"
-            variant="destructive"
-            buttonText="Xóa"
-            icon={<TrashIcon className="w-4 h-4" />}
-            onClick={() => {
-                if (isRoot) {
-                    setToast({
-                        title: "Xóa quyền",
-                        message: "Bạn không được xóa quyền này",
-                        variant: "warning",
-                    })
-                    return;
-                }
-                handlePageQueryToModal("delete", id)
-            }}
-        />,
+        />
+       ),
+        canUpdatePermission && (
+            <ActionButton
+                key="edit"
+                variant="outline"
+                buttonText="Chỉnh sửa"
+                icon={<PencilIcon className="w-4 h-4" />}
+                onClick={() => handlePageQueryToModal("edit", id)}
+            />
+        ),
+        canDeletePermission && (
+            <ActionButton
+                key="delete"
+                variant="destructive"
+                buttonText="Xóa"
+                icon={<TrashIcon className="w-4 h-4" />}
+                onClick={() => {
+                    if (isRoot) {
+                        setToast({
+                            title: "Xóa quyền",
+                            message: "Bạn không được xóa quyền này",
+                            variant: "warning",
+                        })
+                        return;
+                    }
+                    handlePageQueryToModal("delete", id)
+                }}
+            />
+        )
 
     ]
 
@@ -220,16 +239,20 @@ export const ListpermissionsPage = () => {
                         placeholder="Tìm kiếm quyền..."
                         className="w-full sm:w-1/3"
                     />
-                    <Button
-                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 cursor-pointer"
-                        onClick={() => handlePageQueryToModal("create")}
-                    >Tạo quyền mới
-                    </Button>
+                    {canCreatePermission && (
+                        <Button
+                            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 cursor-pointer"
+                            onClick={() => handlePageQueryToModal("create")}
+                        >
+                            Tạo quyền mới
+                        </Button>
+                    )}
                 </div>
-
-                <div className="body">
-                    <Cards cards={permissionCardItems} />
-                </div>
+                {canReadAll && (
+                    <div className="body">
+                        <Cards cards={permissionCardItems} />
+                    </div>
+                )}
 
                 <UpsertPermission
                     refetch={refetch}

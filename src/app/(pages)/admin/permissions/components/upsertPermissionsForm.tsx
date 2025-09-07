@@ -3,10 +3,14 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage, Checkbox, Inp
 import { AppSearchSimple, H4, AppComboBox } from "@/components/common";
 import { UseFormReturn } from "react-hook-form";
 import { permissionApiUrl } from "@/api";
-import { useAxios } from "@/hooks";
+import { useAxios, useHasPermission } from "@/hooks";
 import { UpsertPermissionSchema } from "../models";
 import { z } from "zod";
 import { useModalParams } from "../hooks";
+import APP_RESOURCES from "@/constant/resourceACL";
+import { APP_ACTIONS } from "@/constant";
+
+
 
 
 type AddPermissionForm = z.infer<typeof UpsertPermissionSchema>;
@@ -35,6 +39,11 @@ export const UpsertPermissionForm = ({
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null);
   const { mode, id } = useModalParams();
 
+  const [canReadResources, canReadActions] = useHasPermission([
+    { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_RESOURCES },
+    { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ACTIONS },
+  ]);
+
   const {
     data: actionsMeta,
     loading: actionsLoading,
@@ -45,7 +54,6 @@ export const UpsertPermissionForm = ({
       params: { resource_id: selectedResourceId },
     },
     [selectedResourceId],
-    // !id === null || mode === "create"
     !selectedResourceId
   );
 
@@ -84,33 +92,35 @@ export const UpsertPermissionForm = ({
     <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div className="flex flex-col gap-4 w-full lg:w-2/5">
         <H4>Thông tin quyền</H4>
-        <FormField
-          control={form.control}
-          name="resource_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Resource</FormLabel>
-              <FormControl>
-                <AppComboBox
-                  items={resourceOptions}
-                  value={field.value}
-                  onChange={(value) => {
-                    field.onChange(value);
-                    setSelectedResourceId(value);
-                    console.log(value);
-                  }}
-                  placeholder={
-                    resourcesLoading
-                      ? "Đang tải..."
-                      : "Chọn resource..."
-                  }
-                  emptyText="Không tìm thấy resource"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {canReadResources && (
+          <FormField
+            control={form.control}
+            name="resource_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Resource</FormLabel>
+                <FormControl>
+                  <AppComboBox
+                    items={resourceOptions}
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      setSelectedResourceId(value);
+                      console.log(value);
+                    }}
+                    placeholder={
+                      resourcesLoading
+                        ? "Đang tải..."
+                        : "Chọn resource..."
+                    }
+                    emptyText="Không tìm thấy resource"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
@@ -161,35 +171,36 @@ export const UpsertPermissionForm = ({
             {form.formState.errors.actions_ids.message}
           </p>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b pb-4 max-h-64 overflow-y-auto">
-          {filteredActions.map((opt) => (
-            <FormField
-              key={opt.value}
-              control={form.control}
-              name="actions_ids"
-              render={({ field }) => (
-                <FormItem className="flex items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      disabled={isDisabled}
-                      className="h-5 w-5 border-gray-300"
-                      checked={field.value.includes(opt.value)}
-                      onCheckedChange={(checked) =>
-                        field.onChange(
-                          checked
-                            ? [...field.value, opt.value]
-                            : field.value.filter((v) => v !== opt.value)
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormLabel className="!mb-0">{opt.label}</FormLabel>
-                </FormItem>
-              )}
-            />
-          ))}
-        </div>
+        {canReadActions && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b pb-4 max-h-64 overflow-y-auto">
+            {filteredActions.map((opt) => (
+              <FormField
+                key={opt.value}
+                control={form.control}
+                name="actions_ids"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormControl>
+                      <Checkbox
+                        disabled={isDisabled}
+                        className="h-5 w-5 border-gray-300"
+                        checked={field.value.includes(opt.value)}
+                        onCheckedChange={(checked) =>
+                          field.onChange(
+                            checked
+                              ? [...field.value, opt.value]
+                              : field.value.filter((v) => v !== opt.value)
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormLabel className="!mb-0">{opt.label}</FormLabel>
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
