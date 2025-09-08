@@ -1,6 +1,3 @@
-node_modules
-.next
-Dockerfile
-docker-compose.yml
-.env*
-.gitignore
+.git
+.next/cache
+*.log
