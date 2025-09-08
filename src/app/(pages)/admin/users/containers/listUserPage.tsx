@@ -134,7 +134,7 @@ const ListUserPage = () => {
             canAssignRole && (<ActionButton
                 key="granting-permission-trigger"
                 variant="outline"
-                buttonText="Cấp quyền"
+                buttonText="Cấp vai trò"
                 icon={<ShieldIcon className="w-4 h-4" />}
                 onClick={() => handlePageQueryToModal("edit", user_id)}
             />),
