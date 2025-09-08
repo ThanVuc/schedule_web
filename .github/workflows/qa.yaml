@@ -1,0 +1,45 @@
+name: Deploy to VPS on merge to QA
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - qa
+
+env:
+  CONTAINER_NAME: schedule_web
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set image name
+        id: vars
+        run: echo "IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/schedule_web:latest" >> $GITHUB_ENV
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL_BASE=${{ secrets.NEXT_PUBLIC_API_URL_BASE }} \
+            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} \
+            -t ${{ env.IMAGE_NAME }} .
+
+      - name: Push Docker image
+        run: docker push ${{ env.IMAGE_NAME }}
+
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            bash /home/schedule/deploy.sh "${{ env.IMAGE_NAME }}" "${{ env.CONTAINER_NAME }}"

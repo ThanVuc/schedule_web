@@ -1,30 +1,36 @@
-# Stage 1: Install and build
-FROM node:20-alpine AS builder
+# ---------- 1. Build Stage ----------
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
+# Install dependencies first (cached if package.json doesn't change)
+COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Copy source files
+# Copy project files
 COPY . .
 
-# Build the Next.js app
+# Disable ESLint during build
+ENV NEXT_DISABLE_ESLINT=1
+ARG NEXT_PUBLIC_API_URL_BASE
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+ENV NEXT_PUBLIC_API_URL_BASE=$NEXT_PUBLIC_API_URL_BASE
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+# Build the Next.js project
 RUN npm run build
 
-# Stage 2: Production image
-FROM node:20-alpine AS runner
+# ---------- 2. Production Stage ----------
+FROM node:22-alpine AS runner
+
 WORKDIR /app
-
-# Only copy necessary files
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-# Set environment (important for production optimizations)
 ENV NODE_ENV=production
-RUN npm ci --production
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
-EXPOSE 4000
-CMD ["npm", "run", "start"]
+EXPOSE 3000
+
+CMD ["npm", "start"]

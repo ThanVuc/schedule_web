@@ -1,7 +1,12 @@
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import Head from "next/head";
 import { AppProvider } from "@/context/app.context";
+import { Suspense } from "react";
+
+export const metadata = {
+  title: "Schedulr",
+  description: "Ứng dụng lịch trình của bạn",
+};
 
 export default function RootLayout({
   children,
@@ -10,17 +15,14 @@ export default function RootLayout({
 }>) {  
   return (
     <html lang="en" suppressHydrationWarning >
-      <Head>
-        <title>Schedulr</title>
-        <meta name="description" content="Ứng dụng lịch trình của bạn" />
-      </Head>
-
       <body
         className={`antialiased`}
         suppressHydrationWarning
       >
         <AppProvider>
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ErrorBoundary>{children}</ErrorBoundary>         
+          </Suspense>
         </AppProvider>
       </body>
     </html>

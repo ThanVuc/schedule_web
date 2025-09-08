@@ -1,3 +1,4 @@
+"use client";
 import { AppAlertDialog, AppPagination, AppSearch, H2, Muted } from "@/components/common";
 import { Statistic } from "../../_components/statistic";
 import { EyeIcon, LockIcon, PencilIcon, RoleIcon, ShieldIcon, TrashIcon, UnLockIcon, UserIcon } from "@/components/icon";
