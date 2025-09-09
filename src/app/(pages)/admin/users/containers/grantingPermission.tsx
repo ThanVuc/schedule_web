@@ -12,9 +12,9 @@ import { GrantingForm } from "../components";
 import { GrantingSchema } from "../models/schema/granting.schema";
 import {  useEffect, useState } from "react";
 import { assignRoleUsersMutationResponseType, Role, UserModel } from "../models";
-import { roleApiUrl } from "@/api";
 import { userApiUrl } from "@/api/users.api";
 import { RoleSchema } from "../models/schema/listRole.schema";
+import { getListRoleSchema } from "../models/schema/getlistRole.schema";
 
 export interface AddUserProps {
     refetch?: () => void;
@@ -45,8 +45,7 @@ export const GrantingPermission = ({
     const [roleForm, setRoleForm] = useState<Role[]>([]);
     const { data: RoleData } = useAxios<{ items: Role[] }>({
         method: "GET",
-        url: roleApiUrl.getRoles,
-        params: { page_ignore: true }
+        url: userApiUrl.getUserRoles,
     });
     const { sendRequest } = useAxiosMutation<assignRoleUsersMutationResponseType, z.infer<typeof GrantingSchema>>({
         method: "POST",
@@ -82,9 +81,11 @@ export const GrantingPermission = ({
         form.clearErrors();
     }
 
-    const form = useForm<z.infer<typeof RoleSchema>>({
-        resolver: zodResolver(RoleSchema),
+    const form = useForm<z.infer<typeof getListRoleSchema>>({
+        resolver: zodResolver(getListRoleSchema),
         defaultValues: {
+            email: "",
+            user_id: "",
             role_ids: []
         }
     });
@@ -104,7 +105,11 @@ export const GrantingPermission = ({
     useEffect(() => {
         if (dataGetById) {
             const roleIds = dataGetById.roles ? dataGetById.roles.map((role) => role.role_id) : [];
-            form.reset({ role_ids: roleIds });
+            form.reset({ 
+                role_ids: roleIds,
+                email: dataGetById.email ,
+                user_id: dataGetById.user_id
+            });
         }
     }, [dataGetById]);
     const handleGranting = async (values: z.infer<typeof RoleSchema>, userId: string) => {

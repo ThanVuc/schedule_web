@@ -2,12 +2,12 @@
 import { Button, Checkbox, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui"
 import z from "zod"
 import { UseFormReturn } from "react-hook-form"
-import { GrantingSchema } from "../models/schema/granting.schema"
 import { useEffect, useState } from "react"
 import { AppSearchSimple, H4, Muted } from "@/components/common"
 import { useIndexPagination } from "../../roles/hooks"
+import { getListRoleSchema } from "../models/schema/getlistRole.schema"
 
-type UserForm = z.infer<typeof GrantingSchema>
+type UserForm = z.infer<typeof getListRoleSchema>
 interface GrantingFormProps {
     form: UseFormReturn<UserForm>,
     role?: {
@@ -33,11 +33,11 @@ export const GrantingForm = ({ form, role }: GrantingFormProps) => {
                     <FormField
                         control={form.control}
                         name="email"
-                        render={({  }) => (
+                        render={({  field }) => (
                             <FormItem className="flex justify-center">
                                 <FormLabel className="font-bold">Email:</FormLabel>
                                 <FormControl>
-                                    <p className="font-bold" >thaidaihuan@gmail.com</p>
+                                    <p className="font-bold" >{field.value}</p>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -46,11 +46,11 @@ export const GrantingForm = ({ form, role }: GrantingFormProps) => {
                     <FormField
                         control={form.control}
                         name="user_id"
-                        render={({  }) => (
+                        render={({  field }) => (
                             <FormItem className="flex justify-center">
                                 <FormLabel className="font-bold">ID người dùng:</FormLabel>
                                 <FormControl>
-                                    <p className="font-bold" >123e4567-e89b-12d3-a456-426614174000</p>
+                                    <p className="font-bold" >{field.value}</p>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

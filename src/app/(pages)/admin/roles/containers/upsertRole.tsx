@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UpsertRoleForm } from "../components";
 import { Form } from "@/components/ui";
 import { useAxios, useAxiosMutation, useConfirmDialog, } from "@/hooks";
-import { permissionApiUrl, roleApiUrl } from "@/api"
+import {  roleApiUrl } from "@/api"
 import { useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../hooks";
 import { useEffect, useState } from "react";
@@ -73,7 +73,7 @@ export const UpsertRole = ({
     });
     const { data: permissionsData } = useAxios<{ items: PermissionModel[] }>({
         method: "GET",
-        url: permissionApiUrl.getPermissions,
+        url: roleApiUrl.getRolePermissions,
         params: { page_ignore: true }
     });
     const transformPermissions = (permissions: PermissionModel[]) => {

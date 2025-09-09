@@ -1,25 +1,40 @@
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import "./header.scss";
-import { HelpIcon, HomeIcon, Schedular, ScheduleIcon, TeamIcon } from "@/components/icon";
+import { AdminIcon, HelpIcon, HomeIcon, Schedular, ScheduleIcon, TeamIcon } from "@/components/icon";
 import Link from "next/link";
 import { AppHoverClickCard } from "@/components/common";
 import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { UserCardContent } from "./userCardContent";
-import { useIsMobile } from "@/hooks";
+import { useHasPermission, useIsMobile } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/context/me.context";
+import { APP_ACTIONS } from "@/constant/actionACL";
+import APP_RESOURCES from "@/constant/resourceACL";
 
-const NavItemData = [
-    { href: "/", label: "Trang Chủ", icon: <HomeIcon /> },
-    { href: "/schedule", label: "Lịch Trình", icon: <ScheduleIcon /> },
-    { href: "/teams", label: "Nhóm", icon: <TeamIcon /> },
-    { href: "/support", label: "Hỗ Trợ", icon: <HelpIcon /> },
-]
 
 export const AppHeader = () => {
     const isMobile = useIsMobile();
     const router = useRouter();
     const meContext = useMe();
+    const [canReadAllRole, canReadAllUser, canReadAllPermission] = useHasPermission([
+        { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.USER, action: APP_ACTIONS.READ_ALL },
+        { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ALL },
+    ]);
+    const hasAdminPermission = canReadAllRole || canReadAllUser || canReadAllPermission;
+    const baseItem = [
+        { href: "/", label: "Trang Chủ", icon: <HomeIcon /> },
+        { href: "/schedule", label: "Lịch Trình", icon: <ScheduleIcon /> },
+        { href: "/teams", label: "Nhóm", icon: <TeamIcon /> },
+    ]
+    const adminAction = hasAdminPermission
+        ? [{ href: "/admin", label: "Quản Trị", icon: <AdminIcon className="w-4 h-4 mr-2" /> }]
+        : [];
+    const NavItemData = [
+        ...baseItem,
+        ...adminAction,
+        { href: "/support", label: "Hỗ Trợ", icon: <HelpIcon /> },
+    ]
 
     return (
         <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-[#0B1120] z-50">
