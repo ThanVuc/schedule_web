@@ -10,7 +10,7 @@ export const UpsertProfileSchema = z.object({
         .max(300, "Tiểu sử người dùng không được quá 300 ký tự")
         ,
     slug: z.string(),
-    date_of_birth: z.date().min(0, "Ngày sinh không hợp lệ"),
+    date_of_birth: z.any(),
     gender: z.boolean(),
     created_at: z.number().min(0, "Ngày tạo không hợp lệ").optional(),
     updated_at: z.number().min(0, "Ngày cập nhật không hợp lệ").optional(),

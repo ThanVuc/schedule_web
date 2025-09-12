@@ -55,7 +55,7 @@ const UpdateProfile = ({ id, formItems, refetch }: UpdateProfileProps) => {
         url: profileApiUrl.updateUserProfile,
     });
     const onSubmit = async (values: z.infer<typeof UpsertProfileSchema>) => {
-        const payload = {...values, date_of_birth: formatDate.dateToString(values.date_of_birth)};
+        const payload = {...values, date_of_birth: formatDate.dateToNumber(values.date_of_birth)};
         const { error } = await sendRequest(payload);
         if (error) {
             setToast({
