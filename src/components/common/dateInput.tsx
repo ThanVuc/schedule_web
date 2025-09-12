@@ -1,24 +1,24 @@
 "use client";
 
-import * as React from "react"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import * as React from "react";
+import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
 
 function formatDate(date: Date | undefined, formatStr = "dd/MM/yyyy"): string {
-  if (!date) return ""
-  return format(date, formatStr)
+  if (!date) return "";
+  const zonedDate = format(date, formatStr);
+  return zonedDate;
 }
 
 function parseDate(input: string): Date | undefined {
@@ -54,6 +54,11 @@ interface DateInputProps {
   isBlurAfterDisabled?: boolean
 }
 
+const toUTCDate = (date: Date) => {
+  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+}
+
+
 export function DateInput({
   defaultValue,
   onChange,
@@ -67,22 +72,16 @@ export function DateInput({
   const [open, setOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   
-  const initialDate = useMemo(() => {
-    return defaultValue ? parseDate(defaultValue) : undefined
-  }, [defaultValue])
-  
-  const [date, setDate] = useState<Date | undefined>(initialDate)
-  const [month, setMonth] = useState<Date | undefined>(initialDate)
+  const [date, setDate] = useState<Date | undefined>()
+  const [month, setMonth] = useState<Date | undefined>()
   const [value, setValue] = useState(() => {
     return defaultValue || ""
   })
 
   useEffect(() => {
     setIsClient(true)
-    if (initialDate) {
-      setValue(formatDate(initialDate))
-    }
-  }, [initialDate])
+    setValue(defaultValue || "")
+  }, [])
 
   useEffect(() => {
     if (defaultValue) {
@@ -95,7 +94,7 @@ export function DateInput({
       setMonth(undefined)
       setValue("")
     }
-  }, [defaultValue, isClient])
+  }, [defaultValue])
 
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
@@ -159,10 +158,11 @@ export function DateInput({
               onMonthChange={setMonth}
               onSelect={(selected) => {
                 setDate(selected)
-                setValue(formatDate(selected))
+                const format = formatDate(selected);
+                setValue(format)
                 setOpen(false)
                 if (onChange) {
-                  onChange(selected)
+                  onChange(selected ? toUTCDate(selected) : undefined)
                 }
               }}
             />
