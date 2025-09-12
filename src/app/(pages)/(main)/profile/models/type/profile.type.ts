@@ -5,7 +5,7 @@ export interface Profile {
     avatar_url: string;
     bio: string;
     slug: string;
-    date_of_birth: Date;
+    date_of_birth: Date | number;
     gender: boolean;
     created_at: number;
     updated_at: number;

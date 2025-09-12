@@ -116,13 +116,17 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                                         <DateInput
                                             isBlurAfterDisabled={false}
                                             label="Ngày sinh"
-                                            className="!border-dashed !gap-2 !bg-transparent text-white/50"
                                             inputProps={{
                                                 placeholder: "dd/mm/yyyy",
                                                 className: " border-none !bg-transparent disabled:text-white ",
                                             }}
                                             defaultValue={formatDate.dateToString(field.value)}
-                                            onChange={(date) => field.onChange(date)}
+                                            onChange={(date) => {
+                                                if (typeof date === "number") {
+                                                    date = new Date(date);
+                                                }
+                                                field.onChange(date ? date : null);
+                                            }}
                                             disabled={!isEditing}
                                         />
                                     </FormControl>
@@ -242,7 +246,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                             render={({ field }) => (
                                 <FormItem className="mb-4">
                                     <FormControl >
-                                        <p className="text-white text-base mb-2 italic">{field.value || "Không có động lực"}</p>
+                                        <p className="text-white text-base mb-2 italic">{field.value || "Bạn nên có một câu nói tâm đắc..."}</p>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -254,7 +258,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl >
-                                        <p className="text-white/70 text-sm italic">- {field.value || "Không rõ tác giả"}</p>
+                                        <p className="text-white/70 text-sm italic">- {field.value || "Khuyết Danh"}</p>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -271,7 +275,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                                             className="disabled:opacity-100 disabled:text-white disabled:font-bold bg-transparent border border-white/10 text-white"
                                             disabled={!isEditing}
                                             {...field}
-                                            placeholder="Nhập động lực"
+                                            placeholder="Một câu nói truyền cảm hứng cho bạn"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -288,7 +292,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                                             className="disabled:opacity-100 disabled:text-white bg-transparent border border-white/10 text-white"
                                             disabled={!isEditing}
                                             {...field}
-                                            placeholder="Nhập tác giả"
+                                            placeholder="Tác giả"
                                         />
                                     </FormControl>
                                     <FormMessage />

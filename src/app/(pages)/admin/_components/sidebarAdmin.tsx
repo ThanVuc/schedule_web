@@ -3,7 +3,7 @@ import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon, AdminIcon }
 
 import AppSideBar, { SidebarItem } from "@/components/common/sidebar";
 import { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { forbidden, usePathname } from "next/navigation";
 import { useHasPermission } from "@/hooks";
 import APP_RESOURCES from "@/constant/resourceACL";
 import { APP_ACTIONS } from "@/constant";
@@ -13,7 +13,10 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
         { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ALL },
         { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ALL },
     ]);
-
+    const pathname = usePathname();
+    const hasAdminAccess = hasAccessUser || hasAccessRole || hasAccessPermission;
+    if (!hasAdminAccess) return forbidden();
+    
     const menuItems = [
         {
             title: "Trang chủ",
@@ -39,7 +42,6 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
             icon: AssignmentIcon,
         },
     ].filter(Boolean) as SidebarItem[];
-    const pathname = usePathname();
     const getName = () => {
         if (pathname.startsWith("/admin/users")) return "Danh sách người dùng";
         if (pathname.startsWith("/admin/roles")) return "Danh sách vai trò";

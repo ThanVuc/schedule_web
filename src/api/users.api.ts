@@ -8,4 +8,6 @@ export const userApiUrl = {
     getUsers: createAPI('users'),
     getByIdUsers: createAPI('users'),
     lockUser: createAPI('users/lock-user'),
+    getUserRoles: createAPI('roles/assign'),
+
 };
