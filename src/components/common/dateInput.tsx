@@ -97,15 +97,15 @@ export function DateInput({
   }, [defaultValue])
 
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
-      <Label htmlFor="date" className="px-1">
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <Label htmlFor="date" className="font-extralight font-poppins  text-white/50 ">
         {label}
       </Label>
       <div className="relative flex gap-2">
         <Input
           {...inputProps}
-          disabled={disabled}
           id="date"
+          readOnly
           value={value}
           placeholder="dd/MM/yyyy"
           className={cn("pr-10 bg-background", inputProps?.className, isBlurAfterDisabled && disabled ? "" : "!opacity-100")}
@@ -129,6 +129,11 @@ export function DateInput({
             }
             if (onKeyDown) {
               onKeyDown(e)
+            }
+          }}
+          onClick={() => {
+            if (!disabled) {
+              setOpen(true)
             }
           }}
         />
