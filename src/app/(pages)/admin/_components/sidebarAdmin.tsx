@@ -2,20 +2,30 @@
 import { RoleIcon, ReturnUpBackToHome, CalendarIcon, AssignmentIcon, AdminIcon } from "@/components/icon";
 
 import AppSideBar, { SidebarItem } from "@/components/common/sidebar";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { forbidden, usePathname } from "next/navigation";
 import { useHasPermission } from "@/hooks";
 import APP_RESOURCES from "@/constant/resourceACL";
 import { APP_ACTIONS } from "@/constant";
+import { useMe } from "@/context/me.context";
 const SidebarAdmin = ({ children }: { children: ReactNode }) => {
+    const me = useMe();
     const [hasAccessUser, hasAccessRole, hasAccessPermission] = useHasPermission([
         { resource: APP_RESOURCES.ADMIN_USER, action: APP_ACTIONS.READ_ALL },
         { resource: APP_RESOURCES.ROLE, action: APP_ACTIONS.READ_ALL },
         { resource: APP_RESOURCES.PERMISSION, action: APP_ACTIONS.READ_ALL },
     ]);
     const pathname = usePathname();
+    const isLoadedMe = useMemo(() => {
+        if (me) return true;
+        return false;
+    }, [me]);
     const hasAdminAccess = hasAccessUser || hasAccessRole || hasAccessPermission;
-    if (!hasAdminAccess) return forbidden();
+    useEffect(() => {
+        if (!hasAdminAccess && !isLoadedMe) {
+            forbidden();
+        }
+    }, [hasAdminAccess, isLoadedMe]);
     
     const menuItems = [
         {
