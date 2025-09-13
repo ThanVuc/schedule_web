@@ -94,7 +94,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="font-extralight font-poppins  text-white/50">Họ và tên</FormLabel>
-                                <div className="border-b-1 relative">
+                                <div className={!isEditing ? "border-b-1 relative" : "border-b-1 relative border-white/40"}>
                                     <FormControl className=" border-none !bg-transparent">
                                         <Input className="disabled:opacity-100 disabled:text-white disabled:font-bold" disabled={!isEditing} placeholder="Họ và tên" {...field} />
                                     </FormControl>
@@ -111,7 +111,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                         name="date_of_birth"
                         render={({ field }) => (
                             <FormItem >
-                                <div className="border-b-1 relative">
+                                <div className={!isEditing ? "border-b-1 relative" : "border-b-1 relative border-white/40"}>
                                     <FormControl className=" border-none !bg-transparent">
                                         <DateInput
                                             isBlurAfterDisabled={false}
@@ -137,62 +137,62 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                     />
                 </div>
                 <div className="relative">
-                   {!isEditing ? (
-                       <FormField
-                           control={form.control}
-                           name="gender"
-                           render={({ field }) => (
-                               <FormItem>
-                                <FormLabel className="font-extralight font-poppins text-white/50">
-                                    Giới tính
-                                </FormLabel>
-                                <div className="border-b-1 relative">
-                                    <FormControl className="border-none !bg-transparent">
-                                        <Input className="disabled:opacity-100 disabled:text-white disabled:font-bold" value={field.value === true ? "Nam" : "Nữ"} readOnly />
-                                    </FormControl>
-                                    <GenderIcon className="absolute right-2 top-1/2 transform -translate-y-1/2" />
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />)
-                   
-                   :( <FormField
-                        control={form.control}
-                        name="gender"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="font-extralight font-poppins text-white/50">
-                                    Giới tính
-                                </FormLabel>
-                                <div className="border-b-1 relative">
-                                    <FormControl className="border-none !bg-transparent">
-                                        <Select
-                                            value={
-                                                typeof field.value === "boolean"
-                                                    ? field.value
-                                                        ? "male"
-                                                        : "female"
-                                                    : ""
-                                            }
-                                            onValueChange={(val) => field.onChange(val === "male")}
-                                            disabled={!isEditing}
-                                        >
-                                            <SelectTrigger className="border-none !bg-transparent w-full">
-                                                <SelectValue placeholder="Chọn giới tính" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="male">Nam</SelectItem>
-                                                <SelectItem value="female">Nữ</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <GenderIcon className="absolute right-2 top-1/2 transform -translate-y-1/2" />
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />)}
+                    {!isEditing ? (
+                        <FormField
+                            control={form.control}
+                            name="gender"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="font-extralight font-poppins text-white/50">
+                                        Giới tính
+                                    </FormLabel>
+                                    <div className="border-b-1 relative">
+                                        <FormControl className="border-none !bg-transparent">
+                                            <Input className="disabled:opacity-100 disabled:text-white disabled:font-bold" value={field.value === true ? "Nam" : "Nữ"} readOnly />
+                                        </FormControl>
+                                        <GenderIcon className="absolute right-2 top-1/2 transform -translate-y-1/2" />
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />)
+
+                        : (<FormField
+                            control={form.control}
+                            name="gender"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="font-extralight font-poppins text-white/50">
+                                        Giới tính
+                                    </FormLabel>
+                                    <div className={!isEditing ? "border-b-1 relative" : "border-b-1 relative border-white/40"}>
+                                        <FormControl className="border-none !bg-transparent">
+                                            <Select
+                                                value={
+                                                    typeof field.value === "boolean"
+                                                        ? field.value
+                                                            ? "male"
+                                                            : "female"
+                                                        : ""
+                                                }
+                                                onValueChange={(val) => field.onChange(val === "male")}
+                                                disabled={!isEditing}
+                                            >
+                                                <SelectTrigger className="border-none !bg-transparent w-full">
+                                                    <SelectValue placeholder="Chọn giới tính" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="male">Nam</SelectItem>
+                                                    <SelectItem value="female">Nữ</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <GenderIcon className="absolute right-2 top-1/2 transform -translate-y-1/2" />
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />)}
 
 
                 </div>
@@ -270,6 +270,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                             name="sentence"
                             render={({ field }) => (
                                 <FormItem className="mb-4">
+                                    <FormLabel className="font-extralight font-poppins  text-white/50">Câu nói tâm đắc</FormLabel>
                                     <FormControl >
                                         <Input
                                             className="disabled:opacity-100 disabled:text-white disabled:font-bold bg-transparent border border-white/10 text-white"
@@ -287,6 +288,7 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                             name="author"
                             render={({ field }) => (
                                 <FormItem>
+                                    <FormLabel className="font-extralight font-poppins  text-white/50">Tác giả</FormLabel>
                                     <FormControl >
                                         <Input
                                             className="disabled:opacity-100 disabled:text-white bg-transparent border border-white/10 text-white"
