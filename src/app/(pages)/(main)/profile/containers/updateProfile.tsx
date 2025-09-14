@@ -1,3 +1,4 @@
+"use client"
 import { FieldErrors, useForm } from "react-hook-form";
 import { UpsertProfileSchema } from "../models";
 import z from "zod";
@@ -41,7 +42,7 @@ const UpdateProfile = ({ id, formItems, refetch }: UpdateProfileProps) => {
       id: id,
       fullname: formItems.fullname,
       bio: formItems.bio,
-      slug:  formItems.fullname + formItems.created_at?.toString() || "",
+      slug:  formItems.slug,
       email: formItems.email,
       date_of_birth: formItems.date_of_birth,
       gender: formItems.gender,
@@ -55,7 +56,18 @@ const UpdateProfile = ({ id, formItems, refetch }: UpdateProfileProps) => {
         url: profileApiUrl.updateUserProfile,
     });
     const onSubmit = async (values: z.infer<typeof UpsertProfileSchema>) => {
-        const payload = {...values, date_of_birth: formatDate.dateToNumber(values.date_of_birth)};
+        const date_of_birth = formatDate.dateToNumber(values.date_of_birth);
+        // Validate: must exist and not be a future date
+        if (date_of_birth == null || date_of_birth > Date.now() || date_of_birth > Date.now() - 5 * 365 * 24 * 60 * 60 * 1000) {
+            setToast({
+                title: "Lỗi",
+                message: "Ngày sinh không hợp lệ",
+                variant: "error"
+            });
+            return;
+        }
+
+        const payload = { ...values, date_of_birth };
         const { error } = await sendRequest(payload);
         if (error) {
             setToast({
@@ -85,6 +97,7 @@ const UpdateProfile = ({ id, formItems, refetch }: UpdateProfileProps) => {
                 className="space-y-2"
             >
                 <BasicInformationProfile
+                    refetch={refetch}
                     form={form}
                     isEditing={isEditing}
                     onSubmit={() => {
