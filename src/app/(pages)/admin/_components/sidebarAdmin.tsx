@@ -21,7 +21,9 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
         return false;
     }, [me]);
     const hasAdminAccess = hasAccessUser || hasAccessRole || hasAccessPermission;
+    
     useEffect(() => {
+        if (!isLoadedMe) { return; }
         if (!hasAdminAccess && !isLoadedMe) {
             forbidden();
         }
