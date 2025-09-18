@@ -1,7 +1,9 @@
 "use client";
 
+import { redirect } from "next/navigation";
+
 const SchedulePage = () => {
-    return <div>Schedule Page</div>;
+    redirect("/schedule/daily");
 }
 
 export default SchedulePage;
