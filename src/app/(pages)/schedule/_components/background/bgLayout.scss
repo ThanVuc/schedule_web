@@ -1,0 +1,13 @@
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 4s infinite;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
