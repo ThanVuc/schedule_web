@@ -25,17 +25,18 @@ export interface SidebarProp {
     AppSidebar: SidebarItem[];
     title: string;
     headerTitle: string;
-    headerurl: string;
+    headerUrl: string;
     icon: React.ComponentType<{ className?: string }>;
     currentPage: string;
+    sideBarClassName?: string;
 }
-const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPage, headerurl }: SidebarProp & { children: ReactNode }) => {
+const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPage, headerUrl,sideBarClassName }: SidebarProp & { children: ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
     return (
         <SidebarProvider>
-            <Sidebar className="min-h-screen w-64 bg-white border-r shadow-lg">
-                <SidebarContent className="p-4">
+            <Sidebar className="min-h-screen w-64 border-r bg-white shadow-lg">
+                <SidebarContent className= {`flex-1 p-4 ${sideBarClassName}`}>
                     <SidebarGroup>
                         <SidebarGroupLabel className="text-md font-bold uppercase tracking-wider px-2 mb-3">
                             {React.createElement(icon, { className: "w-5 h-5 mr-2 inline" })}
@@ -83,7 +84,7 @@ const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPag
                                 <BreadcrumbItem>
                                     <BreadcrumbPage
                                         className="text-sm text-gray-600 flex"
-                                        onClick={() => router.push(headerurl)}
+                                        onClick={() => router.push(headerUrl)}
                                     >
                                         {headerTitle}
                                     </BreadcrumbPage>
