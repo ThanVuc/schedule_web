@@ -60,10 +60,10 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
         if (pathname.startsWith("/admin/permissions")) return "Quyền hạn";
         return "";
     };
-    const headerurl = "/admin/users"
+    const headerUrl = "/admin/users"
     const currentPage = getName();
     return (<>
-        <AppSideBar headerurl={headerurl} currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
+        <AppSideBar headerUrl={headerUrl} currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
             {children}
         </AppSideBar>
     </>);
