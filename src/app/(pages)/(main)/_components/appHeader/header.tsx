@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import "./header.scss";
-import { AdminIcon, HelpIcon, HomeIcon, Schedular, ScheduleIcon, TeamIcon } from "@/components/icon";
+import { AdminIcon, HelpIcon, HomeIcon, Schedulr, ScheduleIcon, TeamIcon } from "@/components/icon";
 import Link from "next/link";
 import { AppHoverClickCard } from "@/components/common";
 import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
@@ -37,11 +37,11 @@ export const AppHeader = () => {
     ]
 
     return (
-        <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-[#0B1120] z-50">
+        <div className="app-header fixed top-0 left-0 w-full flex items-center justify-between p-4 md:p-6 bg-background z-50">
             <div className="flex items-center gap-6">
                 <Button className="home" variant="ghost">
                     <Link href="/" className="flex items-center gap-3 p-2 md:p-4">
-                        <Schedular className="text-blue-300" style={{ width: '2rem', height: '2rem' }} />
+                        <Schedulr className="text-blue-300" style={{ width: '2rem', height: '2rem' }} />
                         <span className="hidden sm:inline text-2xl md:text-3xl text-blue-300 font-semibold">Schedulr</span>
                     </Link>
                 </Button>

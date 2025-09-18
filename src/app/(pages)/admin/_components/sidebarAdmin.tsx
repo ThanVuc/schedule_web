@@ -63,7 +63,7 @@ const SidebarAdmin = ({ children }: { children: ReactNode }) => {
     const headerUrl = "/admin/users"
     const currentPage = getName();
     return (<>
-        <AppSideBar headerUrl={headerUrl} currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
+        <AppSideBar variant="light" headerUrl={headerUrl} currentPage={currentPage} AppSidebar={menuItems} title="Quản Trị viên" headerTitle="Quản Trị viên" icon={AdminIcon}>
             {children}
         </AppSideBar>
     </>);
