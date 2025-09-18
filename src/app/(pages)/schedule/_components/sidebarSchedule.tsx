@@ -1,5 +1,5 @@
 "use client";
-import { ReturnUpBackToHome, AssignmentIcon, AdminIcon, TargetIcon, GridIcon, MarketAnalysisIcon } from "@/components/icon";
+import { ReturnUpBackToHome, AssignmentIcon, TargetIcon, MarketAnalysisIcon, Schedulr } from "@/components/icon";
 
 import AppSideBar, { SidebarItem } from "@/components/common/sidebar";
 import { ReactNode } from "react";
@@ -8,7 +8,6 @@ import { LabelIcon } from "@/components/icon/label";
 
 const SidebarSchedule = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname();
-
 
     const menuItems = [
         {
@@ -27,12 +26,7 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
             icon: TargetIcon,
         },
         {
-            title: "Quản lý danh mục",
-            url: "/schedule/categories",
-            icon: GridIcon,
-        },
-        {
-            title: "Quản lý nhãn",
+            title: "Xem thông tin nhãn",
             url: "/schedule/labels",
             icon: LabelIcon,
         },
@@ -45,21 +39,18 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
 
     ].filter(Boolean) as SidebarItem[];
     const getName = () => {
-        if (pathname.startsWith("/schedule/analysis")) return "Danh sách người dùng";
-        if (pathname.startsWith("/schedule/roles")) return "Danh sách vai trò";
-        if (pathname.startsWith("/schedule/permissions")) return "Quyền hạn";
-        if (pathname.startsWith("/schedule/categories")) return "Quản Lý danh mục";
-        if (pathname.startsWith("/schedule/daily")) return "Quản Lý công việc";
-        if (pathname.startsWith("/schedule/labels")) return "Quản Lý nhãn";
-        if (pathname.startsWith("/schedule/goal")) return "Quản Lý mục tiêu";
+        if (pathname.startsWith("/schedule/daily")) return "Lịch Trình Hằng Ngày";
+        if (pathname.startsWith("/schedule/goal")) return "Quản lý mục tiêu";
+        if (pathname.startsWith("/schedule/labels")) return "Xem thông tin nhãn";
+        if (pathname.startsWith("/schedule/analysis")) return "Phân Tích, Báo Cáo, Thống Kê dựa trên AI";
         return "";
     };
     const headerUrl = "/schedule/daily";
     const currentPage = getName();
     return (<>
-            <AppSideBar sideBarClassName="  bg-[#1E293B]/20" headerUrl={headerUrl} currentPage={currentPage} AppSidebar={menuItems} title="SCHEDULR" headerTitle="SCHEDULR" icon={AdminIcon}>
-                {children}
-            </AppSideBar>
+        <AppSideBar headerUrl={headerUrl} currentPage={currentPage} AppSidebar={menuItems} title="Schedulr" headerTitle="Quản lý lịch trình" icon={Schedulr}>
+            {children}
+        </AppSideBar>
     </>);
 }
 
