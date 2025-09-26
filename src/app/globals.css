@@ -376,7 +376,6 @@ body::-webkit-scrollbar-track {
   }
 }
 
-/* Keyframes chung */
 @keyframes progressGrow {
   from {
     width: 0%;
@@ -386,7 +385,6 @@ body::-webkit-scrollbar-track {
   }
 }
 
-/* Progress bar base */
 .progress-bar {
   height: 10px;
   background-color: #14FA61;
@@ -394,7 +392,6 @@ body::-webkit-scrollbar-track {
   transition: width 1s ease-out;
 }
 
-/* Các mức width theo class getProgressClass */
 .progress-0   { width: 0%; }
 .progress-5   { width: 5%; }
 .progress-10  { width: 10%; }
@@ -416,4 +413,6 @@ body::-webkit-scrollbar-track {
 .progress-90  { width: 90%; }
 .progress-95  { width: 95%; }
 .progress-100 { width: 100%; }
+
+
 
