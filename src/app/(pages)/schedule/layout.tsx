@@ -17,7 +17,7 @@ const ScheduleLayout = ({ children }: { children: React.ReactNode }) => {
         >
             <Toaster richColors position="top-right" expand={false} theme="dark" className="app-toaster" />
             <SidebarSchedule>
-                <div className="px-10 mb-10">
+                <div className="px-6 mb-10">
                     {children}
                 </div>
             </SidebarSchedule>
