@@ -8,3 +8,4 @@ export * from "./dateInput";
 export * from "./hoverCard";
 export * from "./hoverClickCard";
 export * from "./InfiniteSpinner";
+export * from "./rich-text";
