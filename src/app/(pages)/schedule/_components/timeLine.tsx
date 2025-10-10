@@ -4,14 +4,20 @@ import { CloudIcon, MoonIcon, MorningIcon, StarIcon, SunIcon } from "@/component
 import { Button } from "@/components/ui";
 import { useEffect, useState } from "react";
 import styles from "./timeLine.module.css";
-const TimeLine = () => {
+
+interface TimeLineProps {
+  activeTime: string | null;
+  setActiveTime: (time: string | null) => void;
+}
+
+const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   const ButtonActive =
     "border-2 p-5 w-15 h-15 rounded-full bg-[#0B1120] hover:scale-120 hover:bg-[#0B1120] border-blue-400 text-white";
   const timeLineTitle = "absolute right-10 text-xs font-semibold";
   const timeLineHour = "absolute left-10 w-22 text-xs font-semibold";
   const [percent, setPercent] = useState(0);
   const [highlight, setHighlight] = useState<null | string>(null);
-  const [activeTime, setActiveTime] = useState<null | string>(null);
+
 
   useEffect(() => {
     const updateHighlight = () => {
@@ -20,22 +26,19 @@ const TimeLine = () => {
       else if (hour >= 11 && hour <= 14) setHighlight("afternoon");
       else if (hour >= 15 && hour <= 18) setHighlight("evening");
       else if (hour >= 19 && hour <= 22) setHighlight("night");
-      else setHighlight("midnight"); // 23:00 → 5:59
+      else setHighlight("midnight");
     };
     updateHighlight();
     const timer = setInterval(updateHighlight, 60 * 1000);
     return () => clearInterval(timer);
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     const updatePosition = () => {
       const now = new Date();
       const minutes = now.getHours() * 60 + now.getMinutes();
-
-      // phút từ 6:00 (anchor) theo chu kỳ 24h
-      const minutesFromSix = (minutes - 6 * 60 + 1440) % 1440; 
-      const percentOfCycle = (minutesFromSix / 1440) * 100;  
-
+      const minutesFromSix = (minutes - 6 * 60 + 1440) % 1440;
+      const percentOfCycle = (minutesFromSix / 1440) * 100;
       setPercent(percentOfCycle);
     };
 
@@ -46,23 +49,23 @@ useEffect(() => {
 
 
   const handleMorningClick = () => {
-    setActiveTime((prev) => (prev === "morning" ? null : "morning"));
+    setActiveTime(activeTime === "morning" ? null : "morning");
   };
 
   const handleAfternoonClick = () => {
-    setActiveTime((prev) => (prev === "afternoon" ? null : "afternoon"));
+    setActiveTime(activeTime === "afternoon" ? null : "afternoon");
   };
 
   const handleEveningClick = () => {
-    setActiveTime((prev) => (prev === "evening" ? null : "evening"));
+    setActiveTime(activeTime === "evening" ? null : "evening");
   };
 
   const handleNightClick = () => {
-    setActiveTime((prev) => (prev === "night" ? null : "night"));
+    setActiveTime(activeTime === "night" ? null : "night");
   };
 
   const handleMidnightClick = () => {
-    setActiveTime((prev) => (prev === "midnight" ? null : "midnight"));
+    setActiveTime(activeTime === "midnight" ? null : "midnight");
   };
 
   const items = [
@@ -108,7 +111,6 @@ useEffect(() => {
     },
   ];
   const percentStep = Math.max(0, Math.min(100, Math.round(percent / 5) * 5));
-
   const bgFilter = "!bg-[#CED0D2] text-black";
   const bgHighlight =
     "bg-[#2A97EA] animate-[glow-blue_2s_infinite_ease-in-out] hover:bg-[#2A97EA] text-black";
@@ -117,7 +119,7 @@ useEffect(() => {
     <div className="pr-8">
       <div className="relative flex flex-col gap-30 items-center h-full">
         <div className="absolute left-1/2 -translate-x-1/2 w-[3px] bg-blue-500 h-250" />
-          <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-250 bg-blue-500">
+        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-250 bg-blue-500">
           <div className={`${styles.progress} ${styles[`p-${percentStep}`]}`} />
         </div>
 
