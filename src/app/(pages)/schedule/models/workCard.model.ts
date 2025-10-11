@@ -5,6 +5,7 @@ export interface WorkLabelModel {
     color: string
 }
 export interface WorkCardModel {
+    id: string;
     title: string;
     start_time: string,
     end_time: string,
