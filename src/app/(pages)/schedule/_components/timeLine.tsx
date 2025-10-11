@@ -4,10 +4,11 @@ import { CloudIcon, MoonIcon, MorningIcon, StarIcon, SunIcon } from "@/component
 import { Button } from "@/components/ui";
 import { useEffect, useState } from "react";
 import styles from "./timeLine.module.css";
+import { DaySection } from "../constant/common";
 
 interface TimeLineProps {
-  activeTime: string | null;
-  setActiveTime: (time: string | null) => void;
+  activeTime: DaySection | null;
+  setActiveTime: (time: DaySection | null) => void;
 }
 
 const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
@@ -16,17 +17,17 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   const timeLineTitle = "absolute right-10 text-xs font-semibold";
   const timeLineHour = "absolute left-10 w-22 text-xs font-semibold";
   const [percent, setPercent] = useState(0);
-  const [highlight, setHighlight] = useState<null | string>(null);
+  const [highlight, setHighlight] = useState<null | DaySection>(null);
 
 
   useEffect(() => {
     const updateHighlight = () => {
       const hour = new Date().getHours();
-      if (hour >= 6 && hour <= 10) setHighlight("morning");
-      else if (hour >= 11 && hour <= 14) setHighlight("afternoon");
-      else if (hour >= 15 && hour <= 18) setHighlight("evening");
-      else if (hour >= 19 && hour <= 22) setHighlight("night");
-      else setHighlight("midnight");
+      if (hour >= 6 && hour <= 10) setHighlight(DaySection.morning);
+      else if (hour >= 11 && hour <= 14) setHighlight(DaySection.afternoon);
+      else if (hour >= 15 && hour <= 18) setHighlight(DaySection.evening);
+      else if (hour >= 19 && hour <= 22) setHighlight(DaySection.night);
+      else setHighlight(DaySection.midnight);
     };
     updateHighlight();
     const timer = setInterval(updateHighlight, 60 * 1000);
@@ -48,66 +49,50 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   }, []);
 
 
-  const handleMorningClick = () => {
-    setActiveTime(activeTime === "morning" ? null : "morning");
-  };
-
-  const handleAfternoonClick = () => {
-    setActiveTime(activeTime === "afternoon" ? null : "afternoon");
-  };
-
-  const handleEveningClick = () => {
-    setActiveTime(activeTime === "evening" ? null : "evening");
-  };
-
-  const handleNightClick = () => {
-    setActiveTime(activeTime === "night" ? null : "night");
-  };
-
-  const handleMidnightClick = () => {
-    setActiveTime(activeTime === "midnight" ? null : "midnight");
-  };
+  const handleTimeClick = (section: DaySection) => {
+  setActiveTime(activeTime === section ? null : section);
+};
 
   const items = [
     {
-      key: "morning",
+      key: DaySection.morning,
       label: "Sáng",
       hour: "6:00-10:00",
       icon: <MorningIcon className="!w-11 !h-20 " />,
       glow: "hover:animate-[glow-blue_2s_infinite_ease-in-out]",
-      onClick: handleMorningClick,
+      onClick: () => handleTimeClick(DaySection.morning),
     },
     {
-      key: "afternoon",
+      key: DaySection.afternoon,
       label: "Trưa",
       hour: "11:00-14:00",
       icon: <SunIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-yellow_2s_infinite_ease-in-out]",
-      onClick: handleAfternoonClick,
+      onClick: () => handleTimeClick(DaySection.afternoon),
     },
     {
-      key: "evening",
+      key: DaySection.evening,
       label: "Chiều",
       hour: "15:00-18:00",
       icon: <CloudIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-red_2s_infinite_ease-in-out]",
-      onClick: handleEveningClick,
+      onClick: () => handleTimeClick(DaySection.evening),
     },
     {
-      key: "night",
+      key: DaySection.night,
       label: "Tối",
       hour: "19:00-22:00",
       icon: <MoonIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-purple_2s_infinite_ease-in-out]",
-      onClick: handleNightClick,
+      onClick: () => handleTimeClick(DaySection.night),
     },
     {
-      key: "midnight",
+      key: DaySection.midnight,
       label: "Khuya",
       hour: "23:00-5:00",
       icon: <StarIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-midnight_2s_infinite_ease-in-out]",
-      onClick: handleMidnightClick,
+      onClick: () => handleTimeClick(DaySection.midnight),
     },
   ];
   const percentStep = Math.max(0, Math.min(100, Math.round(percent / 5) * 5));
