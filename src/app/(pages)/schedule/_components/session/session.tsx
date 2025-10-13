@@ -22,21 +22,21 @@ const Session = ({ morningTasks = [], afternoonTasks = [], eveningTasks = [], ni
     <div className="flex flex-col gap-10">
 
       {
-        (activeSession === DaySection.morning || activeSession === null) && (<SessionBlock icon={<MorningIcon className="!w-6 !h-6" />} title="Sáng" time="6:00 - 10:00" tasks={morningTasks} />)
+        (activeSession === DaySection.MORNING || activeSession === null) && (<SessionBlock icon={<MorningIcon className="!w-6 !h-6" />} title="Sáng" time="6:00 - 10:00" tasks={morningTasks} />)
       }
       {
-        (activeSession === DaySection.afternoon || activeSession === null) && (<SessionBlock icon={<SunIcon className="!w-6 !h-6" />} title="Trưa" time="10:00 - 14:00" tasks={afternoonTasks} />)
+        (activeSession === DaySection.AFTERNOON || activeSession === null) && (<SessionBlock icon={<SunIcon className="!w-6 !h-6" />} title="Trưa" time="10:00 - 14:00" tasks={afternoonTasks} />)
       }
       {
-        (activeSession === DaySection.evening || activeSession === null) && (<SessionBlock icon={<CloudIcon className="!w-6 !h-6" />} title="Chiều" time="14:00 - 18:00" tasks={eveningTasks} />)
-      }
-
-      {
-        (activeSession === DaySection.night || activeSession === null) && (<SessionBlock icon={<MoonIcon className="!w-6 !h-6" />} title="Tối" time="18:00 - 22:00" tasks={nightTasks} />)
+        (activeSession === DaySection.EVENING || activeSession === null) && (<SessionBlock icon={<CloudIcon className="!w-6 !h-6" />} title="Chiều" time="14:00 - 18:00" tasks={eveningTasks} />)
       }
 
       {
-        (activeSession === DaySection.midnight || activeSession === null) && (<SessionBlock icon={<StarIcon className="!w-6 !h-6" />} title="Đêm" time="22:00 - 2:00" tasks={midnightTasks} />)
+        (activeSession === DaySection.NIGHT || activeSession === null) && (<SessionBlock icon={<MoonIcon className="!w-6 !h-6" />} title="Tối" time="18:00 - 22:00" tasks={nightTasks} />)
+      }
+
+      {
+        (activeSession === DaySection.MIDNIGHT || activeSession === null) && (<SessionBlock icon={<StarIcon className="!w-6 !h-6" />} title="Khuya" time="22:00 - 2:00" tasks={midnightTasks} />)
       }
 
     </div>
