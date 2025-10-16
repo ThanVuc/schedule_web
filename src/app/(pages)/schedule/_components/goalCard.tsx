@@ -8,13 +8,9 @@ interface ScheduleCardProps {
   workCard: WorkCardModel;
 }
 
-
-const WorkCard = ({ workCard }: ScheduleCardProps) => {
-  const Draft = workCard.labels.find(label => label.name === "DRAFT");
-
-
+const GoalCard = ({ workCard }: ScheduleCardProps) => {
   return (
-    <Card className={`w-full sm:w-260 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4 ${Draft ?  "border-[#E879F9]/70" :"border-[#00C8FF]/70"}`}>
+    <Card className="w-full sm:w-290 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4 border-[#00C8FF]/70">
       <div className="px-1 sm:px-3 py-2 flex flex-col gap-2 sm:gap-3">
         <div className="flex sm:flex-row justify-between sm:items-center mb-2 border-b-2 border-slate-600 gap-2 pb-2">
           <p className="text-[#98D9F1] font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left">
@@ -25,17 +21,10 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
           </div>
         </div>
         <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
-          {
-            Draft && <Label label={Draft.name} icon={Draft.icon} color={Draft.color} />
-          }
           <Time Begin={workCard.start_time} End={workCard.end_time} />
-          {workCard.labels.filter(label => label.name !== "DRAFT").map(label => {
+          {workCard.labels.map(label => {
             return <Label key={label.id} label={label.name} icon={label.icon} color={label.color} />;
           })}
-        </div>
-        <div className="flex flex-col sm:flex-row sm:gap-2">
-          <p className="font-bold italic text-sm text-white">Mục tiêu:</p>
-          <p className="text-[#AFEEBF] font-light italic text-sm">{workCard.goal}</p>
         </div>
         <div className="flex flex-col sm:flex-row sm:gap-2">
           <p className="font-bold italic text-sm text-white">Mô tả ngắn:</p>
@@ -46,4 +35,4 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
   );
 };
 
-export default WorkCard;
+export default GoalCard;

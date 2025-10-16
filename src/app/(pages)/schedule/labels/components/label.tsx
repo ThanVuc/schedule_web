@@ -1,3 +1,4 @@
+import { useLabelIcon } from "@/hooks/useLabelIcon";
 
 interface LabelProps {
     label: string;
@@ -6,6 +7,7 @@ interface LabelProps {
 }
 
 const Label = ({ label, icon, color }: LabelProps) => {
+    const IconComponent = useLabelIcon(icon);
     return (
         <div
             className="flex justify-center gap-2 p-1 text-sm rounded-md border-2"
@@ -15,7 +17,7 @@ const Label = ({ label, icon, color }: LabelProps) => {
                 borderColor: color,
             }}
         >
-            {icon}
+            {IconComponent && <IconComponent />}
             {label}
         </div>
     );

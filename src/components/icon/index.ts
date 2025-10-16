@@ -62,3 +62,4 @@ export * from "./assignment";
 export * from "./assign";
 export * from "./unHappy";
 export * from "./loop";
+export * from "./document"
