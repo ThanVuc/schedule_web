@@ -1,6 +1,6 @@
 "use client";
 
-import { AddIcon, TargetIcon } from "@/components/icon";
+import { PlusIcon, TargetIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
 
 
@@ -17,7 +17,7 @@ const TargetManagementPage = () => {
             <div>
                 <div>
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center">
-                    <AddIcon className="!w-5 !h-5" />
+                        <PlusIcon className="w-5 h-5" />
                         Tạo mục tiêu
                     </Button>
                 </div>
