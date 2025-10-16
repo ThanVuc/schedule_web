@@ -55,3 +55,4 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
 }
 
 export default SidebarSchedule;
+
