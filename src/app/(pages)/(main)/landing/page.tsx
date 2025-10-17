@@ -4,10 +4,10 @@ export const metadata = {
     description: 'Ứng dụng lịch trình của bạn',
 }
 
-const LanningPage = () => {
+const LandingPage = () => {
     return (
         <></>
     );
 }
 
-export default LanningPage;
+export default LandingPage;
