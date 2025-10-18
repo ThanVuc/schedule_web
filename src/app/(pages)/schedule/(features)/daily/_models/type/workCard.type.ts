@@ -2,7 +2,8 @@ export interface WorkLabelModel {
     id: string,
     name: string,
     icon: string,
-    color: string
+    color: string,
+    KEY: string
 }
 export interface WorkCardModel {
     id: string;
