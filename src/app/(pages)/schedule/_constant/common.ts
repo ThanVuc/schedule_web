@@ -5,6 +5,3 @@ export enum DaySection {
     NIGHT = 4,
     MIDNIGHT = 5
 }
-export enum DraftLabel {
-    DRAFT = "DRAFT"
-}

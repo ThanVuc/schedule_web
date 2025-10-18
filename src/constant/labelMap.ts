@@ -1,11 +1,11 @@
-import { FamilyIcon, TeamIcon, FinanceIcon, SpeedLoopIcon ,DocumentIcon , HealthIcon, SocialIcon, TravelIcon, DoneIcon, Circle, Progress, AssignmentIcon, UnHappy, LoopIcon, PlantIcon, BookIcon, WorkIcon, DateIcon } from '@/components/icon';
+import { FamilyIcon, FinanceIcon, SpeedLoopIcon ,DocumentIcon , HealthIcon, SocialIcon, TravelIcon, DoneIcon, Circle, Progress, AssignmentIcon, UnHappy, LoopIcon, PlantIcon, BookIcon, WorkIcon } from '@/components/icon';
 import type { FC, SVGProps } from 'react';
 
 export const LABEL_ICON_MAP: Record<string, FC<SVGProps<SVGSVGElement>>> = {
   // Work Type
   "REPEATED": LoopIcon,
-  "DAILY": DateIcon,
-  "GROUP": TeamIcon,
+  "DAILY": FamilyIcon,
+  "GROUP": FinanceIcon,
 
   // Status
   "PENDING": Circle,
@@ -29,7 +29,6 @@ export const LABEL_ICON_MAP: Record<string, FC<SVGProps<SVGSVGElement>>> = {
   "WORK": WorkIcon,
   "PERSONAL": PlantIcon,
   "STUDY": BookIcon,
-  "FAMILY": FamilyIcon,
   "FINANCE": FinanceIcon,
   "HEALTH": HealthIcon,
   "SOCIAL": SocialIcon,

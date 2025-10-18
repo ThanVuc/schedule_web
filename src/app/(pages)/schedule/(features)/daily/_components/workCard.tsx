@@ -3,14 +3,13 @@ import { WorkCategory, WorkLabel, WorkTime } from "../../../_components";
 import { WorkCardModel } from "../_models/type";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
-import { DraftLabel } from "../../../_constant/common";
 
 interface ScheduleCardProps {
   workCard: WorkCardModel;
 }
 
 const WorkCard = ({ workCard }: ScheduleCardProps) => {
-  const Draft = workCard.labels.find(label => label.KEY === DraftLabel.DRAFT);
+  const Draft = workCard.labels.find(label => label.name === "DRAFT");
 
   return (
     <ContextMenu>
@@ -30,7 +29,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                 Draft && <WorkLabel label={Draft.name} icon={Draft.icon} color={Draft.color} />
               }
               <WorkTime Begin={workCard.start_time} End={workCard.end_time} />
-              {workCard.labels.filter(label => label.KEY !== DraftLabel.DRAFT).map(label => {
+              {workCard.labels.filter(label => label.name !== "DRAFT").map(label => {
                 return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} />;
               })}
             </div>
@@ -49,6 +48,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
           <ContextMenuItem className="border-b rounded-none"><PencilIcon className="!text-[#E8DC73]" /> Chỉnh sửa</ContextMenuItem>
           <ContextMenuItem className="border-b rounded-none"><TrashIcon className="!text-[#FF4848]" /> Xóa</ContextMenuItem>
         </ContextMenuContent>
+
       </ContextMenuTrigger>
     </ContextMenu>
   );
