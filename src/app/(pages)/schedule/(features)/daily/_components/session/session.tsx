@@ -1,8 +1,8 @@
 import { CloudIcon, MoonIcon, MorningIcon, StarIcon, SunIcon } from "@/components/icon";
-import { WorkCardModel } from "../../../../_models/workCard.model";
 import SessionBlock from "./blockSession";
 import { useEffect, useState } from "react";
 import { DaySection } from "../../../../_constant/common";
+import { WorkCardModel } from "../../_models/type";
 interface SessionProps {
   morningTasks?: WorkCardModel[];
   afternoonTasks?: WorkCardModel[];

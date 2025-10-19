@@ -64,3 +64,6 @@ export * from "./unHappy";
 export * from "./loop";
 export * from "./document";
 export * from "./add";
+export * from "./fourStar";
+export * from "./down"
+export * from "./filter"
