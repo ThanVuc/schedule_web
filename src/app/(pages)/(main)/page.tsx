@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const RootPage = () => {
-    redirect("/laning");
+    redirect("/landing");
 }
 
 export default RootPage;

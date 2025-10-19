@@ -3,8 +3,7 @@
 import { AddIcon, TargetIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
 import { Title } from "../../_components/title";
-
-
+import { DateTimePicker } from "@/components/common/dateTimePicker";
 const TargetManagementPage = () => {
 
   return (
@@ -24,7 +23,7 @@ const TargetManagementPage = () => {
             </div>
         </div>
         <div className="p-2 flex flex-wrap gap-3 justify-center">
-          
+          <DateTimePicker defaultValue={1609459200000}/>
         </div>
     </>
   );
