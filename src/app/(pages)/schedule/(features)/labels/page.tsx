@@ -1,9 +1,17 @@
+import { LabelIcon } from "@/components/icon";
 import { Title } from "../../_components/title";
+import { Instruct } from "./_components/cardInstruct";
+import { CardTypeLabel } from "./_components/cardTypeLabel";
 
 const LabelInformationPage = () => {
     return (
-        <div>
-            <Title>Thông Tin Nhãn Dán</Title>
+        <div className="flex flex-col size-auto gap-6">
+            <div className="flex gap-2 items-center pt-6 px-4">
+                <Title>Thông Tin Nhãn Dán</Title>
+                <LabelIcon />
+            </div>
+            <CardTypeLabel />
+            <Instruct />
         </div>
     )
 }
