@@ -33,7 +33,7 @@ const DailySchedulePage = () => {
                     </div>
                 </div>
                 <div>
-                    <Session afternoonTasks={[]} eveningTasks={[]} nightTasks={[]} midnightTasks={[]} morningTasks={[]} session={activeTime} />
+                    <Session morningTasks={[]} afternoonTasks={[]} eveningTasks={[]} nightTasks={[]} midnightTasks={[]} session={activeTime} />
                 </div>
             </div>
         </div>

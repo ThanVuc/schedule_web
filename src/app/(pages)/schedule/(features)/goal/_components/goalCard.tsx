@@ -15,13 +15,13 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
             {GoalCard.title}
           </p>
           <div className="flex justify-center sm:justify-end">
-            <WorkCategory label={GoalCard.category.name} icon={GoalCard.category.icon} color={GoalCard.category.color} />
+            <WorkCategory label={GoalCard.category.name} icon={GoalCard.category.icon} color={GoalCard.category.color} label_type={GoalCard.category.label_type} />
           </div>
         </div>
         <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
           <WorkTime Begin={GoalCard.start_time} End={GoalCard.end_time} />
           {GoalCard.labels.map(label => {
-            return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} />;
+            return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} label_type={label.label_type} />;
           })}
         </div>
         <div className="flex flex-col sm:flex-row sm:gap-2">
