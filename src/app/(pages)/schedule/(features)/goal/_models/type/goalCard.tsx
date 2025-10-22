@@ -2,7 +2,9 @@ export interface GoalLabelModel {
     id: string,
     name: string,
     icon: string,
-    color: string
+    color: string,
+    key: string,
+    label_type: number;
 }
 export interface GoalCardModel {
     id: string;

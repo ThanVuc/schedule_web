@@ -10,7 +10,7 @@ interface ScheduleCardProps {
 }
 
 const WorkCard = ({ workCard }: ScheduleCardProps) => {
-  const Draft = workCard.labels.find(label => label.KEY === DraftLabel.DRAFT);
+  const Draft = workCard.labels.find(label => label.key === DraftLabel.DRAFT);
 
   return (
     <ContextMenu>
@@ -22,16 +22,16 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                 {workCard.title}
               </p>
               <div className="flex justify-center sm:justify-end">
-                <WorkCategory label={workCard.category.name} icon={workCard.category.icon} color={workCard.category.color} />
+                <WorkCategory label={workCard.category.name} icon={workCard.category.icon} color={workCard.category.color} label_type={workCard.category.label_type} />
               </div>
             </div>
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
               {
-                Draft && <WorkLabel label={Draft.name} icon={Draft.icon} color={Draft.color} />
+                Draft && <WorkLabel label={Draft.name} icon={Draft.icon} color={Draft.color} label_type={Draft.label_type} />
               }
               <WorkTime Begin={workCard.start_time} End={workCard.end_time} />
-              {workCard.labels.filter(label => label.KEY !== DraftLabel.DRAFT).map(label => {
-                return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} />;
+              {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).map(label => {
+                return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} label_type={label.label_type} />;
               })}
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2">
