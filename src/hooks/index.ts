@@ -6,3 +6,5 @@ export * from "./use-mobile";
 export * from "./useConfirmAlertDialog";
 export * from "./useLogout";
 export * from "./usePermission";
+export * from "./useLabelIcon";
+export * from "./use-ipad";

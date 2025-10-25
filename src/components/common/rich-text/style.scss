@@ -1,0 +1,51 @@
+$toolbar-bg: #1e293b;
+$toolbar-hover: #334155;
+$toolbar-text: #f1f5f9;
+$toolbar-active: #3b82f6;
+
+.editor-toolbar {
+  background-color: $toolbar-bg !important;
+  border: none !important;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+
+  button {
+    color: $toolbar-text !important;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: $toolbar-hover !important;
+      color: white !important;
+      transform: scale(1.05);
+    }
+
+    &.active {
+      background: $toolbar-active !important;
+      color: white !important;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.CodeMirror {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 0.5rem;
+  border: none !important;
+}
+
+.CodeMirror-cursor {
+  border-left: 2px solid #3b82f6 !important;
+}
+
+.CodeMirror-empty .CodeMirror-line::before {
+  color: #94a3b8 !important;
+  font-style: italic;
+}

@@ -20,8 +20,8 @@ export interface AddUserProps {
 
 const buttonProps = {
     view: {
-        title: "Xem Vai Trò",
-        description: "Thông tin chi tiết về vai trò",
+        title: "Xem thông tin người dùng",
+        description: "Thông tin chi tiết về người dùng",
         submitButtonText: null,
         cancelButtonText: "Đóng",
     },

@@ -107,7 +107,7 @@ body::-webkit-scrollbar-track {
 }
 
 .dark {
-  --background: #0B1120;
+  --background: #080C16;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -188,6 +188,20 @@ body::-webkit-scrollbar-track {
   .animate-bounce-in {
     animation: bounce-in 0.5s ease-out forwards;
   }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* in */
@@ -376,7 +390,6 @@ body::-webkit-scrollbar-track {
   }
 }
 
-/* Keyframes chung */
 @keyframes progressGrow {
   from {
     width: 0%;
@@ -386,7 +399,6 @@ body::-webkit-scrollbar-track {
   }
 }
 
-/* Progress bar base */
 .progress-bar {
   height: 10px;
   background-color: #14FA61;
@@ -394,7 +406,6 @@ body::-webkit-scrollbar-track {
   transition: width 1s ease-out;
 }
 
-/* Các mức width theo class getProgressClass */
 .progress-0   { width: 0%; }
 .progress-5   { width: 5%; }
 .progress-10  { width: 10%; }
@@ -416,4 +427,6 @@ body::-webkit-scrollbar-track {
 .progress-90  { width: 90%; }
 .progress-95  { width: 95%; }
 .progress-100 { width: 100%; }
+
+
 

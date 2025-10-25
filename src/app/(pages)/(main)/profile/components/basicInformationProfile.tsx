@@ -29,12 +29,13 @@ interface BasicInformationProfileProps {
     onCancel?: () => void
     trigger?: React.ReactNode
     onSubmit?: () => void
+    refetch?: () => void
 }
 
-const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit }: BasicInformationProfileProps) => {
+const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit, refetch }: BasicInformationProfileProps) => {
     return (
         <div className=" text-white w-full max-w-5xl mx-auto p-4 rounded-2xl shadow-md border border-[#ffff]/10">
-            <h2 className="text-2xl font-semibold mb-6">Tiểu sử & Chi tiết khác
+            <h2 className="text-2xl font-semibold mb-6 flex justify-between">Tiểu sử & Chi tiết khác
                 {trigger}
                 {isEditing && (<div className="flex justify-end space-x-2">
                     <Button
@@ -45,7 +46,14 @@ const BasicInformationProfile = ({ form, isEditing, onCancel, trigger, onSubmit 
                     >
                         Lưu
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => onCancel && onCancel()}>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                            if (onCancel) onCancel();
+                            if (refetch) refetch();
+                        }}
+                    >
                         Hủy
                     </Button>
                 </div>)}

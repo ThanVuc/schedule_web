@@ -1,0 +1,149 @@
+.progress {
+  width: 100%;
+  background: #0B1120; 
+  transform-origin: top;
+  transition: height 200ms linear;
+  height: 0%;
+}
+
+.p-0   { height: 0%; }
+.p-5   { height: 5%; }
+.p-10  { height: 10%; }
+.p-15  { height: 15%; }
+.p-20  { height: 20%; }
+.p-25  { height: 25%; }
+.p-30  { height: 30%; }
+.p-35  { height: 35%; }
+.p-40  { height: 40%; }
+.p-45  { height: 45%; }
+.p-50  { height: 50%; }
+.p-55  { height: 55%; }
+.p-60  { height: 60%; }
+.p-65  { height: 65%; }
+.p-70  { height: 70%; }
+.p-75  { height: 75%; }
+.p-80  { height: 80%; }
+.p-85  { height: 85%; }
+.p-90  { height: 90%; }
+.p-95  { height: 95%; }
+.p-100 { height: 100%; }
+
+
+.glow-yellow:hover {
+  animation: glow-yellow 2s infinite ease-in-out;
+}
+
+.glow-yellow {
+  animation: glow-yellow 2s infinite ease-in-out;
+}
+.glow-blue:hover {
+  animation: glow-blue 2s infinite ease-in-out;
+}
+.glow-blue {
+  animation: glow-blue 2s infinite ease-in-out;
+}
+.glow-purple:hover {
+  animation: glow-purple 2s infinite ease-in-out;
+}
+
+.glow-purple {
+  animation: glow-purple 2s infinite ease-in-out;
+}
+
+.glow-red:hover {
+  animation: glow-red 2s infinite ease-in-out;
+}
+.glow-red {
+  animation: glow-red 2s infinite ease-in-out;
+}
+
+.glow-midnight:hover {
+  animation: glow-midnight 2s infinite ease-in-out;
+}
+.glow-midnight {
+  animation: glow-midnight 2s infinite ease-in-out;
+}
+.glow-green:hover {
+  animation: glow-green 2s infinite ease-in-out;
+}
+.glow-green {
+  animation: glow-green 2s infinite ease-in-out;
+}
+
+
+@keyframes glow-yellow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(136, 114, 27, 0.9))
+            drop-shadow(0 0 2px rgba(46, 38, 4, 0.9))
+            drop-shadow(0 0 3px rgba(68, 55, 5, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgb(124, 103, 21))
+            drop-shadow(0 0 4px rgb(103, 83, 4))
+            drop-shadow(0 0 5px rgba(158, 131, 23, 0.9));
+  }
+}
+@keyframes glow-blue {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.8))
+            drop-shadow(0 0 2px rgba(59, 130, 246, 0.9))
+            drop-shadow(0 0 3px rgba(59, 130, 246, 1));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 1))
+            drop-shadow(0 0 4px rgba(59, 130, 246, 1))
+            drop-shadow(0 0 5px rgba(59, 130, 246, 1));
+  }
+}
+
+@keyframes glow-purple {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(168, 85, 247, 0.8))
+            drop-shadow(0 0 2px rgba(168, 85, 247, 0.9))
+            drop-shadow(0 0 3px rgba(168, 85, 247, 1));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(168, 85, 247, 1))
+            drop-shadow(0 0 4px rgba(168, 85, 247, 1))
+            drop-shadow(0 0 5px rgba(168, 85, 247, 1));
+  }
+}
+
+@keyframes glow-red {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(230, 110, 110, 0.8))
+            drop-shadow(0 0 2px rgba(242, 101, 101, 0.9))
+            drop-shadow(0 0 3px rgb(243, 119, 119));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgb(221, 109, 109))
+            drop-shadow(0 0 4px rgb(231, 117, 117))
+            drop-shadow(0 0 5px rgb(243, 124, 124));
+  }
+}
+
+@keyframes glow-midnight {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(6, 182, 212, 0.8))   
+            drop-shadow(0 0 2px rgba(6, 182, 212, 0.9))   
+            drop-shadow(0 0 3px rgba(6, 182, 212, 1));   
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(6, 182, 212, 1))
+            drop-shadow(0 0 4px rgba(6, 182, 212, 1))
+            drop-shadow(0 0 5px rgba(6, 182, 212, 1));
+  }
+}
+@keyframes glow-green {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(34, 197, 94, 0.8))   
+            drop-shadow(0 0 2px rgba(34, 197, 94, 0.9))   
+            drop-shadow(0 0 3px rgba(34, 197, 94, 1));   
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(34, 197, 94, 1))
+            drop-shadow(0 0 4px rgba(34, 197, 94, 1))
+            drop-shadow(0 0 5px rgba(34, 197, 94, 1));
+  }
+}
+
