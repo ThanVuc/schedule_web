@@ -4,23 +4,24 @@ interface LabelProps {
     label: string;
     icon: string;
     color: string;
-    width?: number;
-    height?: number;
+    widthIcon?: number;
+    heightIcon?: number;
+    textSize?: string
 }
 
-const Label = ({ label, icon, color, width=4, height=4 }: LabelProps) => {
+const Label = ({ label, icon, color, widthIcon, heightIcon, textSize }: LabelProps) => {
     const IconComponent = useLabelIcon(icon);
     return (
         <div className="flex w-full">
             <div
-                className="flex w-full justify-center gap-1 p-1 text-sm rounded-md border-2 items-center"
+                className={`flex justify-center gap-1 p-1 text-${textSize} rounded-md border-2 items-center`}
                 style={{
                     color: color,
                     backgroundColor: `${color}20`,
                     borderColor: color,
                 }}
             >
-                {IconComponent && <IconComponent className={`!w-${width} !h-${height} text-[${color}]`} />}
+                {IconComponent && <IconComponent className={`w-${widthIcon} !h-${heightIcon} text-[${color}]`} />}
                 {label}
             </div>
         </div>
