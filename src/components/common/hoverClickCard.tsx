@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsMobile } from "@/hooks";
+import { useIsIpad, useIsMobile } from "@/hooks";
 import { AppClickCard } from "./clickCardMobile";
 import { AppHoverCard } from "./hoverCard";
 
@@ -26,10 +26,11 @@ export const AppHoverClickCard = ({
     className = "w-80"
 }: AppHoverClickCardProps) => {
     const isMobile = useIsMobile();
+    const isIpad = useIsIpad();
 
     return (
         <div>
-            {isMobile ? (
+            {isMobile || isIpad ? (
                 <AppClickCard
                     trigger={trigger}
                     avatarSrc={avatarSrc}
