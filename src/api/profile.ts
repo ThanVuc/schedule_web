@@ -6,6 +6,7 @@ const createAPI = (url: string) => `${globalConfig.ApiUrlBase}${url}`;
 export const profileApiUrl = {
     getUserProfile: createAPI('profile'),
     updateUserProfile: createAPI('profile/update'),
+    getPresignedUrl: createAPI('users/avatar-presigned-url'),
 }
 
 export default profileApiUrl

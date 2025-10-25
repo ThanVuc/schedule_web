@@ -11,5 +11,16 @@ export interface Profile {
     updated_at: number;
     sentence: string;
     author: string;
-    profile_completed_percentage:number
+    profile_completed_percentage: number
+}
+
+export interface PresignedUrlRequest {
+    public_url?: string
+    is_delete?: boolean
+}
+
+export interface PresignedUrlResponse {
+    presign_url: string
+    public_url: string
+    object_key: string
 }

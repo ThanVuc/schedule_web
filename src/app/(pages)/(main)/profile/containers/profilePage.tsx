@@ -52,6 +52,8 @@ return (
                     UpdateAt={formatDate(data?.updated_at)}
                     percentage={data?.profile_completed_percentage}
                     Name={data?.fullname || "No name"}
+                    url={data?.avatar_url}
+                    refetchProfile={refetch}
                 />
             </div>
             {data &&(<div className="lg:w-4/5 w-full space-y-6">

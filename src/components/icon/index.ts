@@ -68,3 +68,4 @@ export * from "./fourStar";
 export * from "./down"
 export * from "./filter"
 export * from "./calendar"
+export * from "./uploadIcon"
