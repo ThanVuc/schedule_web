@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui";
 import { useAxios } from "@/hooks";
 import Label from "../../../_components/label";
-import { Metadata, LabelPerType } from "../_models/type";
+import { LabelPerType, LabelsResponse } from "../_models/type";
 import LabelApiUrl from "@/api/label";
 
 export const CardTypeLabel = () => {
@@ -17,9 +17,9 @@ export const CardTypeLabel = () => {
         6: { name: "Bản nháp", title: "Lưu tạm thời các công việc trong hệ thống" }
     };
     const [openGroups, setOpenGroups] = useState<number[]>([]);
-    const { data, error, loading } = useAxios<Metadata>({
+    const { data, error, loading } = useAxios<LabelsResponse>({
         method: "GET",
-        url: LabelApiUrl.getInformationLabels
+        url: LabelApiUrl.getLabelInformation
     });
     const groups = useMemo<LabelPerType[]>(() => {
         return data?.label_per_types ?? [];

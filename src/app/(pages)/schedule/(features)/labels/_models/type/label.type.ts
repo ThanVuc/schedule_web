@@ -11,7 +11,7 @@ export interface LabelPerType{
     type: number,
     labels: ILabel[]
 };
-export interface Metadata {
+export interface LabelsResponse {
   label_per_types: LabelPerType[]
   error: any
 }
