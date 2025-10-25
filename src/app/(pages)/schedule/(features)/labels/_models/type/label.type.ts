@@ -7,7 +7,11 @@ export interface ILabel{
     label_type: number,
     key: string
 };
-export interface ILabelGroup{
+export interface LabelPerType{
     type: number,
     labels: ILabel[]
 };
+export interface Metadata {
+  label_per_types: LabelPerType[]
+  error: any
+}
