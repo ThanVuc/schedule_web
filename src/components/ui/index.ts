@@ -13,3 +13,5 @@ export * from "./command";
 export * from "./popover";
 export * from "./hover-card";
 export * from "./avatar";
+export * from "./separator";
+export * from "./progress";
