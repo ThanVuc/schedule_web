@@ -38,7 +38,7 @@ const ProfilePage = () => {
 
 
 return (
-    <div className="min-h-screen px-10 pb-10">
+    <div className="min-h-screen px-10 pb-10 pt-10">
         <div className="mb-6">
             <h1 className="text-3xl font-bold  text-white">Profile</h1>
             <p className="text-white text-sm mt-1 border-b-2 pb-4 border-dashed border-[#343538] ">
@@ -52,6 +52,8 @@ return (
                     UpdateAt={formatDate(data?.updated_at)}
                     percentage={data?.profile_completed_percentage}
                     Name={data?.fullname || "No name"}
+                    url={data?.avatar_url}
+                    refetchProfile={refetch}
                 />
             </div>
             {data &&(<div className="lg:w-4/5 w-full space-y-6">
