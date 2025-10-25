@@ -25,8 +25,8 @@ export const CardTypeLabel = () => {
         return data?.label_per_types ?? [];
     }, [data]);
 
-    if (loading) return (loading)
-    if (error) return (error)
+    if (loading) return null;
+    if (error) return null;
     if (!data) return null;
 
     return (
