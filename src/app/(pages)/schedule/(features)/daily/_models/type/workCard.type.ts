@@ -3,7 +3,8 @@ export interface WorkLabelModel {
     name: string,
     icon: string,
     color: string,
-    KEY: string
+    key: string,
+    label_type: number
 }
 export interface WorkCardModel {
     id: string;

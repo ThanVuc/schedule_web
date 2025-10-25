@@ -15,7 +15,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             >
                 <Toaster richColors position="top-right" expand={false} theme="dark" className="app-toaster" />
                 <StarBackground>
-                    <div className="pt-20 px-10 mb-10">
+                    <div className="pt-20">
                         <AppHeader />
                         {children}
                     </div>

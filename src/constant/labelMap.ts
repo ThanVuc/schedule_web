@@ -4,7 +4,7 @@ import type { FC, SVGProps } from 'react';
 export const LABEL_ICON_MAP: Record<string, FC<SVGProps<SVGSVGElement>>> = {
   // Work Type
   "REPEATED": LoopIcon,
-  "DAILY": DateIcon,
+  "IN_DAY": DateIcon,
   "GROUP": TeamIcon,
 
   // Status
@@ -12,7 +12,7 @@ export const LABEL_ICON_MAP: Record<string, FC<SVGProps<SVGSVGElement>>> = {
   "IN_PROGRESS": Progress,
   "COMPLETED": DoneIcon,
   "OVER_DUE": AssignmentIcon,
-  "CANCELLED": UnHappy,
+  "GIVE_UP": UnHappy,
   
   // Difficulty
   "EASY": SpeedLoopIcon,
