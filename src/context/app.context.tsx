@@ -6,6 +6,7 @@ import { MeProvider } from "./me.context";
 import { MeModel } from "@/models/me";
 import { useAxios } from "@/hooks";
 import { utilsApiUrl } from "@/api";
+import { useFirebaseMessaging } from "@/hooks/useFirbaseMessaging";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
     const [csrfToken, setCsrfToken] = useState<string>("");
@@ -27,6 +28,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         url: utilsApiUrl.getMe,
         method: 'GET',
     }, [csrfToken ?? null], !csrfToken);
+
+    useFirebaseMessaging(data);
 
     return (
         <CsrfProvider token={csrfToken}>
