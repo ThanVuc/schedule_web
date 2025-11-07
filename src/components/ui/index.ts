@@ -15,3 +15,4 @@ export * from "./hover-card";
 export * from "./avatar";
 export * from "./separator";
 export * from "./progress";
+export * from "./alert";

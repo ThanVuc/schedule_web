@@ -6,6 +6,7 @@ import { MeProvider } from "./me.context";
 import { MeModel } from "@/models/me";
 import { useAxios } from "@/hooks";
 import { utilsApiUrl } from "@/api";
+import { useFirebaseMessaging } from "@/hooks/useFirbaseMessaging";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
     const [csrfToken, setCsrfToken] = useState<string>("");
@@ -28,6 +29,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         method: 'GET',
     }, [csrfToken ?? null], !csrfToken);
 
+    const { NotificationComponent } = useFirebaseMessaging(data);
+
     return (
         <CsrfProvider token={csrfToken}>
             <MeProvider me={error || !data ? null : data} refetchMe={() => {
@@ -36,6 +39,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 }
             }}>
                 {children}
+                {NotificationComponent && (
+                    <div className="fixed top-4 right-4 z-[9999]">
+                        {NotificationComponent}
+                    </div>
+                )}
             </MeProvider>
         </CsrfProvider>
     );
