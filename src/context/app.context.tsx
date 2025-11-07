@@ -29,7 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         method: 'GET',
     }, [csrfToken ?? null], !csrfToken);
 
-    useFirebaseMessaging(data);
+    const { NotificationComponent } = useFirebaseMessaging(data);
 
     return (
         <CsrfProvider token={csrfToken}>
@@ -39,6 +39,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 }
             }}>
                 {children}
+                {NotificationComponent && (
+                    <div className="fixed top-4 right-4 z-[9999]">
+                        {NotificationComponent}
+                    </div>
+                )}
             </MeProvider>
         </CsrfProvider>
     );

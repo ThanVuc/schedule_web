@@ -14,14 +14,32 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// Handle background messages (when browser closed)
 messaging.onBackgroundMessage(function (payload) {
-    console.log("[firebase-messaging-sw.js] Received background message ", payload);
+    console.log("[Service Worker] Background message received:", payload);
 
-    const notificationTitle = payload.notification.title;
+    const { title, body } = payload.data;
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: null,
+        body,
+        icon: "/thumb.png",
     };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    self.registration.showNotification(title, notificationOptions);
+});
+
+// Handle notification clicks
+self.addEventListener("notificationclick", function (event) {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: "window" }).then(function (clientList) {
+            for (const client of clientList) {
+                if (client.url === "/" && "focus" in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow("/");
+            }
+        })
+    );
 });

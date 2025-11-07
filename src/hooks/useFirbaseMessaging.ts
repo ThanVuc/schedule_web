@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { messaging, getToken, onMessage } from "@/lib/firebase";
 import { globalConfig } from "@/global/global";
 import { MeModel } from "@/models";
+import { useAppNotification } from "./useNotification";
 
 export function useFirebaseMessaging(me?: MeModel | null) {
     const [fcmToken, setFcmToken] = useState<string | null>(null);
+    const {
+        showNotification,
+        NotificationComponent
+    } = useAppNotification();
 
     useEffect(() => {
-        console.log("🔔 Initializing Firebase Messaging...");
         if (!me) return; // User must be logged in
         if (!messaging) return;
 
@@ -48,15 +52,20 @@ export function useFirebaseMessaging(me?: MeModel | null) {
         // Listen for foreground messages
         const unsubscribe = onMessage(messaging, (payload) => {
             console.log("📩 Foreground message:", payload);
-
-            const { title, body } = payload.notification || {};
+            const { title, body, url, icon, src  } = payload.data || {};
             if (title && body) {
-                alert(`Notification: ${title}\n${body}`);
+                showNotification({
+                    title,
+                    body,
+                    url,
+                    icon,
+                    src,
+                });
             }
         });
 
         return unsubscribe;
-    }, [me]);
+    }, [me, showNotification]);
 
-    return fcmToken; // ✅ Return token so caller can use it if needed
+    return { fcmToken, NotificationComponent };
 }
