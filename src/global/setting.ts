@@ -2,6 +2,7 @@
 export interface GlobalConfig {
     ApiUrlBase: string;
     AppName: string;
+    GoogleClientId: string;
     FirebaseConfig: FirebaseConfig;
 }
 

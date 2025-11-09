@@ -2,6 +2,7 @@ import { GlobalConfig } from "./setting";
 
 export const globalConfig: GlobalConfig = {
     ApiUrlBase: process.env.NEXT_PUBLIC_API_URL_BASE ?? "http://localhost:3000/api/v1/",
+    GoogleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "",
     AppName: 'Schedulr',
     FirebaseConfig: {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
