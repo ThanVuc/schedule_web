@@ -1,5 +1,6 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GoogleLoginContainer from './container/googleLogin';
+import { globalConfig } from '@/global/global';
 
 export const metadata = {
     title: 'Đăng Nhập | Schedulr',
@@ -8,7 +9,7 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+    <GoogleOAuthProvider clientId={globalConfig.GoogleClientId || ''}>
         <GoogleLoginContainer />
     </GoogleOAuthProvider>
   );
