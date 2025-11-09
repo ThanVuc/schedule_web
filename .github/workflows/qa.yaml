@@ -27,10 +27,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
-            --build-arg NEXT_PUBLIC_API_URL_BASE=${{ secrets.NEXT_PUBLIC_API_URL_BASE }} \
-            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} \
-            -t ${{ env.IMAGE_NAME }} .
+          docker build -t $IMAGE_NAME .
 
       - name: Push Docker image
         run: docker push ${{ env.IMAGE_NAME }}
