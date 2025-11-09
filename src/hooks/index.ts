@@ -8,3 +8,4 @@ export * from "./useLogout";
 export * from "./usePermission";
 export * from "./useLabelIcon";
 export * from "./use-ipad";
+export * from "./useNotification";
