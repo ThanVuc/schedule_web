@@ -14,7 +14,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 
 interface DateTimePickerProps {
-  defaultValue?: number; 
+  title: string;
+  defaultValue?: number;
   onChange?: (date: Date) => void;
   icon?: React.ReactNode;
 }
@@ -22,6 +23,7 @@ interface DateTimePickerProps {
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   defaultValue,
   onChange,
+  title,
   icon,
 }) => {
   const parsedDate = defaultValue ? new Date(defaultValue) : new Date();
@@ -70,20 +72,31 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal !p-0",
             !date && "text-muted-foreground"
           )}
         >
-          {date ? (
-            format(date, "MM/dd/yyyy hh:mm aa")
-          ) : (
-            <span>MM/DD/YYYY hh:mm aa</span>
-          )}
-          {icon && <span className="ml-2">{icon}</span>}
+          <div className="flex h-full w-full">
+            {title && (
+              <div className="flex items-center  p-2 h-full border-r-2 pr-2 mr-2">
+                <span>{title}:</span>
+              </div>
+            )}
+
+            <div className="flex items-center w-full justify-between p-2">
+              {date ? (
+                format(date, "MM/dd/yyyy hh:mm aa")
+              ) : (
+                <span>MM/DD/YYYY hh:mm aa</span>
+              )}
+              {icon && <span className="ml-2">{icon}</span>}
+            </div>
+          </div>
         </Button>
+
       </PopoverTrigger>
 
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0 z-160">
         <div className="sm:flex">
           <Calendar
             mode="single"
@@ -145,8 +158,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     size="icon"
                     variant={
                       date &&
-                      ((ampm === "AM" && date.getHours() < 12) ||
-                        (ampm === "PM" && date.getHours() >= 12))
+                        ((ampm === "AM" && date.getHours() < 12) ||
+                          (ampm === "PM" && date.getHours() >= 12))
                         ? "default"
                         : "ghost"
                     }
