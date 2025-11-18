@@ -7,14 +7,15 @@ interface LabelProps {
     widthIcon?: number;
     heightIcon?: number;
     textSize?: string
+    className?: string;
 }
 
-const Label = ({ label, icon, color, widthIcon, heightIcon, textSize }: LabelProps) => {
+const Label = ({ label, icon, color, widthIcon, heightIcon, textSize, className }: LabelProps) => {
     const IconComponent = useLabelIcon(icon);
     return (
         <div className="flex w-full">
             <div
-                className={`flex justify-center gap-1 p-1 text-${textSize} rounded-md border-2 items-center`}
+                className={`flex justify-center gap-1 p-1 text-${textSize} rounded-md border-2 items-center ${className}`}
                 style={{
                     color: color,
                     backgroundColor: `${color}20`,

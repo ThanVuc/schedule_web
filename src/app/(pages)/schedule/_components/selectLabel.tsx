@@ -1,36 +1,101 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { useLabelIcon } from "@/hooks";
 import { WorkLabelModel } from "../(features)/daily/_models/type";
 import Label from "./label";
 import { BackIcon } from "@/components/icon";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
+import { cn } from "@/lib/utils";
 interface SelectLabelProps {
   Open: boolean;
   onOpenChange?: (open: boolean) => void;
   data: WorkLabelModel[];
+  classNameContent?: string;
+  label: {
+    label: string;
+    icon: string;
+    color: string;
+    width: string;
+    height: string;
+  };
+  onclick?: () => void;
+  onchangeValue?: (value: string) => void;
+  disable?: boolean;
 }
+const SelectWorkLabel = ({
+  Open, onOpenChange, data, classNameContent, label, onclick, onchangeValue, disable
+}: SelectLabelProps) => {
+  const [selected, setSelected] = useState(label);
+  const IconComponent = useLabelIcon(selected.icon);
 
-const SelectLabel = ({ Open, onOpenChange, data }: SelectLabelProps) => {
+  const formatColor = (color: string) => {
+    if (color.startsWith("#")) {
+      return `${color}20`;
+    }
+    return color;
+  };
   return (
-    <DropdownMenu open={Open} onOpenChange={onOpenChange}>
-      <DropdownMenuTrigger asChild>
-        <div></div>
-      </DropdownMenuTrigger>
-            <div className="mt-2"><BackIcon className="!w-4 !h-4"/></div>
-      <DropdownMenuContent side="right">
-        <DropdownMenuGroup>
-          {data.map(data => (
-            <DropdownMenuItem className="flex flex-col items-center justify-center" key={data.id}><Label label={data.name} color={data.color} icon={data.key}/></DropdownMenuItem>
+    <Select
+      open={Open}
+      onOpenChange={onOpenChange}
+      value={selected.label}
+      onValueChange={(value) => {
+        const newLabel = data.find((x) => x.name === value);
+        if (newLabel) {
+          setSelected({ label: newLabel.name, icon: newLabel.key, color: newLabel.color, width: label.width, height: label.height, });
+        }
+        if (onchangeValue) onchangeValue(newLabel?.id || "");
+      }}
+    >
+      <SelectTrigger className="border-0 p-0 bg-transparent [&>svg]:hidden" disabled={disable}>
+        <SelectValue>
+          <div
+            className="flex w-full justify-center gap-2 p-1.5 text-sm rounded-md border-2 items-center"
+            style={{
+              color: selected.color,
+              backgroundColor: formatColor(selected.color),
+              borderColor: selected.color,
+            }}
+          >
+            {IconComponent && (
+              <IconComponent
+                className={`!w-${selected.width} !h-${selected.height}`}
+                style={{ color: selected.color }}
+              />
+            )}
+            {selected.label}
+          </div>
+        </SelectValue>
+      </SelectTrigger>
+      {
+        Open && (<BackIcon className="!w-4 !h-4" />)
+      }
+      <SelectContent
+        side="right"
+        className={cn("!w-full ml-3", classNameContent)}
+      >
+        <SelectGroup className="flex flex-col items-center w-full">
+          {data.map((item) => (
+            <SelectItem key={item.id} value={item.name} onClick={onclick}>
+              <Label
+                className="min-w-[7rem] max-w-[9rem] text-center"
+                label={item.name}
+                color={item.color}
+                icon={item.key}
+              />
+            </SelectItem>
           ))}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </SelectGroup>
+      </SelectContent>
+
+    </Select>
   );
 };
 
-export default SelectLabel;
+export default SelectWorkLabel;
