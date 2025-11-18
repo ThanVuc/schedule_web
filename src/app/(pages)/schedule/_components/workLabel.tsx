@@ -1,5 +1,4 @@
 "use client";
-import { useLabelIcon } from "@/hooks/useLabelIcon";
 import { useState } from "react";
 import SelectLabel from "./selectLabel";
 import { useAxios } from "@/hooks";
@@ -10,50 +9,49 @@ interface LabelProps {
     label: string;
     icon: string;
     color: string;
-      width?: string;
-  height?: string;
-  label_type: number;
+    width?: string;
+    height?: string;
+    label_type: number;
+    classNameContentLabel?: string;
+    onchange?: (value: string) => void;
+    disable?: boolean;
 }
 
-const WorkLabel = ({ label, icon, color, width, height, label_type }: LabelProps) => {
-    const IconComponent = useLabelIcon(icon);
+const WorkLabel = ({
+    label, icon, color, width, height, label_type, classNameContentLabel,onchange, disable
+}: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
-    const { data, refetch } = useAxios<{ labels: WorkLabelModel[] }>({
+    
+    const { data, refetch } = useAxios<{ labels: WorkLabelModel[] }>(
+        {
             method: "GET",
             url: `${LabelApiUrl.getListLabels}/${label_type}`,
-            
-        }, [OpenSelector], !OpenSelector);
+        },
+        [OpenSelector],
+        !OpenSelector || disable
+    );
+
     const handleOpenLabel = () => {
         setOpenSelector(!OpenSelector);
-        if (refetch) {
-            refetch();
-        }
-    }
+        if (refetch) refetch();
+    };
+    const currentLabel = {
+        label, icon, color, width: width ?? "4", height: height ?? "4",
+    };
+
     return (
-       <div className="flex">
-            <div
-                className="flex justify-center gap-2 p-1.5 text-sm rounded-md border-2 items-center"
-                style={{
-                    color: color,
-                    backgroundColor: `${color}20`,
-                    borderColor: color,
-                }}
-                onClick={handleOpenLabel}
-            >
-                {IconComponent && <IconComponent className={`!w-${width} !h-${height}`} />}
-                {label}
-            </div>
-            <div>
-                {OpenSelector && (
-                    <SelectLabel
-                        Open={OpenSelector}
-                        onOpenChange={setOpenSelector}
-                        data={data ? data.labels : []}
-                    />
-                )}
-            </div>
-       </div>
+        <div className="flex">
+            <SelectLabel
+                label={currentLabel}
+                Open={OpenSelector}
+                onOpenChange={handleOpenLabel}
+                data={data?.labels ?? []}
+                classNameContent={classNameContentLabel}
+                onchangeValue={onchange}
+                disable={disable}
+            />
+        </div>
     );
-}
+};
 
 export default WorkLabel;
