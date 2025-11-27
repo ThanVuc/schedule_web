@@ -3,9 +3,13 @@ import { messaging, getToken, onMessage } from "@/lib/firebase";
 import { globalConfig } from "@/global/global";
 import { MeModel } from "@/models";
 import { useAppNotification } from "./useNotification";
+import { FcmTokenModel } from "@/models/fcm";
+import { NotificationApiUrl } from "@/api";
+import { useAxiosMutationAvoidRC } from "./useAxios";
 
-export function useFirebaseMessaging(me?: MeModel | null) {
+export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | null) {
     const [fcmToken, setFcmToken] = useState<string | null>(null);
+    const { sendRequest } = useAxiosMutationAvoidRC(csrfToken || "");
     const {
         showNotification,
         NotificationComponent
@@ -14,6 +18,7 @@ export function useFirebaseMessaging(me?: MeModel | null) {
     useEffect(() => {
         if (!me) return; // User must be logged in
         if (!messaging) return;
+        if (!csrfToken) return;
 
         const init = async () => {
             try {
@@ -27,15 +32,19 @@ export function useFirebaseMessaging(me?: MeModel | null) {
                     });
 
                     if (token) {
-                        console.log("✅ FCM Token obtained:", token);
                         setFcmToken(token);
+                        const resp = await sendRequest<FcmTokenModel>({
+                            url: NotificationApiUrl.upsertFcmToken,
+                            method: "POST",
+                            payload: {
+                                fcm_token: token,
+                                device_id: navigator.userAgent,
+                            }
+                        });
 
-                        // Optional: send token to backend
-                        // await fetch("/api/notifications/register", {
-                        //   method: "POST",
-                        //   headers: { "Content-Type": "application/json" },
-                        //   body: JSON.stringify({ token }),
-                        // });
+                        if (resp.error) {
+                            console.error("FCM token registration failed:", resp.error);
+                        }
                     } else {
                         console.warn("⚠️ No FCM token returned");
                     }
@@ -52,7 +61,7 @@ export function useFirebaseMessaging(me?: MeModel | null) {
         // Listen for foreground messages
         const unsubscribe = onMessage(messaging, (payload) => {
             console.log("📩 Foreground message:", payload);
-            const { title, body, url, icon, src  } = payload.data || {};
+            const { title, body, url, icon, src } = payload.data || {};
             if (title && body) {
                 showNotification({
                     title,
@@ -65,7 +74,7 @@ export function useFirebaseMessaging(me?: MeModel | null) {
         });
 
         return unsubscribe;
-    }, [me, showNotification]);
+    }, [me, showNotification, sendRequest, csrfToken]);
 
     return { fcmToken, NotificationComponent };
 }

@@ -155,3 +155,52 @@ export const useAxiosMutation = <T = unknown, D = unknown>(
 
   return { sendRequest };
 };
+
+// avoid race condition by always using the latest csrfToken
+export const useAxiosMutationAvoidRC = (csrfToken: string) => {
+  const router = useRouter();
+
+  const sendRequest = useCallback(
+    async <T = unknown, D = unknown>(
+      config: AxiosRequestConfig & { id?: string; payload?: D }
+    ) => {
+      const makeRequest = async () => axios({
+        ...config,
+        url: config.id ? `${config.url}/${config.id}` : config.url,
+        ...(config.payload && { data: config.payload }),
+        withCredentials: true,
+        headers: {
+          ...config.headers,
+          "X-CSRF-Token": csrfToken,
+        },
+      });
+
+      try {
+        const response = await makeRequest();
+        return {
+          data: response.data.metadata || null,
+          error: null,
+          headers: response.headers,
+        };
+      } catch (err) {
+        const axiosErr = err as AxiosError;
+        if (axiosErr.response?.status === 401) {
+          try {
+            await axios.post(authApiUrl.refreshToken, null, {
+              withCredentials: true,
+              headers: { "X-CSRF-Token": csrfToken },
+            });
+            return await sendRequest<T, D>(config); // retry
+          } catch {
+            router.push("/login");
+            return { data: null, error: axiosErr, headers: {} };
+          }
+        }
+        return { data: null, error: axiosErr, headers: {} };
+      }
+    },
+    [csrfToken] // ✅ luôn lấy token mới nhất
+  );
+
+  return { sendRequest };
+};
