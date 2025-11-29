@@ -4,7 +4,6 @@ import { useState } from "react";
 import { AppNotification } from "@/components/common";
 
 export interface NotificationOptionProps {
-    icon?: React.ReactNode;
     src?: string;
     alt?: string;
     title: string;
