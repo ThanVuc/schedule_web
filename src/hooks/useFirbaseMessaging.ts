@@ -31,23 +31,29 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                         vapidKey: globalConfig.FirebaseConfig.vapidKey!,
                     });
 
-                    if (token) {
-                        setFcmToken(token);
-                        const resp = await sendRequest<FcmTokenModel>({
-                            url: NotificationApiUrl.upsertFcmToken,
-                            method: "POST",
-                            payload: {
-                                fcm_token: token,
-                                device_id: navigator.userAgent,
-                            }
-                        });
-
-                        if (resp.error) {
-                            console.error("FCM token registration failed:", resp.error);
-                        }
-                    } else {
-                        console.warn("⚠️ No FCM token returned");
+                    if (!token) {
+                        return;
                     }
+                    setFcmToken(token);
+                    const lastToken = localStorage.getItem("fcm_token");
+                    if (token === lastToken) {
+                        return;
+                    }
+
+                    const resp = await sendRequest<FcmTokenModel>({
+                        url: NotificationApiUrl.upsertFcmToken,
+                        method: "POST",
+                        payload: {
+                            fcm_token: token,
+                            device_id: navigator.userAgent,
+                        }
+                    });
+
+                    if (resp.error) {
+                        console.error("FCM token registration failed:", resp.error);
+                    }
+
+                    localStorage.setItem("fcm_token", token);
                 } else {
                     console.warn("❌ Notification permission denied");
                 }
@@ -57,17 +63,16 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
         };
 
         init();
-
+        
         // Listen for foreground messages
         const unsubscribe = onMessage(messaging, (payload) => {
             console.log("📩 Foreground message:", payload);
-            const { title, body, url, icon, src } = payload.data || {};
+            const { title, body, url, src } = payload.data || {};
             if (title && body) {
                 showNotification({
                     title,
                     body,
                     url,
-                    icon,
                     src,
                 });
             }
