@@ -74,6 +74,7 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                     body,
                     url,
                     src,
+                    duration: 8000,
                 });
             }
         });
