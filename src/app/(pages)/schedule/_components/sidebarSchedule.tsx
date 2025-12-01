@@ -16,7 +16,7 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
             icon: ReturnUpBackToHome,
         },
         {
-            title: "Lịch Trình Hằng Ngày",
+            title: "Lịch trình hằng ngày",
             url: "/schedule/daily",
             icon: AssignmentIcon,
         },

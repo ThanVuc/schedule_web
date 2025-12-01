@@ -25,8 +25,8 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
         if (dataList.length >= MAX_TASKS) return;
 
         const newTask: miniTask = {
-            isCompleted: false,
-            title: newInput.trim(),
+            is_completed: false,
+            name: newInput.trim(),
         };
         setDataList([...dataList, newTask]);
         setNewInput("");
@@ -56,14 +56,14 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                 <div className="flex items-center gap-3">
                     <p className="font-bold">
                         {dataList.length > 0
-                            ? Math.round((dataList.filter((item) => item.isCompleted).length / dataList.length) * 100)
+                            ? Math.round((dataList.filter((item) => item.is_completed).length / dataList.length) * 100)
                             : 0}
                         %
                     </p>
                     <Progress
                         className="[&>div]:bg-[#01BC39]"
                         value={
-                            (dataList.filter((item) => item.isCompleted).length / dataList.length) * 100 || 0
+                            (dataList.filter((item) => item.is_completed).length / dataList.length) * 100 || 0
                         }
                     />
                 </div>
@@ -74,19 +74,19 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                     >
                         <Checkbox
                             className="w-5 h-5 border-white/60 border-3"
-                            checked={item.isCompleted}
+                            checked={item.is_completed}
                             onCheckedChange={(checked) => {
                                 const updated = [...dataList];
-                                updated[index].isCompleted = !!checked;
+                                updated[index].is_completed = !!checked;
                                 setDataList(updated);
                             }}
                         />
                         <span
                             className={
-                                item.isCompleted ? "line-through text-gray-400 flex-1" : "flex-1"
+                                item.is_completed ? "line-through text-gray-400 flex-1" : "flex-1"
                             }
                         >
-                            {item.title}
+                            {item.name}
                         </span>
                         <TrashIcon
                             className="!w-5 !h-5 text-[#FF6B6B] cursor-pointer"
