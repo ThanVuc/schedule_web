@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
+import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 
 interface DateTimePickerProps {
   title: string;
   defaultValue?: number;
-  onChange?: (date: Date) => void;
+  onChange?: (date: number | undefined) => void;
   icon?: React.ReactNode;
 }
 
@@ -63,7 +64,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     }
 
     setDate(newDate);
-    onChange?.(newDate);
+    onChange?.(formatDate.dateToNumber(newDate) ?? undefined);
   };
 
   return (

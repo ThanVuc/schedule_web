@@ -1,7 +1,7 @@
 import z from "zod";
 import { upsertScheduleSchema } from "../_models/schema";
 import { UseFormReturn } from "react-hook-form";
-import { Checkbox, FormField, FormItem, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui";
+import { Checkbox, FormField, FormItem, FormMessage, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui";
 import { DateTimePicker } from "@/components/common/dateTimePicker";
 import { CalendarIcon } from "@/components/icon";
 import { WorkLabel } from "../../../_components";
@@ -26,17 +26,18 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                 <div className="ml-8 ">
                     <FormField
                         control={form.control}
-                        name="title"
+                        name="name"
                         render={({ field }) => (
                             <FormItem className="flex flex-col mb-4">
                                 <Input {...field} className="rounded-sm" placeholder="Tên công việc" id={field.name} />
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <div className="flex w-full gap-4">
                         <FormField
                             control={form.control}
-                            name="start"
+                            name="start_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
                                     <DateTimePicker title="Từ" {...field} icon={<CalendarIcon />} />
@@ -45,7 +46,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                         />
                         <FormField
                             control={form.control}
-                            name="end"
+                            name="end_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
                                     <DateTimePicker title="Đến" {...field} icon={<CalendarIcon />} />
@@ -56,7 +57,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                     <div>
                         <FormField
                             control={form.control}
-                            name="goal"
+                            name="goal_id"
                             render={({ field }) => (
                                 <FormItem>
                                     <Select
@@ -69,8 +70,8 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                         </SelectTrigger>
                                         <SelectContent className="z-160">
                                             <SelectGroup>
-                                                <SelectItem value="goal1">Mục tiêu 1</SelectItem>
-                                                <SelectItem value="goal2">Mục tiêu 2</SelectItem>
+                                                <SelectItem value="6925c73183828e4ac22388fb">Mục tiêu 1</SelectItem>
+                                                <SelectItem value="6925c69c83828e4ac22388fa">Mục tiêu 2</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -88,7 +89,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                 <p className={titleLabel}>Loại công việc</p>
                                 <FormField
                                     control={form.control}
-                                    name="workType"
+                                    name="type_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <WorkLabel onchange={field.onChange} color="#E8E8E8" icon="IN_DAY" label="Trong Ngày" label_type={1} classNameContentLabel="z-161" />
@@ -103,7 +104,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                 <p className={titleLabel}>Trạng thái</p>
                                 <FormField
                                     control={form.control}
-                                    name="status"
+                                    name="status_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <WorkLabel onchange={field.onChange} color="#FFEA00" icon="PENDING" label="Chờ làm" label_type={2} classNameContentLabel="z-161" />
@@ -118,7 +119,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                 <p className={titleLabel}>Mức độ khó</p>
                                 <FormField
                                     control={form.control}
-                                    name="difficulty"
+                                    name="difficulty_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <WorkLabel onchange={field.onChange} color="#13C540" icon="EASY" label="Dễ" label_type={3} classNameContentLabel="z-161" />
@@ -134,7 +135,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
 
                                 <FormField
                                     control={form.control}
-                                    name="priority"
+                                    name="priority_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <WorkLabel onchange={field.onChange} color="#13C540" icon="IMPORTANT_NOT_URGENT" label="Quan trọng & Không khẩn cấp" label_type={4} classNameContentLabel="z-161" />
@@ -149,7 +150,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                 <p className={titleLabel}>Danh mục</p>
                                 <FormField
                                     control={form.control}
-                                    name="category"
+                                    name="category_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <WorkLabel onchange={field.onChange} color="#3B82F6" icon="WORK" label="Công việc" label_type={5} classNameContentLabel="z-161" />
@@ -165,7 +166,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                 <div className="pt-3">
                     <FormField
                         control={form.control}
-                        name="miniTasks"
+                        name="sub_tasks"
                         render={({ field }) => (
                             <FormItem>
                                 <div>
@@ -181,7 +182,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                 <div className="ml-8 border-b-1 pb-7">
                     <FormField
                         control={form.control}
-                        name="shortDescription"
+                        name="short_descriptions"
                         render={({ field }) => (
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
@@ -196,7 +197,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="description"
+                        name="detailed_description"
                         render={({ field }) => (
                             <FormItem>
                                 <Textarea

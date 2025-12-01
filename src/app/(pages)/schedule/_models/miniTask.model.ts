@@ -1,4 +1,4 @@
 export interface miniTask {
-    title: string;
-    isCompleted: boolean;
+    name: string;
+    is_completed: boolean;
 }

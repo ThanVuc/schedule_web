@@ -8,6 +8,14 @@ import { Form } from "@/components/ui";
 import { useModalParams } from "../hooks";
 import { useConfirmDialog } from "@/hooks/useConfirmAlertDialog";
 import UpsertScheduleForm from "../_components/upsertScheduleForm";
+import { useAxios, useAxiosMutation } from "@/hooks";
+import { CreateWorkMutationResponseType } from "../_models/type/mutation.type";
+import { worksApiUrl } from "@/api/work";
+import useToastState from "@/hooks/useToasts";
+import { formatDate } from "@/app/(pages)/(main)/profile/utils";
+import { labelDefault } from "../_models/type/label";
+import { LabelApiUrl } from "@/api/label";
+import { useEffect } from "react";
 
 
 const buttonProps = {
@@ -30,39 +38,64 @@ const buttonProps = {
         cancelButtonText: "Hủy",
     },
 };
+interface UpsertScheduleProps {
+    refetch?: () => void;
+}
 
-
-const UpsertSchedule = () => {
+const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { mode} = useModalParams();
+    const { mode } = useModalParams();
     const openDialog = mode === "create" || mode === "edit" || mode === "view";
     const isDisabled = mode === "view";
     const buttonData = buttonProps[mode as keyof typeof buttonProps] ?? buttonProps.create;
     const { confirm, dialog } = useConfirmDialog();
+    const { setToast } = useToastState();
 
+    const { data: labelDefaultData } = useAxios<labelDefault>({
+        method: "GET",
+        url: LabelApiUrl.getDefault,
+    }, undefined, !openDialog);
+    useEffect(() => {
+        if (openDialog && labelDefaultData) {
+            form.reset({
+                type_id: labelDefaultData?.type_id,
+                status_id: labelDefaultData?.status_id,
+                difficulty_id: labelDefaultData?.difficulty_id,
+                priority_id: labelDefaultData?.priority_id,
+                category_id: labelDefaultData?.category_id,
+            });
+        }
+    }, [mode, labelDefaultData]);
+    const { sendRequest } = useAxiosMutation<CreateWorkMutationResponseType, z.infer<typeof upsertScheduleSchema>>({
+        method: "POST",
+        url: worksApiUrl.createWork,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
 
 
     const form = useForm<z.infer<typeof upsertScheduleSchema>>({
         resolver: zodResolver(upsertScheduleSchema),
         defaultValues: {
-            title: "",
-            start: new Date(),
-            end: new Date(),
-            goal: "",
-            workType: "690f2c2be89fc365524f45cb",
-            status: "690f2c2be89fc365524f45cd",
-            difficulty: "690f2c2be89fc365524f45d2",
-            priority: "690f2c2be89fc365524f45d6",
-            category: "690f2c2be89fc365524f45d9",
-            shortDescription: "",
-            description: "",
+            name: "",
+            start_date: formatDate.dateToNumber(new Date()) ?? undefined,
+            end_date: formatDate.dateToNumber(new Date()) ?? undefined,
+            goal_id: "",
+            type_id: labelDefaultData?.type_id,
+            status_id: labelDefaultData?.status_id,
+            difficulty_id: labelDefaultData?.difficulty_id,
+            priority_id: labelDefaultData?.priority_id,
+            category_id: labelDefaultData?.category_id,
+            short_descriptions: "",
+            detailed_description: "",
             appNotifications: [],
             emailNotifications: "",
-            miniTasks: [],
+            sub_tasks: [],
         },
     });
-    const closeModel = () => {
+    const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("mode");
         params.delete("id");
@@ -70,20 +103,48 @@ const UpsertSchedule = () => {
         form.reset();
         form.clearErrors();
     }
-    const onSubmit = async () => {
+
+    const handleCreate = async (values: z.infer<typeof upsertScheduleSchema>) => {
+        const { data, error } = await sendRequest(values);
+        if (error) {
+            setToast({
+                title: "Lỗi hệ thống",
+                message: "Không thể thêm vai trò mới",
+                variant: "error",
+                closeable: false
+            });
+            return;
+        }
+        if (data?.is_success) {
+            closeModal();
+            setToast({
+                title: "Thành công",
+                message: "Vai trò đã được thêm thành công",
+                variant: "success",
+                closeable: true
+            });
+            if (refetch) {
+                refetch();
+            }
+        }
+    };
+
+
+    const onSubmit = async (values: z.infer<typeof upsertScheduleSchema>) => {
         if (isDisabled) return;
         const isConfirmed = await confirm();
         if (!isConfirmed) return;
+        if (mode === "create") {
+            await handleCreate(values);
+        }
     }
-
-
     return (<>
         <AppDialog
             dialogTitle={buttonData.title}
             dialogDescription={buttonData.description}
             submitButtonText={isDisabled ? null : buttonData.submitButtonText}
             cancelButtonText={buttonData.cancelButtonText}
-            onClose={closeModel}
+            onClose={closeModal}
             onSubmit={() => form.handleSubmit(onSubmit)()}
             open={openDialog}
         >
