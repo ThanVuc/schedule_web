@@ -19,16 +19,12 @@ interface DateTimePickerProps {
   defaultValue?: number;
   onChange?: (date: number | undefined) => void;
   icon?: React.ReactNode;
-  disabledTime?: boolean;
-  disabledDate?: boolean;
 }
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   defaultValue,
   onChange,
   title,
-  disabledTime = false,
-  disabledDate = false,
   icon,
 }) => {
   const parsedDate = defaultValue ? new Date(defaultValue) : new Date();
@@ -106,14 +102,13 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           <Calendar
             mode="single"
             selected={date}
-            disabled={disabledDate}
+            disabled={true}
             initialFocus
           />
 
-          {!disabledTime && <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+          <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
             {/* Hour */}
-            <ScrollArea className="w-64 sm:w-auto"
-            >
+            <ScrollArea className="w-64 sm:w-auto">
               <div className="flex sm:flex-col p-2">
                 {hours.reverse().map((hour) => (
                   <Button
@@ -177,7 +172,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 ))}
               </div>
             </ScrollArea>
-          </div>}
+          </div>
         </div>
       </PopoverContent>
     </Popover>
