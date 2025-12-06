@@ -18,6 +18,8 @@ interface AppNotificationProps {
     onClick?: () => void;
 }
 
+const DEFAULT_SRC = "https://www.schedulr.site/assets/image%208.png";
+
 export const AppNotification = ({
     src,
     alt,
@@ -65,7 +67,7 @@ export const AppNotification = ({
             }}
         >
             <Avatar className="rounded-full">
-                <AvatarImage src={src} alt={alt ?? "Image"} className="rounded-sm" />
+                <AvatarImage src={src === "" ? DEFAULT_SRC : src} alt={alt ?? "Image"} className="rounded-sm" />
                 <AvatarFallback className="text-xs">HR</AvatarFallback>
             </Avatar>
 
