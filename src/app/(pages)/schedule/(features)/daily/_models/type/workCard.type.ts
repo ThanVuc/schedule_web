@@ -16,3 +16,10 @@ export interface WorkCardModel {
     shortDescription: string;
     labels: WorkLabelModel[];
 }
+export interface WorkCardListModel {
+    morning: WorkCardModel[];
+    noon: WorkCardModel[];
+    afternoon: WorkCardModel[];
+    evening: WorkCardModel[];
+    night: WorkCardModel[];
+}
