@@ -19,16 +19,12 @@ interface DateTimePickerProps {
   defaultValue?: number;
   onChange?: (date: number | undefined) => void;
   icon?: React.ReactNode;
-  disabledTime?: boolean;
-  disabledDate?: boolean;
 }
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   defaultValue,
   onChange,
   title,
-  disabledTime = true,
-  disabledDate = false,
   icon,
 }) => {
   const parsedDate = defaultValue ? new Date(defaultValue) : new Date();
@@ -68,7 +64,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     }
 
     setDate(newDate);
-    { disabledDate && onChange?.(formatDate.dateToNumber(newDate) ?? undefined); }
+    onChange?.(formatDate.dateToNumber(newDate) ?? undefined);
   };
 
   return (
@@ -90,11 +86,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
             <div className="flex items-center w-full justify-between p-2">
               {date ? (
-                disabledTime
-                  ? format(date, "dd/MM/yyyy")      
-                  : format(date, "dd/MM/yyyy hh:mm aa") 
+                format(date, "MM/dd/yyyy hh:mm aa")
               ) : (
-                <span>{disabledTime ? "DD/MM/YYYY" : "DD/MM/YYYY hh:mm aa"}</span>
+                <span>MM/DD/YYYY hh:mm aa</span>
               )}
               {icon && <span className="ml-2">{icon}</span>}
             </div>
@@ -108,21 +102,13 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           <Calendar
             mode="single"
             selected={date}
-            disabled={disabledDate}
+            disabled={true}
             initialFocus
-            onSelect={(d) => {
-              if (!d) return;
-              setDate(d);
-              if (!disabledDate) {
-                onChange?.(formatDate.dateToNumber(d) ?? undefined);
-              }
-            }}
           />
 
-          {!disabledTime && <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+          <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
             {/* Hour */}
-            <ScrollArea className="w-64 sm:w-auto"
-            >
+            <ScrollArea className="w-64 sm:w-auto">
               <div className="flex sm:flex-col p-2">
                 {hours.reverse().map((hour) => (
                   <Button
@@ -186,7 +172,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 ))}
               </div>
             </ScrollArea>
-          </div>}
+          </div>
         </div>
       </PopoverContent>
     </Popover>
