@@ -79,7 +79,7 @@ const DailySchedulePage = () => {
                 </div>
                 <UpsertSchedule refetch={refetch} />
                 <div>
-                    <Session morningTasks={data?.morning} afternoonTasks={data?.noon} eveningTasks={data?.afternoon} nightTasks={data?.night} midnightTasks={data?.evernight} session={activeTime} />
+                    <Session morningTasks={data?.morning} afternoonTasks={data?.noon} eveningTasks={data?.afternoon} nightTasks={data?.night} midnightTasks={data?.evening} session={activeTime} />
                 </div>
             </div>
         </div>
