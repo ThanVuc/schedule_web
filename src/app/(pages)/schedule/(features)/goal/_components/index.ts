@@ -1,1 +1,2 @@
-export { default as GoalCard } from "./goalCard";
+export * from './goalCard'
+export * from './listGoal'
