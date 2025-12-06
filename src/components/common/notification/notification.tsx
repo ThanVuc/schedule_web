@@ -41,13 +41,13 @@ export const AppNotification = ({
                 if (onClick) onClick();
             }}
             className="
-                fixed bottom-3 right-3 z-50
-                max-w-xs w-full sm:w-80
-                flex items-center gap-2
+                fixed bottom-4 right-4 z-50
+                max-w-sm w-full sm:w-[360px]
+                flex items-center gap-3
                 bg-white dark:bg-neutral-900
                 border border-gray-200 dark:border-neutral-700
-                rounded-lg
-                px-3 py-2
+                rounded-xl
+                px-4 py-3
                 cursor-pointer
                 transition-all duration-300
                 overflow-hidden
@@ -56,25 +56,36 @@ export const AppNotification = ({
                 dark:border-r-2 dark:border-r-gray-600
             "
             style={{
-                boxShadow: '0 2px 6px oklch(0.42 0.05 265 / 0.55)',
+                boxShadow: '0 4px 10px oklch(0.42 0.05 265 / 0.55)',
                 transition: 'box-shadow 0.3s ease, transform 0.3s ease'
             }}
             onMouseEnter={e => {
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 3px 8px oklch(0.50 0.06 265 / 0.75)'; // subtle hover
+                (e.currentTarget as HTMLDivElement).style.boxShadow =
+                    '0 5px 12px oklch(0.50 0.06 265 / 0.75)';
             }}
             onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 6px oklch(0.50 0.06 265 / 0.75)'; // default thin shadow
+                (e.currentTarget as HTMLDivElement).style.boxShadow =
+                    '0 4px 10px oklch(0.42 0.05 265 / 0.55)';
             }}
         >
-            <Avatar className="rounded-full">
-                <AvatarImage src={src === "" ? DEFAULT_SRC : src} alt={alt ?? "Image"} className="rounded-sm" />
-                <AvatarFallback className="text-xs">HR</AvatarFallback>
+            <Avatar className="w-12 h-12 min-w-12 min-h-12 rounded-full border">
+                <AvatarImage
+                    src={src === "" ? DEFAULT_SRC : src}
+                    alt={alt ?? "Image"}
+                    className="w-full h-full rounded-full object-cover"
+                />
+                <AvatarFallback className="text-sm">HR</AvatarFallback>
             </Avatar>
 
-            <div className="flex-1 flex-col justify-center gap-1">
-                <AlertTitle className="flex-1">{title}</AlertTitle>
-                <AlertDescription>{body}</AlertDescription>
+            <div className="flex flex-col flex-1 gap-1">
+                <AlertTitle className="text-lg font-semibold leading-tight">
+                    {title}
+                </AlertTitle>
+
+                <AlertDescription className="text-base leading-snug">
+                    {body}
+                </AlertDescription>
             </div>
         </Alert>
-    )
-}
+    );
+};

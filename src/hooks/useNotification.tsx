@@ -32,7 +32,7 @@ export const useAppNotification = () => {
 
         const timer = setTimeout(() => {
             setNotifications((prev) => prev.filter((n) => n.id !== id));
-        }, options.duration ?? 3000);
+        }, options.duration ?? 7000);
 
         return () => clearTimeout(timer);
     };
