@@ -36,7 +36,8 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                     }
                     setFcmToken(token);
                     const lastToken = localStorage.getItem("fcm_token");
-                    if (token === lastToken) {
+                    const lastUserId = localStorage.getItem("user_id");
+                    if (lastToken === token && lastUserId === me.user_id) {
                         return;
                     }
 
@@ -54,6 +55,7 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                     }
 
                     localStorage.setItem("fcm_token", token);
+                    localStorage.setItem("user_id", me.user_id);
                 } else {
                     console.warn("❌ Notification permission denied");
                 }

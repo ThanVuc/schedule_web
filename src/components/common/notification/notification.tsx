@@ -54,7 +54,7 @@ export const AppNotification = ({
                 dark:border-r-2 dark:border-r-gray-600
             "
             style={{
-                boxShadow: '0 2px 6px oklch(0.42 0.05 265 / 0.55)', // thinner blue shadow
+                boxShadow: '0 2px 6px oklch(0.42 0.05 265 / 0.55)',
                 transition: 'box-shadow 0.3s ease, transform 0.3s ease'
             }}
             onMouseEnter={e => {
