@@ -19,7 +19,6 @@ const DailySchedulePage = () => {
     const [activeTime, setActiveTime] = useState<DaySection | null>(null);
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [open, setOpen] = useState(false);
     const {setToast} = useToastState();
 
     const listParams = useMemo(() => {
@@ -66,7 +65,7 @@ const DailySchedulePage = () => {
                     </div>
                     <div className="flex gap-3">
                         <Button className="bg-[#0EA5E9] hover:bg-[#0EA5E9]/80 text-white"
-                        onClick={()=>{handlePageQueryToModal("create"); setOpen(true);}}
+                        onClick={()=>{handlePageQueryToModal("create")}}
                         > <AddIcon />  Tạo Lịch</Button>
                         <Button className="bg-[#14B8A6] hover:bg-[#14B8A6]/80 text-white"> <LoopIcon />  Khôi Phục</Button>
                         <Button className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#D946EF] hover:to-[#8B5CF6] text-white"> <FourStarIcon />  AI Tạo Lịch</Button>
