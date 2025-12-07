@@ -56,14 +56,14 @@ export const CardTypeLabel = () => {
                             <p className="px-2 pt-4 text-md">{config.title}</p>
 
                             <div
-                                className={`overflow-hidden transition-all duration-550 ease-in-out py-2 gap-y-6 flex gap-[2%] flex-wrap ${isOpen ? "max-h-[1000px] opacity-100 translate-y-0 mt-4" : "max-h-0 opacity-0 -translate-y-2 mt-0"
+                                className={`overflow-hidden transition-all duration-550 ease-in-out py-2 gap-y-6 flex gap-[2%] flex-wrap ${isOpen ? "max-h-[1500px] opacity-100 translate-y-0 mt-4" : "max-h-0 opacity-0 -translate-y-2 mt-0"
                                     }`}
                                 aria-hidden={!isOpen}
                             >
                                 {group.labels.map(label => (
                                     <Card
                                         key={label.id}
-                                        className="px-6 py-4 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[32%] transform"
+                                        className="px-6 py-4 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[47%]  transform"
                                     >
                                         <span className="flex">
                                             <Label
