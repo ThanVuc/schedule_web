@@ -1,14 +1,16 @@
-import { JSX} from "react";
+import { JSX } from "react";
 import WorkCard from "../workCard";
 import { WorkCardModel } from "../../_models/type";
+import SkeletonCard from "@/components/common/skeleton";
 
 interface SessionBlockProps {
   icon: JSX.Element;
   title: string;
   time: string;
   tasks: WorkCardModel[];
+  loading: boolean;
 }
-const SessionBlock = ({icon,title,time,tasks}: SessionBlockProps) => {
+const SessionBlock = ({ icon, title, time, tasks, loading }: SessionBlockProps) => {
 
   return (
     <div className="flex flex-col gap-5 border-t-2 border-b-2 py-4">
@@ -22,7 +24,7 @@ const SessionBlock = ({icon,title,time,tasks}: SessionBlockProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-3 ">
-        {tasks.length > 0 ? (
+        {loading ? (<SkeletonCard />) : tasks.length > 0 ? (
           tasks.map((task) => (
             <WorkCard key={task.id} workCard={task} />
           ))
