@@ -10,8 +10,6 @@ import { DownIcon, FilterIcon } from "@/components/icon";
 import UpsertSchedule from "./upsertWork";
 import { Session } from "../_components";
 import { DaySection } from "../../../_constant/common";
-import SkeletonCard from "@/components/common/skeleton";
-import Spinner from "@/components/common/spiner";
 
 interface ListWorkProps {
     activeTime: DaySection | null;
