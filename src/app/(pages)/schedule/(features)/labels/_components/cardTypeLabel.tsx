@@ -51,6 +51,7 @@ export const CardTypeLabel = () => {
                                     }>
                                     <ThreeDot className="size-[25]" />
                                 </Button>
+
                             </div>
 
                             <p className="px-2 pt-4 text-md">{config.title}</p>
@@ -63,7 +64,7 @@ export const CardTypeLabel = () => {
                                 {group.labels.map(label => (
                                     <Card
                                         key={label.id}
-                                        className="px-6 py-4 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[47%]  transform"
+                                        className="px-6 py-4 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[49%] lg:w-[32%] transform"
                                     >
                                         <span className="flex">
                                             <Label
