@@ -17,7 +17,7 @@ interface LabelProps {
     disable?: boolean;
 }
 
-const WorkLabel = ({
+const LabelSelector = ({
     label, icon, color, width, height, label_type, classNameContentLabel,onchange, disable
 }: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
@@ -54,4 +54,4 @@ const WorkLabel = ({
     );
 };
 
-export default WorkLabel;
+export default LabelSelector;

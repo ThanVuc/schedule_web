@@ -1,9 +1,10 @@
 import { Card } from "@/components/ui";
-import { WorkCategory, WorkLabel, WorkTime } from "../../../_components";
+import { WorkCategory, WorkLabel} from "../../../_components";
 import { WorkCardModel } from "../_models/type";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { DraftLabel } from "../../../_constant/common";
+import Time from "../../../_components/time";
 
 interface ScheduleCardProps {
   workCard: WorkCardModel;
@@ -29,7 +30,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
               {
                 Draft && <WorkLabel label={Draft.name} icon={Draft.icon} color={Draft.color} label_type={Draft.label_type} />
               }
-              <WorkTime Begin={workCard.start_time} End={workCard.end_time} />
+              <Time Begin={workCard.start_time} End={workCard.end_time} Icon="Work" />
               {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).map(label => {
                 return <WorkLabel key={label.id} label={label.name} icon={label.icon} color={label.color} label_type={label.label_type} />;
               })}

@@ -1,30 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { DaySection } from "../../_constant/common";
-import { Session, TimeLine } from "./_components";
+import { TimeLine } from "./_components";
 import { Title } from "../../_components/title";
-import { AddIcon, DateIcon, DownIcon, FilterIcon, FourStarIcon, LoopIcon } from "@/components/icon";
+import { AddIcon, DateIcon, FourStarIcon, LoopIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
-import { AppSearch } from "@/components/common";
-import UpsertSchedule from "./container";
+
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAxios } from "@/hooks";
-import { WorkCardListModel } from "./_models/type";
-import { worksApiUrl } from "@/api/work";
-import useToastState from "@/hooks/useToasts";
+import ListWork from "./container/listWork";
 
 
 const DailySchedulePage = () => {
     const [activeTime, setActiveTime] = useState<DaySection | null>(null);
     const searchParams = useSearchParams();
     const router = useRouter();
-    const {setToast} = useToastState();
 
-    const listParams = useMemo(() => {
-            const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
-            return Object.fromEntries(entries);
-        }, [searchParams]);
     const handlePageQueryToModal = (mode: string, id?: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("mode", mode);
@@ -36,24 +27,8 @@ const DailySchedulePage = () => {
 
         router.push(`/schedule/daily?${params.toString()}`, { scroll: false });
     }
-    const {data, error, refetch} = useAxios<WorkCardListModel>({
-        method: "GET",
-        url: worksApiUrl.getWork,
-        params: { ...listParams },
-    });
-    useEffect(() => {
-        if (error) {
-            setToast({
-                title: "Lỗi hệ thống",
-                message: "Không thể tải dữ liệu lịch làm việc",
-                variant: "error",
-                closeable: false
-            });
-        }
-    }, [error]);
 
-   
-    
+
     return (
         <div className="flex gap-7 h-full">
             <TimeLine activeTime={activeTime} setActiveTime={setActiveTime} />
@@ -65,22 +40,13 @@ const DailySchedulePage = () => {
                     </div>
                     <div className="flex gap-3">
                         <Button className="bg-[#0EA5E9] hover:bg-[#0EA5E9]/80 text-white"
-                        onClick={()=>{handlePageQueryToModal("create")}}
+                            onClick={() => { handlePageQueryToModal("create") }}
                         > <AddIcon />  Tạo Lịch</Button>
                         <Button className="bg-[#14B8A6] hover:bg-[#14B8A6]/80 text-white"> <LoopIcon />  Khôi Phục</Button>
                         <Button className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#D946EF] hover:to-[#8B5CF6] text-white"> <FourStarIcon />  AI Tạo Lịch</Button>
                     </div>
                 </div>
-                <div className="flex justify-between mb-3">
-                    <div><AppSearch className="flex-2s" placeholder="Tìm kiếm Theo tên, danh mục, mô tả ngắn" /></div>
-                    <div>
-                        <Button className="bg-null text-white hover:bg-null"> <FilterIcon />  Filter<DownIcon /></Button>
-                    </div>
-                </div>
-                <UpsertSchedule refetch={refetch} />
-                <div>
-                    <Session morningTasks={data?.morning} afternoonTasks={data?.noon} eveningTasks={data?.afternoon} nightTasks={data?.night} midnightTasks={data?.evening} session={activeTime} />
-                </div>
+                <ListWork activeTime={activeTime} />
             </div>
         </div>
     );
