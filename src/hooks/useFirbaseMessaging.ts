@@ -47,6 +47,7 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                         payload: {
                             fcm_token: token,
                             device_id: navigator.userAgent,
+                            email: me.email,
                         }
                     });
 
