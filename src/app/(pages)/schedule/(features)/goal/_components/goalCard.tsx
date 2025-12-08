@@ -1,11 +1,12 @@
 import { Card } from "@/components/ui";
-import { GoalTime, WorkCategory, WorkLabel } from "../../../_components";
+import { WorkCategory, WorkLabel } from "../../../_components";
 import { GoalCardModel, GoalLabelModel, GoalLabelsGrouped } from "../_models/type/goalCard";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ContextMenuItem } from "@radix-ui/react-context-menu";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
+import Time from "../../../_components/time";
 
 interface GoalCardProps {
   GoalCard: GoalCardModel;
@@ -86,7 +87,7 @@ const GoalCard = ({ GoalCard, onDelete }: GoalCardProps) => {
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
-              <GoalTime Begin={begin} End={end} />
+              <Time Begin={begin} End={end} Icon={"Goal"} />
               {labels.map(label => (
                 <WorkLabel
                   key={label.id}
