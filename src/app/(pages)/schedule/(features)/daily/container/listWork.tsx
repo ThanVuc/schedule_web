@@ -10,8 +10,6 @@ import { DownIcon, FilterIcon } from "@/components/icon";
 import UpsertSchedule from "./upsertWork";
 import { Session } from "../_components";
 import { DaySection } from "../../../_constant/common";
-import SkeletonCard from "@/components/common/skeleton";
-import Spinner from "@/components/common/spiner";
 
 interface ListWorkProps {
     activeTime: DaySection | null;
@@ -24,7 +22,7 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
         return Object.fromEntries(entries);
     }, [searchParams]);
-    const { data, error, refetch, loading } = useAxios<WorkCardListModel>({
+    const { data, error, refetch } = useAxios<WorkCardListModel>({
         method: "GET",
         url: worksApiUrl.getWork,
         params: { ...listParams },
