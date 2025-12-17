@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import "./header.scss";
 import { AdminIcon, HelpIcon, HomeIcon, Schedulr, ScheduleIcon, TeamIcon } from "@/components/icon";
 import Link from "next/link";
-import { AppHoverClickCard } from "@/components/common";
+import { AppBellNotification, AppHoverClickCard } from "@/components/common";
 import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { UserCardContent } from "./userCardContent";
 import { useHasPermission, useIsIpad, useIsMobile } from "@/hooks";
@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { useMe } from "@/context/me.context";
 import { APP_ACTIONS } from "@/constant/actionACL";
 import APP_RESOURCES from "@/constant/resourceACL";
-
 
 export const AppHeader = () => {
     const isMobile = useIsMobile();
@@ -77,16 +76,20 @@ export const AppHeader = () => {
 
             <div className="user">
                 {meContext?.me ? (
-                    <AppHoverClickCard
-                        trigger={
-                            <Avatar className="cursor-pointer">
-                                <AvatarImage src={img.src} />
-                                <AvatarFallback>N/A</AvatarFallback>
-                            </Avatar>
-                        }
-                        content={<UserCardContent />}
-                        className="w-60"
-                    />
+                    <div className="relative flex items-center gap-4">
+                        <AppBellNotification />
+
+                        <AppHoverClickCard
+                            trigger={
+                                <Avatar className="cursor-pointer">
+                                    <AvatarImage src={img.src} />
+                                    <AvatarFallback>N/A</AvatarFallback>
+                                </Avatar>
+                            }
+                            content={<UserCardContent />}
+                            className="w-60"
+                        />
+                    </div>
                 ) : (
                     <div>
                         <Button variant="default" className="login hover:cursor-pointer"
