@@ -78,11 +78,11 @@ export const AppNotification = ({
             </Avatar>
 
             <div className="flex flex-col flex-1 gap-1">
-                <AlertTitle className="text-lg font-semibold leading-tight">
+                <AlertTitle className="text-[1rem] font-semibold leading-tight">
                     {title}
                 </AlertTitle>
 
-                <AlertDescription className="text-base leading-snug">
+                <AlertDescription className="text-[0.9rem] leading-snug">
                     {body}
                 </AlertDescription>
             </div>
