@@ -15,8 +15,18 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // Handle background messages (when browser closed)
-messaging.onBackgroundMessage(function (payload) {
-    console.log("[Service Worker] Background message received:", payload);
+messaging.onBackgroundMessage(async function (payload) {
+    const clientList = await clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+    });
+
+    clientList.forEach(client => {
+        client.postMessage({
+            type: "PUSH_RECEIVED_NOTIFICATION",
+            payload
+        });
+    });
 
     const { title, body } = payload.data;
     const notificationOptions = {
