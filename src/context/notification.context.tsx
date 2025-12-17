@@ -1,5 +1,5 @@
 import { MeModel, Notification } from "@/models";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { NotificationApiUrl } from "@/api";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import useToastState from "@/hooks/useToasts";
@@ -29,10 +29,38 @@ export function NotificationProvider({
 }) {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const { setToast } = useToastState();
+  const refetchRef = useRef(refetch);
+  const refetchTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    refetchRef.current = refetch;
+  }, [refetch]);
 
   useEffect(() => {
     setNotifications(initialNotifications);
   }, [initialNotifications]);
+
+  useEffect(() => {
+    if (!navigator.serviceWorker) return;
+
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type !== "PUSH_RECEIVED_NOTIFICATION") return;
+
+      if (refetchTimeout.current) return;
+
+      refetchTimeout.current = setTimeout(() => {
+        refetchRef.current?.();
+        refetchTimeout.current = null;
+      }, 500);
+
+    };
+
+    navigator.serviceWorker.addEventListener("message", handler);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handler);
+    };
+  }, []);
 
   const { sendRequest } = useAxiosMutation({
     url: NotificationApiUrl.markAsRead,
@@ -96,17 +124,17 @@ export function useNotification() {
 }
 
 export function FirebaseMessagingWrapper({
-    me,
-    csrfToken,
+  me,
+  csrfToken,
 }: {
-    me: MeModel | null;
-    csrfToken: string;
+  me: MeModel | null;
+  csrfToken: string;
 }) {
-    const { NotificationComponent } = useFirebaseMessaging(me, csrfToken);
+  const { NotificationComponent } = useFirebaseMessaging(me, csrfToken);
 
-    return NotificationComponent ? (
-        <div className="fixed top-4 right-4 z-[9999]">
-            {NotificationComponent}
-        </div>
-    ) : null;
+  return NotificationComponent ? (
+    <div className="fixed top-4 right-4 z-[9999]">
+      {NotificationComponent}
+    </div>
+  ) : null;
 }
