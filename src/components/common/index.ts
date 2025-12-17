@@ -10,4 +10,4 @@ export * from "./hoverClickCard";
 export * from "./InfiniteSpinner";
 export * from "./rich-text";
 export * from "./notification";
-export * from "./appNotification";
+export * from "./appBellNotification";
