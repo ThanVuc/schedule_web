@@ -6,9 +6,11 @@ import { useAppNotification } from "./useNotification";
 import { FcmTokenModel } from "@/models/fcm";
 import { NotificationApiUrl } from "@/api";
 import { useAxiosMutationAvoidRC } from "./useAxios";
+import { useNotification } from "@/context/notification.context";
 
 export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | null) {
     const [fcmToken, setFcmToken] = useState<string | null>(null);
+    const notificationContext = useNotification();
     const { sendRequest } = useAxiosMutationAvoidRC(csrfToken || "");
     const {
         showNotification,
@@ -78,11 +80,14 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                     src,
                     duration: 8000,
                 });
+                if (notificationContext && notificationContext.refetch) {
+                    notificationContext.refetch();
+                }
             }
         });
 
         return unsubscribe;
-    }, [me, showNotification, sendRequest, csrfToken]);
+    }, [me, showNotification, sendRequest, csrfToken, notificationContext]);
 
     return { fcmToken, NotificationComponent };
 }

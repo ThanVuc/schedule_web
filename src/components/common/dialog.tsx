@@ -25,6 +25,7 @@ export interface AppDialogProps {
   height?: "large" | "medium" | "small";
   submitButtonText?: string | null;
   cancelButtonText?: string;
+  BottomComponent?: React.ReactNode;
 }
 
 export const AppDialog = ({
@@ -41,6 +42,7 @@ export const AppDialog = ({
   setOpen = () => { },
   submitButtonText = "Lưu",
   cancelButtonText = "Hủy Bỏ",
+  BottomComponent,
 }: AppDialogProps) => {
 
   const handleOpenChange = (open: boolean) => {
@@ -82,6 +84,8 @@ export const AppDialog = ({
               }
             }}>{submitButtonText}</Button>
           )}
+
+          {BottomComponent}
         </DialogFooter>
       </DialogContent>
     </Dialog>

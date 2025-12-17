@@ -5,8 +5,9 @@ import { getCSRFToken } from "@/lib/utils";
 import { MeProvider } from "./me.context";
 import { MeModel } from "@/models/me";
 import { useAxios } from "@/hooks";
-import { utilsApiUrl } from "@/api";
-import { useFirebaseMessaging } from "@/hooks/useFirbaseMessaging";
+import { NotificationApiUrl, utilsApiUrl } from "@/api";
+import { NotificationProvider } from "./notification.context";
+import { Notification } from "@/models";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
     const [csrfToken, setCsrfToken] = useState<string>("");
@@ -16,34 +17,53 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             try {
                 const token = await getCSRFToken();
                 setCsrfToken(token || "");
-            } catch (error) {
-                console.error("Failed to fetch CSRF token:", error);
+            } catch {
                 setCsrfToken("");
             }
         };
         fetchToken();
     }, []);
 
-    const { data, error, refetch } = useAxios<MeModel>({
-        url: utilsApiUrl.getMe,
-        method: 'GET',
-    }, [csrfToken ?? null], !csrfToken);
+    const { data: me, error, refetch: refetchMe } = useAxios<MeModel>(
+        {
+            url: utilsApiUrl.getMe,
+            method: "GET",
+        },
+        [csrfToken ?? null],
+        !csrfToken
+    );
 
-    const { NotificationComponent } = useFirebaseMessaging(data, csrfToken);
+    const {
+        data: notificationsData,
+        refetch: refetchNotifications,
+    } = useAxios<{ notifications: Notification[] }>(
+        {
+            url: NotificationApiUrl.getNotifications,
+            method: "GET",
+        },
+        [csrfToken ?? null],
+        !csrfToken
+    );
 
     return (
         <CsrfProvider token={csrfToken}>
-            <MeProvider me={error || !data ? null : data} refetchMe={() => {
-                if (refetch) {
-                    refetch();
+            <MeProvider me={error || !me ? null : me} refetchMe={() => {
+                if (refetchMe) {
+                    return refetchMe();
                 }
             }}>
-                {children}
-                {NotificationComponent && (
-                    <div className="fixed top-4 right-4 z-[9999]">
-                        {NotificationComponent}
-                    </div>
-                )}
+                <NotificationProvider
+                    initialNotifications={notificationsData?.notifications ?? []}
+                    refetch={async () => {
+                        if (refetchNotifications) {
+                            await refetchNotifications();
+                        }
+                    }}
+                    me={me}
+                    csrfToken={csrfToken}
+                >
+                    {children}
+                </NotificationProvider>
             </MeProvider>
         </CsrfProvider>
     );
