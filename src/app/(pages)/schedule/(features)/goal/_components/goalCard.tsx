@@ -1,51 +1,25 @@
 import { Card } from "@/components/ui";
 import { WorkCategory, WorkLabel } from "../../../_components";
-import { GoalCardModel, GoalLabelModel, GoalLabelsGrouped } from "../_models/type/goalCard";
+import { GoalCardModel, GoalLabelModel } from "../_models/type/goalCard.type";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ContextMenuItem } from "@radix-ui/react-context-menu";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { useRouter, useSearchParams } from "next/navigation";
-import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 import Time from "../../../_components/time";
+import { stringToDate } from "../utils";
+import { ModelType } from "../../../_constant";
 
 interface GoalCardProps {
   GoalCard: GoalCardModel;
-  onDelete?: (goal: GoalCardModel) => void;
 }
 
-const flattenLabels = (goalLabels?: GoalLabelsGrouped): GoalLabelModel[] => {
-  if (!goalLabels) return [];
-
-  const allLabels: GoalLabelModel[] = [];
-
-  Object.values(goalLabels).forEach((labelArray) => {
-    if (Array.isArray(labelArray)) {
-      allLabels.push(...labelArray);
-    }
-  });
-
-  return allLabels;
-};
-
-const toDate = (v: any): string => {
-  if (v == null || v === "") return "";
-
-  const timestamp = Number(v);
-  if (!Number.isFinite(timestamp)) {
-    return formatDate.numberToString(v);
-  }
-
-  return formatDate.numberToString(timestamp);
-};
-
-const GoalCard = ({ GoalCard, onDelete }: GoalCardProps) => {
+const GoalCard = ({ GoalCard }: GoalCardProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const category = Array.isArray(GoalCard?.category) ? GoalCard.category[0] : (GoalCard?.category as any) ?? null;
-  const labels = flattenLabels(GoalCard?.goalLabels);
-  const begin = toDate(GoalCard?.start_date);
-  const end = toDate(GoalCard?.end_date);
+  const labels: GoalLabelModel[] = GoalCard?.labels ?? [];
+  const category: GoalLabelModel | null = GoalCard?.category ?? null;
+  const begin = stringToDate(GoalCard?.start_date);
+  const end = stringToDate(GoalCard?.end_date);
 
   const pushModeWithId = (mode: string) => {
     const id = (GoalCard as any)?.id;
@@ -53,16 +27,12 @@ const GoalCard = ({ GoalCard, onDelete }: GoalCardProps) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("mode", mode);
     params.set("id", String(id));
-    router.push(`/schedule/goal?${params.toString()}`);
+    router.push(`/schedule/goal?${params.toString()}`, { scroll: false });
   };
 
-  const handleView = () => pushModeWithId("view");
-  const handleEdit = () => pushModeWithId("edit");
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(GoalCard);
-    }
-  };
+  const handleView = () => pushModeWithId(ModelType.VIEW);
+  const handleEdit = () => pushModeWithId(ModelType.UPDATE);
+  const handleDelete = () => pushModeWithId(ModelType.DELETE);
 
   return (
     <ContextMenu>
@@ -76,18 +46,18 @@ const GoalCard = ({ GoalCard, onDelete }: GoalCardProps) => {
               <div className="flex justify-center sm:justify-end">
                 {category && (
                   <WorkCategory
-                    key={category.id ?? ""}
-                    label={category.name ?? ""}
-                    icon={category.key ?? ""}
-                    color={category.color ?? ""}
-                    label_type={category.label_type ?? 0}
+                    key={category.id}
+                    label={category.name}
+                    icon={category.key}
+                    color={category.color}
+                    label_type={category.label_type}
                   />
                 )}
               </div>
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
-              <Time Begin={begin} End={end} Icon={"Goal"} />
+              <Time Begin={begin} End={end} Icon={"Work"} />
               {labels.map(label => (
                 <WorkLabel
                   key={label.id}
