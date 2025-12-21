@@ -1,2 +1,2 @@
 export * from './goalCard'
-export * from './listGoal'
+export * from '../container/listGoal'
