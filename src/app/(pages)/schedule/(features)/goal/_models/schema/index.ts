@@ -1,1 +1,1 @@
-export * from './sertGoal.schema'
+export * from './upsertGoal.schema'

@@ -9,7 +9,7 @@ type ToastProp = {
     variant?: "default" | "success" | "error" | "warning";
     closeable?: boolean;
 };
-export default function useToastState() {
+export function useToastState() {
     const [toastState, setToastState] = useState<ToastProp | null>(null);
 
     useEffect(() => {
@@ -54,3 +54,5 @@ export default function useToastState() {
 
     return { setToast };
 }
+
+export default useToastState;

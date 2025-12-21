@@ -8,3 +8,10 @@ export enum DaySection {
 export enum DraftLabel {
     DRAFT = "DRAFT"
 }
+
+export enum ModelType {
+    CREATE = "Create",
+    UPDATE = "Update",
+    DELETE = "Delete",
+    VIEW = "View"
+}

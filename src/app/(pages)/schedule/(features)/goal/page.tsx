@@ -3,9 +3,25 @@
 import { AddIcon, TargetIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
 import { Title } from "../../_components/title";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ModelType } from "../../_constant";
 import { ListGoal } from "./_components";
-const TargetManagementPage = () => {
+const GoalPage = () => {
 
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    const handlePageQueryToModal = (mode: string, id?: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("mode", mode);
+        if (id) {
+            params.set("id", id)
+        } else {
+            params.delete("id");
+        }
+
+        router.push(`/schedule/goal?${params.toString()}`, { scroll: false });
+    }
 
     return (
         <>
@@ -16,7 +32,8 @@ const TargetManagementPage = () => {
                 </div>
                 <div>
                     <div>
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center"
+                            onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}>
                             <AddIcon />
                             Tạo mục tiêu
                         </Button>
@@ -30,4 +47,4 @@ const TargetManagementPage = () => {
     );
 };
 
-export default TargetManagementPage;
+export default GoalPage;

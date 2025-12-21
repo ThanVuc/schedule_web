@@ -1,1 +1,1 @@
-export * from './goalCard'
+export * from './goalCard.type'
