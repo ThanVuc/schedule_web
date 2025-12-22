@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { AppHoverClickCard } from "./hoverClickCard";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui";
 import { UserCardContent } from "@/app/(pages)/(main)/_components";
+import { AppBellNotification } from "./appBellNotification";
 export interface SidebarItem {
     title: string;
     url: string;
@@ -128,16 +129,19 @@ const AppSideBar = ({ AppSidebar, title, headerTitle, children, icon, currentPag
                         )}
                     </div>
 
-                    <AppHoverClickCard
-                        trigger={
-                            <Avatar className="cursor-pointer">
-                                <AvatarImage src={image ?? img.src} />
-                                <AvatarFallback>N/A</AvatarFallback>
-                            </Avatar>
-                        }
-                        content={<UserCardContent />}
-                        className="w-60"
-                    />
+                    <div className="right flex gap-2 items-center justify-start">
+                        <AppBellNotification />
+                        <AppHoverClickCard
+                            trigger={
+                                <Avatar className="cursor-pointer">
+                                    <AvatarImage src={image ?? img.src} />
+                                    <AvatarFallback>N/A</AvatarFallback>
+                                </Avatar>
+                            }
+                            content={<UserCardContent />}
+                            className="w-60"
+                        />
+                    </div>
                 </div>
                 <main className="p-4">{children}</main>
             </SidebarInset>

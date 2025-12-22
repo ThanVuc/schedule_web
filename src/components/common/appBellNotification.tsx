@@ -111,6 +111,7 @@ export const AppBellNotification = () => {
                                                     trigger_at: CaculateTimeFromTimeToNow(notification.trigger_at),
                                                     is_read: notification.is_read,
                                                     img_url: notification.image_url,
+                                                    link: notification.link,
                                                 }}
                                                 onMarkAsRead={markAsRead} />
                                         ))}
@@ -140,8 +141,9 @@ interface NotificationItemProps {
         trigger_at: string
         is_read: boolean
         img_url?: string
+        link?: string
     }
-    onMarkAsRead: (id: string) => void
+    onMarkAsRead: (id: string) => void,
 }
 
 function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
@@ -150,6 +152,9 @@ function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps)
             onClick={() => {
                 if (!notification.is_read) {
                     onMarkAsRead(notification.id);
+                }
+                if (notification.link) {
+                    window.open(notification.link, "_blank");
                 }
             }}
             className={cn(
