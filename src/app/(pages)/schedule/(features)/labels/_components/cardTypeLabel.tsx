@@ -1,11 +1,12 @@
 'use client';
-import { ThreeDot } from "@/components/icon";
-import { useState, useMemo } from "react";
+import { LabelIcon, ThreeDot } from "@/components/icon";
+import { useState, useMemo, useEffect } from "react";
 import { Button, Card } from "@/components/ui";
-import { useAxios } from "@/hooks";
+import { useAxios, useToastState } from "@/hooks";
 import Label from "../../../_components/label";
 import { LabelPerType, LabelsResponse } from "../_models/type";
 import LabelApiUrl from "@/api/label";
+import Spinner from "@/components/common/spinner";
 
 export const CardTypeLabel = () => {
     const typeConfig: Record<number, { name: string; title: string }> = {
@@ -16,6 +17,8 @@ export const CardTypeLabel = () => {
         5: { name: "Danh mục", title: "Danh mục các công việc" },
         6: { name: "Bản nháp", title: "Lưu tạm thời các công việc trong hệ thống" }
     };
+    const [isLoading, setIsLoading] = useState(true);
+    const { setToast } = useToastState();
     const [openGroups, setOpenGroups] = useState<number[]>([]);
     const { data, error, loading } = useAxios<LabelsResponse>({
         method: "GET",
@@ -25,9 +28,33 @@ export const CardTypeLabel = () => {
         return data?.label_per_types ?? [];
     }, [data]);
 
-    if (loading) return null;
-    if (error) return null;
-    if (!data) return null;
+    useEffect(() => {
+        if (data && isLoading) {
+            setIsLoading(false);
+        }
+    }, [data, isLoading]);
+
+    useEffect(() => {
+        if (error) {
+            setToast({
+                title: "Lỗi hệ thống",
+                message: "Không thể tải danh sách nhãn dán",
+                variant: "error"
+            });
+        }
+    }, [error]);
+
+    if (loading) {
+        return <div className="flex justify-center h-screen items-center"><Spinner /></div>
+    }
+
+    if (!data) return
+    <div className="flex flex-col items-center justify-center py-10 gap-4">
+        <LabelIcon className="size-8" />
+        <h3 className="text-xl font-semibold text-gray-400">
+            Không có mục tiêu nào
+        </h3>
+    </div>;
 
     return (
         <div className="flex flex-col gap-4">
@@ -64,7 +91,7 @@ export const CardTypeLabel = () => {
                                 {group.labels.map(label => (
                                     <Card
                                         key={label.id}
-                                        className="px-6 py-4 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[49%] lg:w-[32%] transform"
+                                        className="px-6 py-2 rounded-[10px] border bg-transparent border-[#3C414D] w-full sm:w-[48%] md:w-[49%] lg:w-[32%] transform"
                                     >
                                         <span className="flex">
                                             <Label

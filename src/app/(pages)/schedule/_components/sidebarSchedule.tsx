@@ -31,7 +31,7 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
             icon: LabelIcon,
         },
         {
-            title: "Phân Tích, Báo Cáo, Thống Kê dựa trên AI",
+            title: "Báo cáo dựa trên AI",
             url: "/schedule/analysis",
             icon: MarketAnalysisIcon,
         },
