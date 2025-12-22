@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import GoalApiUrl from "@/api/goal";
 import { useForm } from "react-hook-form";
 import { AppDialog } from "@/components/common";
-import { Form } from "@/components/ui";
+import { Button, Form } from "@/components/ui";
 import UpsertGoalForm from "../_components/upsertGoalForm";
 import type { GoalDetailModel, GoalLabelsGroup } from "../_models/type/goalCard.type";
 import { ModelType } from "../../../_constant";
@@ -75,7 +75,7 @@ const UpsertGoal = ({ refetch }: UpsertGoalProps) => {
     );
 
     useEffect(() => {
-        if (mode === ModelType.CREATE && labelDefaultData && !goalData) {
+        if (mode === ModelType.CREATE && labelDefaultData) {
             form.reset({
                 name: "",
                 start_date: Date.now(),
@@ -237,6 +237,23 @@ const UpsertGoal = ({ refetch }: UpsertGoalProps) => {
             await handleUpdate(values);
         }
     }
+    const handleSwitchToUpdate = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("mode", ModelType.UPDATE);
+        if (id) {
+            params.set("id", id);
+        }
+        router.push(`/schedule/goal?${params.toString()}`, { scroll: false });
+    }
+    const SwitchUpdate = mode === ModelType.VIEW ? (
+        <Button
+            type="button"
+            onClick={handleSwitchToUpdate}
+            variant="default"
+        >
+            Chỉnh sửa
+        </Button>
+    ) : null
 
     return (
         <>
@@ -247,6 +264,7 @@ const UpsertGoal = ({ refetch }: UpsertGoalProps) => {
                 onClose={closeModal}
                 onSubmit={() => form.handleSubmit(onSubmit)()}
                 open={openDialog}
+                BottomComponent={SwitchUpdate}
             >
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>

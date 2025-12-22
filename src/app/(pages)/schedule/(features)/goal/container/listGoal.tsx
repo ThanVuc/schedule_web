@@ -69,7 +69,7 @@ export const ListGoal = () => {
                 <AppSearch
                     key="search-goal"
                     className="flex-2"
-                    placeholder="Tìm kiếm theo tên, danh mục, mô tả ngắn"
+                    placeholder="Tìm kiếm theo tên mục tiêu"
                 />
                 <div className="flex gap-2">
                     <Select>
@@ -87,7 +87,7 @@ export const ListGoal = () => {
                 )}
                 {!loading && view.goals.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 gap-4">
-                        <TargetIcon className="size-10" />
+                        <TargetIcon className="size-8" />
                         <h3 className="text-xl font-semibold text-gray-400">
                             Không có mục tiêu nào
                         </h3>

@@ -57,7 +57,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
-              <Time Begin={begin} End={end} Icon={"Work"} />
+              <Time Begin={begin} End={end} Icon={"Goal"} />
               {labels.map(label => (
                 <WorkLabel
                   key={label.id}
