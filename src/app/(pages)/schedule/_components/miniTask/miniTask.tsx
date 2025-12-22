@@ -1,42 +1,50 @@
 "use client";
-import { AddIcon, TrashIcon } from "@/components/icon";
+import { AddIcon, ClearIcon, TrashIcon } from "@/components/icon";
 import { Button, Checkbox, Input, Label, Progress } from "@/components/ui";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { miniTask } from "../../_models/miniTask.model";
+import { useConfirmDialog } from "@/hooks";
 
 interface MiniTaskProps {
     value?: miniTask[];
     onChange?: (value: miniTask[]) => void;
+    disabled?: boolean;
 }
 
-const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
+const MiniTask = ({ value = [], onChange, disabled }: MiniTaskProps) => {
     const [openInput, setOpenInput] = useState(false);
-    const [dataList, setDataList] = useState<miniTask[]>(value);
     const [newInput, setNewInput] = useState("");
 
     const MAX_TASKS = 5;
+    const dataList = value;
 
-    useEffect(() => {
-        onChange?.(dataList);
-    }, [dataList]);
+    const { confirm, dialog } = useConfirmDialog();
+
+    const update = (next: miniTask[]) => {
+        onChange?.(next);
+    };
 
     const handleAddTask = () => {
-        if (newInput.trim() === "") return;
-        if (dataList.length >= MAX_TASKS) return;
+        if (!newInput.trim() || dataList.length >= MAX_TASKS) return;
 
-        const newTask: miniTask = {
-            is_completed: false,
-            name: newInput.trim(),
-        };
-        setDataList([...dataList, newTask]);
+        update([
+            ...dataList,
+            { name: newInput.trim(), is_completed: false }
+        ]);
+
         setNewInput("");
         setOpenInput(false);
     };
 
     const handleDeleteTask = (index: number) => {
-        const updated = dataList.filter((_, i) => i !== index);
-        setDataList(updated);
+        update(dataList.filter((_, i) => i !== index));
     };
+
+    const handleClearAll = async () => {
+        if (!(await confirm())) return;
+        update([]);
+    };
+
 
     return (
         <>
@@ -44,14 +52,16 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                 <Label className="text-lg mb-5 text-[#E6E6E2] font-bold">
                     Chia nhỏ công việc
                 </Label>
-                <Button className="border-1 border-[#FF8080] bg-[#FF8080]/20 text-[#FF8080] hover:bg-[#FF8080]/60"
-                type="button"
-                onClick={() => setDataList([])}
+                <Button className=" disabled:opacity-100 disabled:cursor-not-allowed border-1 border-[#FF8080] bg-[#FF8080]/20 text-[#FF8080] hover:bg-[#FF8080]/60"
+                    type="button"
+                    onClick={() => handleClearAll()}
+                    disabled={disabled}
                 >
+                    <ClearIcon className="!w-4 !h-4 mr-2" />
                     Xoá tất cả
                 </Button>
             </div>
-
+            {dialog}
             <div className="ml-8">
                 <div className="flex items-center gap-3">
                     <p className="font-bold">
@@ -73,12 +83,16 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                         className="flex items-center gap-3 border-b border-white/10 py-2"
                     >
                         <Checkbox
+                            disabled={disabled}
                             className="w-5 h-5 border-white/60 border-3"
                             checked={item.is_completed}
                             onCheckedChange={(checked) => {
                                 const updated = [...dataList];
-                                updated[index].is_completed = !!checked;
-                                setDataList(updated);
+                                updated[index] = {
+                                    ...updated[index],
+                                    is_completed: !!checked,
+                                };
+                                update(updated);
                             }}
                         />
                         <span
@@ -88,10 +102,12 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                         >
                             {item.name}
                         </span>
-                        <TrashIcon
-                            className="!w-5 !h-5 text-[#FF6B6B] cursor-pointer"
-                            onClick={() => handleDeleteTask(index)}
-                        />
+                        <button type="button" disabled={disabled}>
+                            <TrashIcon
+                                className="!w-5 !h-5 text-[#FF6B6B] cursor-pointer"
+                                onClick={() => handleDeleteTask(index)}
+                            />
+                        </button>
                     </div>
                 ))}
                 {openInput && (
@@ -116,10 +132,11 @@ const MiniTask = ({ value = [], onChange }: MiniTaskProps) => {
                 )}
                 <div className="mt-3">
                     <Button
-                        className="flex items-center bg-[#3DF875]/20 hover:bg-[#3DF875]/40 border-[#3DF875] text-[#3DF875] border rounded-sm p-5 disabled:opacity-40 disabled:cursor-not-allowed"
+
+                        className=" flex items-center bg-[#3DF875]/20 hover:bg-[#3DF875]/40 border-[#3DF875] text-[#3DF875] border rounded-sm p-5 disabled:opacity-40 disabled:cursor-not-allowed"
                         type="button"
                         onClick={() => setOpenInput(true)}
-                        disabled={dataList.length >= MAX_TASKS}
+                        disabled={dataList.length >= MAX_TASKS || disabled}
                     >
                         <AddIcon className="!w-4 !h-4 mr-2" />
                         {dataList.length >= MAX_TASKS

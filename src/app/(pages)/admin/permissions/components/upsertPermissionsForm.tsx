@@ -106,7 +106,6 @@ export const UpsertPermissionForm = ({
                     onChange={(value) => {
                       field.onChange(value);
                       setSelectedResourceId(value);
-                      console.log(value);
                     }}
                     placeholder={
                       resourcesLoading

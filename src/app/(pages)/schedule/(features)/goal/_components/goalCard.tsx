@@ -46,11 +46,11 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
               <div className="flex justify-center sm:justify-end">
                 {category && (
                   <WorkCategory
-                    key={category.id}
-                    label={category.name}
-                    icon={category.key}
-                    color={category.color}
-                    label_type={category.label_type}
+                    key={category.id ?? ""}
+                    label={category.name ?? ""}
+                    keyIcon={category.key ?? ""}
+                    color={category.color ?? ""}
+                    label_type={category.label_type ?? 0}
                   />
                 )}
               </div>
@@ -62,7 +62,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
                 <WorkLabel
                   key={label.id}
                   label={label.name}
-                  icon={label.key}
+                  keyIcon={label.key}
                   color={label.color}
                   label_type={label.label_type}
                 />

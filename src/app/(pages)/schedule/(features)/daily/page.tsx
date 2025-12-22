@@ -27,8 +27,6 @@ const DailySchedulePage = () => {
 
         router.push(`/schedule/daily?${params.toString()}`, { scroll: false });
     }
-
-
     return (
         <div className="flex gap-7 h-full">
             <TimeLine activeTime={activeTime} setActiveTime={setActiveTime} />

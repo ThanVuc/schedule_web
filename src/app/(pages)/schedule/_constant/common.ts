@@ -15,3 +15,10 @@ export enum ModelType {
     DELETE = "Delete",
     VIEW = "View"
 }
+export enum DaySectionText {
+  MORNING = "MORNING",
+  NOON = "NOON",
+  AFTERNOON = "AFTERNOON",
+  NIGHT = "NIGHT",
+  EVERNIGHT = "EVERNIGHT"
+}

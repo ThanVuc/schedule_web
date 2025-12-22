@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea} from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 
@@ -21,14 +21,16 @@ interface DateTimePickerProps {
   icon?: React.ReactNode;
   disabledTime?: boolean;
   disabledDate?: boolean;
+  disabled?: boolean;
 }
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   defaultValue,
   onChange,
   title,
-  disabledTime = true,
+  disabledTime = false,
   disabledDate = false,
+  disabled = false,
   icon,
 }) => {
 
@@ -50,8 +52,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, [defaultValue]);
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
-  const minutes = Array.from({ length: 12 }, (_, i) => i * 5);
-
+  const minutes = Array.from({ length: 61 }, (_, i) => i * 1);
   const handleTimeChange = (
     type: "hour" | "minute" | "ampm",
     value: string
@@ -95,6 +96,12 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             "w-full justify-start text-left font-normal !p-0",
             !date && "text-muted-foreground"
           )}
+          onClick={(e) => {
+            if (disabled) {
+              e.preventDefault()
+              e.stopPropagation()
+            }
+          }}
         >
           <div className="flex h-full w-full">
             {title && (
@@ -136,16 +143,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             }}
           />
 
-          {/* Time picker */}
           {!disabledTime && (
             <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
               {/* Hour */}
               <ScrollArea className="w-64 sm:w-auto">
-                <div className="flex sm:flex-col p-2">
+                <div className="flex sm:flex-col p-2"
+                  onWheel={(e) => {
+                    e.currentTarget
+                      .closest('[data-radix-scroll-area-viewport]')
+                      ?.scrollBy({ top: e.deltaY });
+                  }}
+                >
                   {[...hours].map((hour) => {
                     const displayHour = hour.toString();
                     const selectedHour =
-                      date.getHours() % 12 === hour % 12 || 
+                      date.getHours() % 12 === hour % 12 ||
                       (date.getHours() % 12 === 0 && hour === 12);
 
                     return (
@@ -161,12 +173,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     );
                   })}
                 </div>
+                <ScrollBar orientation="horizontal" className="sm:hidden" />
               </ScrollArea>
 
               {/* Minutes */}
               <ScrollArea className="w-64 sm:w-auto">
-                <div className="flex sm:flex-col p-2">
+                <div className="flex sm:flex-col p-2"
+                  onWheel={(e) => {
+                    e.currentTarget
+                      .closest('[data-radix-scroll-area-viewport]')
+                      ?.scrollBy({ top: e.deltaY });
+                  }}
+                >
+                  
                   {minutes.map((minute) => (
+                    
                     <Button
                       key={minute}
                       size="icon"
@@ -178,6 +199,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     </Button>
                   ))}
                 </div>
+                <ScrollBar orientation="horizontal" className="sm:hidden" />
               </ScrollArea>
 
               {/* AM/PM */}
@@ -189,7 +211,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                       size="icon"
                       variant={
                         (ampm === "AM" && date.getHours() < 12) ||
-                        (ampm === "PM" && date.getHours() >= 12)
+                          (ampm === "PM" && date.getHours() >= 12)
                           ? "default"
                           : "ghost"
                       }

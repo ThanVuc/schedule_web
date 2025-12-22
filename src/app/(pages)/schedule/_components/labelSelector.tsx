@@ -7,7 +7,7 @@ import LabelApiUrl from "@/api/label";
 
 interface LabelProps {
     label: string;
-    icon: string;
+    keyIcon: string;
     color: string;
     width?: string;
     height?: string;
@@ -15,10 +15,11 @@ interface LabelProps {
     classNameContentLabel?: string;
     onchange?: (value: string) => void;
     disable?: boolean;
+    onchangeObject?: (value: string) => void;
 }
 
 const LabelSelector = ({
-    label, icon, color, width, height, label_type, classNameContentLabel,onchange, disable
+    label, keyIcon, color, width, height, label_type, classNameContentLabel,onchange, disable, onchangeObject,
 }: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
     
@@ -36,7 +37,7 @@ const LabelSelector = ({
         if (refetch) refetch();
     };
     const currentLabel = {
-        label, icon, color, width: width ?? "4", height: height ?? "4",
+        label, keyIcon, color, width: width ?? "4", height: height ?? "4",
     };
 
     return (
@@ -48,6 +49,7 @@ const LabelSelector = ({
                 data={data?.labels ?? []}
                 classNameContent={classNameContentLabel}
                 onchangeValue={onchange}
+                onchangeObject={onchangeObject}
                 disable={disable}
             />
         </div>

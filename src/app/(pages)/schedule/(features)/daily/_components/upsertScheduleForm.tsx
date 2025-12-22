@@ -8,17 +8,18 @@ import { WorkLabel } from "../../../_components";
 import InfoPopover from "./infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { labelDefault } from "../_models/type/label";
 import { useState } from "react";
 
 type ScheduleForm = z.infer<typeof upsertScheduleSchema>
 interface UpsertScheduleFormProps {
     form: UseFormReturn<ScheduleForm>
+    labelDefaultData?: labelDefault
+    disabled?: boolean
 }
-const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
+const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertScheduleFormProps) => {
     const titleLabel = "border-2 p-2 rounded-md bg-white/10 md:min-w-35 max-w-21"
-    const [disabledMail, setDisabledMail] = useState(false)
-    const [selectedValue, setSelectedValue] = useState<string | null>(null)
-    const [disabledApp, setDisabledApp] = useState(false)
+    const [currentTypeLabel, setCurrentTypeLabel] = useState(false);
     return (<>
         <div className="flex justify-between gap-10">
             <div className="basis-2/3 w-full">
@@ -29,7 +30,14 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                         name="name"
                         render={({ field }) => (
                             <FormItem className="flex flex-col mb-4">
-                                <Input {...field} className="rounded-sm" placeholder="Tên công việc" id={field.name} />
+                                <Input
+                                    {...field}
+                                    value={field.value ?? ""}
+                                    className="rounded-sm disabled:opacity-100 disabled:cursor-not-allowed"
+                                    placeholder="Tên công việc"
+                                    id={field.name}
+                                    disabled={disabled}
+                                />
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -40,7 +48,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                             name="start_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker title="Từ" {...field} icon={<CalendarIcon />} />
+                                    <DateTimePicker disabled={ disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
                                 </FormItem>
                             )}
                         />
@@ -49,7 +57,8 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                             name="end_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker title="Đến" {...field} icon={<CalendarIcon />} />
+                                    <DateTimePicker disabled={disabled} disabledDate={!currentTypeLabel} title="Đến" {...field} icon={<CalendarIcon />} />
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -64,14 +73,16 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                         onValueChange={field.onChange}
                                         value={field.value}
                                         defaultValue={field.value}
+                                        disabled={disabled}
                                     >
-                                        <SelectTrigger className="w-full rounded-sm">
+                                        <SelectTrigger className="w-full rounded-sm disabled:opacity-100 disabled:cursor-not-allowed">
                                             <SelectValue placeholder="Chọn mục tiêu" />
                                         </SelectTrigger>
                                         <SelectContent className="z-160">
                                             <SelectGroup>
-                                                <SelectItem value="6925c73183828e4ac22388fb">Mục tiêu 1</SelectItem>
+                                                <SelectItem value={"0"}>Không Mục tiêu</SelectItem>
                                                 <SelectItem value="6925c69c83828e4ac22388fa">Mục tiêu 2</SelectItem>
+                                                <SelectItem value="6925c73183828e4ac22388fb">Mục tiêu 1</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -92,7 +103,14 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                     name="type_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} color="#E8E8E8" icon="IN_DAY" label="Trong Ngày" label_type={1} classNameContentLabel="z-161" />
+                                            <WorkLabel onchange={field.onChange} onchangeObject={(selectedKey) => {
+                                                if (selectedKey === "REPEATED") {
+                                                    setCurrentTypeLabel(true);
+                                                }
+                                                else {
+                                                    setCurrentTypeLabel(false);
+                                                }
+                                            }} disable={disabled} color={labelDefaultData?.type.color || "#E8E8E8"}  keyIcon={labelDefaultData?.type.key || "IN_DAY"} label={labelDefaultData?.type.name || "Trong Ngày"} label_type={labelDefaultData?.type.label_type || 1} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -107,7 +125,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                     name="status_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} color="#FFEA00" icon="PENDING" label="Chờ làm" label_type={2} classNameContentLabel="z-161" />
+                                            <WorkLabel disable={disabled} onchange={field.onChange} color={labelDefaultData?.status.color || "#FFEA00"} keyIcon={labelDefaultData?.status.key || "PENDING"} label={labelDefaultData?.status.name || "Chờ làm"} label_type={labelDefaultData?.status.label_type || 2} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -122,7 +140,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                     name="difficulty_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} color="#13C540" icon="EASY" label="Dễ" label_type={3} classNameContentLabel="z-161" />
+                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.difficulty.color || "#13C540"} keyIcon={labelDefaultData?.difficulty.key || "EASY"} label={labelDefaultData?.difficulty.name || "Dễ"} label_type={labelDefaultData?.difficulty.label_type || 3} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -138,12 +156,12 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                     name="priority_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} color="#13C540" icon="IMPORTANT_NOT_URGENT" label="Quan trọng & Không khẩn cấp" label_type={4} classNameContentLabel="z-161" />
+                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.priority.color || "#13C540"} keyIcon={labelDefaultData?.priority.key || "IMPORTANT_NOT_URGENT"} label={labelDefaultData?.priority.name || "Quan trọng & Không khẩn cấp"} label_type={labelDefaultData?.priority.label_type || 4} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="Category" />
+                            <InfoPopover label="Priority" />
                         </div>
                         <div className="flex justify-between w-full">
                             <div className="flex gap-3 items-center">
@@ -153,7 +171,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                                     name="category_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} color="#3B82F6" icon="WORK" label="Công việc" label_type={5} classNameContentLabel="z-161" />
+                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.category.color || "#3B82F6"} keyIcon={labelDefaultData?.category.key || "WORK"} label={labelDefaultData?.category.name || "Công việc"} label_type={labelDefaultData?.category.label_type || 5} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -170,7 +188,7 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                         render={({ field }) => (
                             <FormItem>
                                 <div>
-                                    <MiniTask {...field} />
+                                    <MiniTask  {...field} onChange={field.onChange} disabled={disabled} />
                                 </div>
                             </FormItem>
                         )}
@@ -186,7 +204,8 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                         render={({ field }) => (
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
-                                    className="border-dashed"
+                                    disabled={disabled}
+                                    className="border-dashed disabled:opacity-100 disabled:cursor-not-allowed"
                                     {...field}
                                     placeholder="Mô tả ngắn"
                                     id={field.name}
@@ -201,7 +220,8 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
                         render={({ field }) => (
                             <FormItem>
                                 <Textarea
-                                    className="border-dashed w-full h-32"
+                                    disabled={disabled}
+                                    className="border-dashed w-full h-32 disabled:opacity-100 disabled:cursor-not-allowed"
                                     {...field}
                                     placeholder="Mô tả chi tiết"
                                     id={field.name}
@@ -216,116 +236,126 @@ const UpsertScheduleForm = ({ form }: UpsertScheduleFormProps) => {
 
                     <FormField
                         control={form.control}
-                        name="appNotifications"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex items-center justify-between">
-                                    <Label className="font-bold text-xl">Thông báo ứng dụng</Label>
-                                    <Switch
-                                        onCheckedChange={(checked) => {
-                                            setDisabledApp(!checked)
-                                            if (!checked) {
-                                                field.onChange([])
+                        name="notifications"
+                        render={({ field }) => {
+                            const value = field.value ?? {
+                                beforeFiveMinApp: false,
+                                beforeThirtyMinApp: false,
+                                beforeFiveMinEmail: false,
+                                beforeThirtyMinEmail: false,
+                            };
+                            const appEnabled =
+                                value.beforeFiveMinApp || value.beforeThirtyMinApp;
+                            const emailEnabled =
+                                value.beforeFiveMinEmail || value.beforeThirtyMinEmail;
+
+                            return (
+                                <FormItem>
+                                    <div>
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-bold">Thông báo ứng dụng</p>
+                                            <Switch
+                                                disabled={disabled}
+                                                checked={appEnabled}
+                                                onCheckedChange={(checked) => {
+                                                    if (!checked) {
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeFiveMinApp: false,
+                                                            beforeThirtyMinApp: false,
+                                                        });
+                                                    } else {
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeFiveMinApp: true,
+                                                        });
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className="mt-4 opacity-100">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <Checkbox
+                                                    disabled={!appEnabled || disabled}
+                                                    checked={value.beforeFiveMinApp}
+                                                    onCheckedChange={(checked) =>
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeFiveMinApp: checked,
+                                                        })
+                                                    }
+                                                />
+                                                <Label className={!appEnabled ? "opacity-40" : ""}>Trước 5 phút</Label>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <Checkbox
+                                                    disabled={!appEnabled || disabled}
+                                                    checked={value.beforeThirtyMinApp}
+                                                    onCheckedChange={(checked) =>
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeThirtyMinApp: checked,
+                                                        })
+                                                    }
+                                                />
+                                                <Label className={!appEnabled ? "opacity-40" : ""}>Trước 30 phút</Label>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center justify-between mt-6">
+                                            <p className="font-bold">Thông báo email</p>
+                                            <Switch
+                                                disabled={disabled}
+                                                checked={emailEnabled}
+                                                onCheckedChange={(checked) => {
+                                                    if (!checked) {
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeFiveMinEmail: false,
+                                                            beforeThirtyMinEmail: false,
+                                                        });
+                                                    } else {
+                                                        field.onChange({
+                                                            ...field.value,
+                                                            beforeFiveMinEmail: true,
+                                                        });
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+
+                                        <RadioGroup
+                                            disabled={!emailEnabled || disabled}
+                                            onValueChange={(val) => {
+                                                field.onChange({
+                                                    ...field.value,
+                                                    beforeFiveMinEmail: val === "5",
+                                                    beforeThirtyMinEmail: val === "30",
+                                                });
+                                            }}
+                                            value={
+                                                value.beforeFiveMinEmail ? "5" :
+                                                    value.beforeThirtyMinEmail ? "30" :
+                                                        undefined
                                             }
-                                        }}
-                                    />
-                                </div>
+                                            className={!emailEnabled ? "opacity-40" : ""}
+                                        >
+                                            <div className="flex items-center gap-3 mt-4 mb-2">
+                                                <RadioGroupItem value="5" disabled={!emailEnabled || disabled} />
+                                                <Label>Trước 5 phút</Label>
+                                            </div>
 
-                                <div className="flex mt-2 items-center">
-                                    <Checkbox
-                                        checked={field.value?.includes("5-minutes")}
-                                        disabled={disabledApp}
-                                        onCheckedChange={(checked) => {
-                                            if (disabledApp) return
-                                            const newValues = checked ? [...(field.value || []), "5-minutes"] : (field.value || []).filter((v) => v !== "5-minutes")
-                                            field.onChange(newValues)
-                                        }}
-                                    />
-                                    <Label htmlFor="app-5-minutes" className="ml-2">
-                                        Trước 5 phút
-                                    </Label>
-                                </div>
-
-                                <div className="flex mt-2 items-center">
-                                    <Checkbox
-                                        checked={field.value?.includes("30-minutes")}
-                                        disabled={disabledApp}
-                                        onCheckedChange={(checked) => {
-                                            if (disabledApp) return
-                                            const newValues = checked ? [...(field.value || []), "30-minutes"] : (field.value || []).filter((v) => v !== "30-minutes")
-                                            field.onChange(newValues)
-                                        }}
-                                    />
-                                    <Label htmlFor="app-30-minutes" className="ml-2">
-                                        Trước 30 phút
-                                    </Label>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="emailNotifications"
-                        render={({ field }) => (
-                            <FormItem>
-                                <div className="flex items-center justify-between">
-                                    <Label className="font-bold text-xl">Thông báo email</Label>
-                                    <Switch
-                                        onCheckedChange={(checked) => {
-                                            setDisabledMail(!checked)
-                                            if (checked) {
-                                                const defaultValue = "5-minutes"
-                                                setSelectedValue(defaultValue)
-                                                field.onChange(defaultValue)
-                                            } else {
-                                                setSelectedValue(null)
-                                                field.onChange(null)
-                                            }
-                                        }}
-                                    />
-                                </div>
-
-                                <RadioGroup
-                                    className="mt-4"
-                                    disabled={disabledMail}
-                                    value={selectedValue ?? ""}
-                                    onValueChange={(value) => {
-                                        const newValue = selectedValue === value ? null : value
-                                        setSelectedValue(newValue)
-                                        field.onChange(newValue)
-                                    }}
-                                >
-                                    <div className="flex mt-2 items-center">
-                                        <RadioGroupItem value="5-minutes" id="email-5-minutes" />
-                                        <Label htmlFor="email-5-minutes" className="ml-2">
-                                            Trước 5 phút
-                                        </Label>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <RadioGroupItem value="30" disabled={!emailEnabled || disabled} />
+                                                <Label>Trước 30 phút</Label>
+                                            </div>
+                                        </RadioGroup>
                                     </div>
-
-                                    <div className="flex mt-2 items-center">
-                                        <RadioGroupItem value="30-minutes" id="email-30-minutes" />
-                                        <Label htmlFor="email-30-minutes" className="ml-2">
-                                            Trước 30 phút
-                                        </Label>
-                                    </div>
-                                </RadioGroup>
-                            </FormItem>
-                        )}
-                    />
-
-                </div>
-                <div className="flex justify-end mt-10">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            const values = form.getValues()
-                            console.log("📋 Dữ liệu form hiện tại:", values)
+                                </FormItem>
+                            );
                         }}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                    >
-                        Test
-                    </button>
+                    />
                 </div>
             </div>
 
