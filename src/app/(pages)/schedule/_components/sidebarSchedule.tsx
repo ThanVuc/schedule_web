@@ -42,7 +42,7 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
         if (pathname.startsWith("/schedule/daily")) return "Lịch Trình Hằng Ngày";
         if (pathname.startsWith("/schedule/goal")) return "Quản lý mục tiêu";
         if (pathname.startsWith("/schedule/labels")) return "Xem thông tin nhãn";
-        if (pathname.startsWith("/schedule/analysis")) return "Phân Tích, Báo Cáo, Thống Kê dựa trên AI";
+        if (pathname.startsWith("/schedule/analysis")) return "Báo cáo dựa trên AI";
         return "";
     };
     const headerUrl = "/schedule/daily";
@@ -55,4 +55,3 @@ const SidebarSchedule = ({ children }: { children: ReactNode }) => {
 }
 
 export default SidebarSchedule;
-
