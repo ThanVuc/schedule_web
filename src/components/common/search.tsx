@@ -41,15 +41,16 @@ export const AppSearchSimple = (
 export const AppSearch = (
     { placeholder = "Tìm kiếm...", className }: AppSearchProps
 ) => {
-    const [searchString, setSearchString] = useState("");
     const searchParam = useSearchParams();
+    const [searchString, setSearchString] = useState(() => searchParam.get("search") || "");
     const router = useRouter();
     const debouncedValue = useDebounce(searchString, 300);
 
     useEffect(() => {
         const params = new URLSearchParams(searchParam.toString());
-        if (debouncedValue) {
-            params.set("search", debouncedValue as string);
+        const debouncedValueTrimmed = (debouncedValue as string).trim();
+        if (debouncedValueTrimmed) {
+            params.set("search", debouncedValueTrimmed as string);
         } else {
             params.delete("search");
         }
