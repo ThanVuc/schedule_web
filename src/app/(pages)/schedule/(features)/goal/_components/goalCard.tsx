@@ -30,6 +30,9 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
     router.push(`/schedule/goal?${params.toString()}`, { scroll: false });
   };
 
+  const statusLabel = labels.find(label => label.label_type === 2);
+  const statusColor = statusLabel?.color ?? "#00C8FF";
+
   const handleView = () => pushModeWithId(ModelType.VIEW);
   const handleEdit = () => pushModeWithId(ModelType.UPDATE);
   const handleDelete = () => pushModeWithId(ModelType.DELETE);
@@ -37,10 +40,10 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <Card className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4 border-[#00C8FF]/70">
+        <Card className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4" style={{ borderColor: statusColor + "B3" }}>
           <div className="px-1 sm:px-3 py-2 flex flex-col gap-2 sm:gap-3">
             <div className="flex sm:flex-row justify-between sm:items-center mb-2 border-b-2 border-slate-600 gap-2 pb-2">
-              <p className="text-[#98D9F1] font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left">
+              <p className=" font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left" style={{ color: statusColor + "CC" }} >
                 {GoalCard?.name ?? "-"}
               </p>
               <div className="flex justify-center sm:justify-end">
@@ -88,7 +91,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
           <TrashIcon className="!text-red-500" />Xóa
         </ContextMenuItem>
       </ContextMenuContent>
-    </ContextMenu>
+    </ContextMenu >
   );
 };
 

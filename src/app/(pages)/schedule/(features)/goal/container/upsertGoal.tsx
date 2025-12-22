@@ -115,7 +115,7 @@ const UpsertGoal = ({ refetch }: UpsertGoalProps) => {
 
 
     const defaultLabels = useMemo(() => {
-        if (!id && !goalData) return labelDefaultData;
+        if (!id) return labelDefaultData;
 
         const goalLabels = goalData?.goalLabels;
         const labels: GoalLabelsGroup | null = goalLabels
