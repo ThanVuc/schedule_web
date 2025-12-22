@@ -192,7 +192,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 name="tasks"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <MiniTask {...field} />
+                                        <MiniTask {...field} disable={isDisabled} />
                                     </FormItem>
                                 )}
                             />

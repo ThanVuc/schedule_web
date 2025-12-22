@@ -1,6 +1,5 @@
 "use client";
 import { AppPagination, AppSearch } from "@/components/common";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import GoalCard from "../_components/goalCard";
 import { useAxios, useToastState } from "@/hooks";
@@ -10,16 +9,30 @@ import Spinner from "@/components/common/spinner";
 import { DeleteGoal } from "./deleteGoal";
 import UpsertGoal from "./upsertGoal";
 import { FilterIcon, TargetIcon } from "@/components/icon";
-import { Select } from "@/components/ui";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui";
+import { WorkLabelModel } from "../../daily/_models/type";
+import LabelApiUrl from "@/api/label";
+import { LabelType } from "../_constant/common";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 export const ListGoal = () => {
 
     const searchParams = useSearchParams();
+    const router = useRouter();
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
         return Object.fromEntries(entries);
     }, [searchParams]);
+
+    const { data: statusLabelData } = useAxios<{ labels: WorkLabelModel[] }>(
+        {
+            method: "GET",
+            url: `${LabelApiUrl.getListLabels}/${LabelType.LabelStatus}`,
+        },
+        []
+    );
+
     const [isLoading, setIsLoading] = useState(true);
 
     const { data, error, loading, refetch } = useAxios<GoalsResponse>({
@@ -46,6 +59,17 @@ export const ListGoal = () => {
         }
     }, [error]);
 
+    const handleFilterStatus = (value: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (value === "all") {
+            params.delete("status_id");
+        } else {
+            params.set("status_id", value);
+        }
+        const queryString = params.toString();
+        router.replace(`/schedule/goal?${queryString}`, { scroll: false });
+    }
+
     const view = useMemo(() => {
         const goals = data?.items ?? [];
         const page = data?.page ?? 1;
@@ -69,12 +93,30 @@ export const ListGoal = () => {
                 <AppSearch
                     key="search-goal"
                     className="flex-2"
-                    placeholder="Tìm kiếm theo tên, danh mục, mô tả ngắn"
+                    placeholder="Tìm kiếm theo tên mục tiêu"
                 />
                 <div className="flex gap-2">
-                    <Select>
-                        <FilterIcon />
-                        <p className="text-md">Chọn trạng thái</p>
+                    <Select
+                        value={searchParams.get("status_id") ?? "all"}
+                        onValueChange={(value) => handleFilterStatus(value)}>
+                        <SelectTrigger className="w-[180px]">
+                            <FilterIcon className="size-4 mr-2" />
+                            <SelectValue placeholder="Chọn trạng thái" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Trạng thái</SelectLabel>
+                                <SelectItem key="all" value="all">Tất cả</SelectItem>
+                                {
+                                    statusLabelData?.labels.map((status) => (
+                                        <SelectItem
+                                            key={status.id}
+                                            value={status.id}
+                                        >{status.name}</SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
                     </Select>
                 </div>
             </div>
@@ -87,7 +129,7 @@ export const ListGoal = () => {
                 )}
                 {!loading && view.goals.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 gap-4">
-                        <TargetIcon className="size-10" />
+                        <TargetIcon className="size-8" />
                         <h3 className="text-xl font-semibold text-gray-400">
                             Không có mục tiêu nào
                         </h3>
