@@ -1,25 +1,21 @@
 export interface WorkLabelModel {
     id: string,
     name: string,
-    icon: string,
     color: string,
     key: string,
     label_type: number
 }
 export interface WorkCardModel {
     id: string;
-    title: string;
-    start_time: string,
-    end_time: string,
+    name: string;
+    start_date: number;
+    end_date: number;
     category: WorkLabelModel;
     goal: string;
-    shortDescription: string;
+    short_descriptions: string;
+    detailed_description: string;
     labels: WorkLabelModel[];
 }
 export interface WorkCardListModel {
-    morning: WorkCardModel[];
-    noon: WorkCardModel[];
-    afternoon: WorkCardModel[];
-    evening: WorkCardModel[];
-    night: WorkCardModel[];
+    works: WorkCardModel[];
 }

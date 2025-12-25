@@ -22,7 +22,7 @@ const Session = ({ morningTasks = [], afternoonTasks = [], eveningTasks = [], ni
     <div className="flex flex-col gap-10">
 
       {
-        (activeSession === DaySection.MORNING || activeSession === null) && (<SessionBlock loading={loading} icon={<MorningIcon className="!w-6 !h-6" />} title="Sáng" time="6:00 - 10:00" tasks={morningTasks} />)
+        (activeSession === DaySection.MORNING || activeSession === null) && (<SessionBlock loading={loading} icon={<MorningIcon className="!w-6 !h-6" />} title="Sáng" time="0:00 - 10:00" tasks={morningTasks} />)
       }
       {
         (activeSession === DaySection.AFTERNOON || activeSession === null) && (<SessionBlock loading={loading} icon={<SunIcon className="!w-6 !h-6" />} title="Trưa" time="10:00 - 14:00" tasks={afternoonTasks} />)
@@ -36,7 +36,7 @@ const Session = ({ morningTasks = [], afternoonTasks = [], eveningTasks = [], ni
       }
 
       {
-        (activeSession === DaySection.MIDNIGHT || activeSession === null) && (<SessionBlock loading={loading} icon={<StarIcon className="!w-6 !h-6" />} title="Khuya" time="22:00 - 2:00" tasks={midnightTasks} />)
+        (activeSession === DaySection.MIDNIGHT || activeSession === null) && (<SessionBlock loading={loading} icon={<StarIcon className="!w-6 !h-6" />} title="Khuya" time="22:00 - 24:00" tasks={midnightTasks} />)
       }
 
     </div>

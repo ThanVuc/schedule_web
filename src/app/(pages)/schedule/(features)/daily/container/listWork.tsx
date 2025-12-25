@@ -9,7 +9,7 @@ import { Button } from "@/components/ui";
 import { DownIcon, FilterIcon } from "@/components/icon";
 import UpsertSchedule from "./upsertWork";
 import { Session } from "../_components";
-import { DaySection } from "../../../_constant/common";
+import { DaySection, DaySectionText } from "../../../_constant/common";
 
 interface ListWorkProps {
     activeTime: DaySection | null;
@@ -39,6 +39,50 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
             });
         }
     }, [error]);
+
+    const getSessionFromDate = (timestamp: number): DaySectionText => {
+        const date = new Date(timestamp);
+        const hour = date.getHours();
+
+        if (hour >= 0 && hour < 10) return DaySectionText.MORNING;   
+        if (hour >= 10 && hour < 14) return DaySectionText.NOON;        
+        if (hour >= 14 && hour < 18) return DaySectionText.AFTERNOON;   
+        if (hour >= 18 && hour < 22) return DaySectionText.NIGHT;      
+        return DaySectionText.EVERNIGHT;                              
+    };
+
+    const works = data?.works ?? [];
+
+    const sessionData = useMemo(() => {
+        const morning: typeof works = [];
+        const noon: typeof works = [];
+        const afternoon: typeof works = [];
+        const night: typeof works = [];
+        const evernight: typeof works = [];
+
+        works.forEach((w) => {
+            const section = getSessionFromDate(w.start_date);
+            switch (section) {
+                case DaySectionText.MORNING:
+                    morning.push(w);
+                    break;
+                case DaySectionText.NOON:
+                    noon.push(w);
+                    break;
+                case DaySectionText.AFTERNOON:
+                    afternoon.push(w);
+                    break;
+                case DaySectionText.NIGHT:
+                    night.push(w);
+                    break;
+                case DaySectionText.EVERNIGHT:
+                    evernight.push(w);
+                    break;
+            }
+        });
+
+        return { morning, noon, afternoon, night, evernight };
+    }, [data]);
     return (<>
         <div className="flex justify-between mb-3">
             <div><AppSearch className="flex-2s" placeholder="Tìm kiếm Theo tên, danh mục, mô tả ngắn" /></div>
@@ -48,7 +92,7 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         </div>
         <UpsertSchedule refetch={refetch} />
         <div>
-            <Session morningTasks={data?.morning} afternoonTasks={data?.noon} eveningTasks={data?.afternoon} nightTasks={data?.night} midnightTasks={data?.evening} session={activeTime} />
+            <Session morningTasks={sessionData?.morning} afternoonTasks={sessionData?.noon} eveningTasks={sessionData?.afternoon} nightTasks={sessionData?.night} midnightTasks={sessionData?.evernight} session={activeTime} />
         </div>
     </>);
 }

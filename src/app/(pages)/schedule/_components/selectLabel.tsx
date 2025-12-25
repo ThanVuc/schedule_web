@@ -19,7 +19,7 @@ interface SelectLabelProps {
   classNameContent?: string;
   label: {
     label: string;
-    icon: string;
+    keyIcon: string;
     color: string;
     width: string;
     height: string;
@@ -27,12 +27,13 @@ interface SelectLabelProps {
   onclick?: () => void;
   onchangeValue?: (value: string) => void;
   disable?: boolean;
+  onchangeObject?: (value: string) => void;
 }
 const SelectWorkLabel = ({
-  Open, onOpenChange, data, classNameContent, label, onclick, onchangeValue, disable
+  Open, onOpenChange, data, classNameContent, label, onclick, onchangeValue, disable, onchangeObject,
 }: SelectLabelProps) => {
   const [selected, setSelected] = useState(label);
-  const IconComponent = useLabelIcon(selected.icon);
+  const IconComponent = useLabelIcon(selected.keyIcon);
 
   const formatColor = (color: string) => {
     if (color.startsWith("#")) {
@@ -48,12 +49,13 @@ const SelectWorkLabel = ({
       onValueChange={(value) => {
         const newLabel = data.find((x) => x.name === value);
         if (newLabel) {
-          setSelected({ label: newLabel.name, icon: newLabel.key, color: newLabel.color, width: label.width, height: label.height, });
+          setSelected({ label: newLabel.name, keyIcon: newLabel.key, color: newLabel.color, width: label.width, height: label.height, });
         }
         if (onchangeValue) onchangeValue(newLabel?.id || "");
+        if (onchangeObject) onchangeObject(newLabel?.key || "");
       }}
     >
-      <SelectTrigger className="border-0 p-0 bg-transparent [&>svg]:hidden" disabled={disable}>
+      <SelectTrigger className="border-0 p-0 bg-transparent [&>svg]:hidden disabled:opacity-100 disabled:cursor-not-allowed" disabled={disable}>
         <SelectValue>
           <div
             className="flex w-full justify-center gap-2 p-1.5 text-sm rounded-md border-2 items-center"
@@ -93,7 +95,6 @@ const SelectWorkLabel = ({
           ))}
         </SelectGroup>
       </SelectContent>
-
     </Select>
   );
 };

@@ -75,3 +75,87 @@ export const formatDate = {
         return d ? formatDate.dateToISO(d) : "";
     }
 };
+export const formatTime = {
+    // string ("HH:mm" hoặc "HH:mm:ss") -> Date (ngày hôm nay)
+    stringToDate: (input?: string | null): Date | null => {
+        if (!input) return null;
+
+        const parts = input.split(":").map(Number);
+
+        if (parts.length < 2) return null;
+
+        const [hour, minute, second = 0] = parts;
+
+        const now = new Date();
+        now.setHours(hour, minute, second, 0);
+
+        return now;
+    },
+
+    // Date -> string ("HH:mm")
+    dateToString: (input?: Date | string | number | null): string => {
+        if (!input) return "";
+        const date = input instanceof Date ? input : new Date(input);
+        if (isNaN(date.getTime())) return "";
+
+        const hh = String(date.getHours()).padStart(2, "0");
+        const mm = String(date.getMinutes()).padStart(2, "0");
+
+        return `${hh}:${mm}`;
+    },
+
+    // Date -> string ("HH:mm:ss")
+    dateToLongString: (input?: Date | string | number | null): string => {
+        if (!input) return "";
+        const date = input instanceof Date ? input : new Date(input);
+        if (isNaN(date.getTime())) return "";
+
+        const hh = String(date.getHours()).padStart(2, "0");
+        const mm = String(date.getMinutes()).padStart(2, "0");
+        const ss = String(date.getSeconds()).padStart(2, "0");
+
+        return `${hh}:${mm}:${ss}`;
+    },
+
+    // number (timestamp) -> string ("HH:mm")
+    numberToString: (input?: number | null): string => {
+        if (!input) return "";
+        const date = new Date(input);
+        return formatTime.dateToString(date);
+    },
+
+    // string ("HH:mm") -> number (timestamp)
+    stringToNumber: (input?: string | null): number | null => {
+        const d = formatTime.stringToDate(input);
+        return d ? d.getTime() : null;
+    },
+
+    // số milliseconds -> Date
+    numberToDate: (input?: number | null): Date | null => {
+        if (!input) return null;
+        return new Date(input);
+    },
+
+    // Date -> number (timestamp)
+    dateToNumber: (input?: Date | string | number | null): number | null => {
+        if (!input) return null;
+        const date = input instanceof Date ? input : new Date(input);
+        return isNaN(date.getTime()) ? null : date.getTime();
+    },
+
+    // string ("HH:mm:ss") -> number timestamp
+    longStringToNumber: (input?: string | null): number | null => {
+        if (!input) return null;
+
+        const parts = input.split(":").map(Number);
+
+        if (parts.length < 3) return null;
+
+        const [hour, minute, second] = parts;
+
+        const now = new Date();
+        now.setHours(hour, minute, second, 0);
+
+        return now.getTime();
+    },
+};

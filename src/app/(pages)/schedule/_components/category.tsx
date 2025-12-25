@@ -6,7 +6,7 @@ import { LabelApiUrl } from "@/api/label";
 
 interface LabelProps {
     label: string;
-    icon: string;
+    keyIcon: string;
     color: string;
     width?: string;
     height?: string;
@@ -14,7 +14,7 @@ interface LabelProps {
     classNameContentLabel?: string;
 }
 
-export const WorkCategory = ({ label, icon, color, width, height, label_type, classNameContentLabel }: LabelProps) => {
+export const WorkCategory = ({ label, keyIcon, color, width, height, label_type, classNameContentLabel }: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
 
     const { data, refetch } = useAxios<{ labels: WorkLabelModel[] }>(
@@ -31,7 +31,7 @@ export const WorkCategory = ({ label, icon, color, width, height, label_type, cl
         if (refetch) refetch();
     };
     const currentLabel = {
-        label, icon, color, width: width ?? "4", height: height ?? "4",
+        label, keyIcon, color: color || "#ffffff", width: width ?? "4", height: height ?? "4",
     };
 
     return (
