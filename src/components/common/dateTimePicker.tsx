@@ -52,7 +52,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, [defaultValue]);
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
-  const minutes = Array.from({ length: 61 }, (_, i) => i * 1);
+  const minutes = Array.from({ length: 60 }, (_, i) => i * 1);
   const handleTimeChange = (
     type: "hour" | "minute" | "ampm",
     value: string

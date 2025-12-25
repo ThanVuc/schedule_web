@@ -46,13 +46,17 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
     const updateHighlight = () => {
       const minutes = new Date().getHours() * 60 + new Date().getMinutes();
 
-      if (minutes < 600) setHighlight(DaySection.MORNING);
-      else if (minutes < 840) setHighlight(DaySection.AFTERNOON);
-      else if (minutes < 1080) setHighlight(DaySection.EVENING);
-      else if (minutes < 1320) setHighlight(DaySection.NIGHT);
-      else setHighlight(DaySection.MIDNIGHT);
+      if (minutes >= 0 && minutes < 600)
+        setHighlight(DaySection.MORNING);
+      else if (minutes >= 600 && minutes < 840)
+        setHighlight(DaySection.AFTERNOON);
+      else if (minutes >= 840 && minutes < 1080)
+        setHighlight(DaySection.EVENING);
+      else if (minutes >= 1080 && minutes < 1320)
+        setHighlight(DaySection.NIGHT);
+      else
+        setHighlight(DaySection.MIDNIGHT);
     };
-
     updateHighlight();
     const timer = setInterval(updateHighlight, 60_000);
     return () => clearInterval(timer);
@@ -126,7 +130,7 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
     },
   ];
 
-    const percentStep = Math.max(0, Math.min(100, Math.round(percent / 5) * 5));
+  const percentStep = Math.max(0, Math.min(100, Math.round(percent / 5) * 5));
 
   const bgFilter = "!bg-[#CED0D2] text-black";
   const bgHighlight =

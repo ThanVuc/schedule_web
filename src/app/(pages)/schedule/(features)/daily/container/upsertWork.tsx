@@ -241,8 +241,8 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     }
     const handleCreate = async (values: z.infer<typeof upsertScheduleSchema>) => {
         const currentDate = values.start_date ?? 0;
-        const beforeThirtyMin = currentDate + 30 * 60 * 1000;
-        const beforeFiveMin = currentDate + 5 * 60 * 1000;
+        const beforeThirtyMin = currentDate - 30 * 60 * 1000;
+        const beforeFiveMin = currentDate - 5 * 60 * 1000;
         let StateNotificationMail = false;
         let timeNotificationMail = 0;
         if (values.notifications.beforeThirtyMinEmail) {
