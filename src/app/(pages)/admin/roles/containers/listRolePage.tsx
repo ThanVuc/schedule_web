@@ -172,7 +172,6 @@ export const ListRolePage = () => {
                             open: true,
                             setOpen: setOpenAlertDialog,
                         });
-                        setOpenAlertDialog(true);
                     }}
                 />) : (
                     <ActionButton

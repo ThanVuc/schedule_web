@@ -143,7 +143,6 @@ export const UpsertPermission = ({
 
 
     const onSubmit = async (values: z.infer<typeof UpsertPermissionSchema>) => {
-        console.log("Form submitted with values:", values);
         if (isDisabled) return;
         const isConfirmed = await confirm();
         if (!isConfirmed) return;
