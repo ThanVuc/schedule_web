@@ -17,7 +17,7 @@ import { labelDefault } from "../_models/type/label";
 import { LabelApiUrl } from "@/api/label";
 import {useEffect, useState } from "react";
 import Spinner from "@/components/common/spinner";
-import { ModelType } from "../../../_constant";
+import { LinkNotification, ModelType } from "../../../_constant";
 
 
 const buttonProps = {
@@ -273,19 +273,19 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                     trigger_at: beforeFiveMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeFiveMinApp || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
                     trigger_at: beforeThirtyMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeThirtyMinApp || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
                     trigger_at: timeNotificationMail,
                     is_send_mail: StateNotificationMail,
                     is_active: StateNotificationMail || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 }
             ],
             sub_tasks: values.sub_tasks?.map(subTask => ({
@@ -339,8 +339,8 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     };
     const handleEdit = async (values: z.infer<typeof upsertScheduleSchema>) => {
         const currentDate = values.start_date ?? 0;
-        const beforeThirtyMin = currentDate + 30 * 60 * 1000;
-        const beforeFiveMin = currentDate + 5 * 60 * 1000;
+        const beforeThirtyMin = currentDate - 30 * 60 * 1000;
+        const beforeFiveMin = currentDate - 5 * 60 * 1000;
         let StateNotificationMail = false;
         let timeNotificationMail = 0;
         if (values.notifications.beforeThirtyMinEmail) {
@@ -371,19 +371,19 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                     trigger_at: beforeFiveMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeFiveMinApp || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
                     trigger_at: beforeThirtyMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeThirtyMinApp || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
                     trigger_at: timeNotificationMail,
                     is_send_mail: StateNotificationMail,
                     is_active: StateNotificationMail || false,
-                    link: "https://www.schedulr.site/schedule/works/" + searchParams.get("id"),
+                    link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 }
             ],
             sub_tasks: values.sub_tasks?.map(subTask => ({

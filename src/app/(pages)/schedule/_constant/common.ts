@@ -22,4 +22,7 @@ export enum DaySectionText {
   NIGHT = "NIGHT",
   EVERNIGHT = "EVERNIGHT"
 }
+export enum LinkNotification {
+    LinkNotificationSchedule = "https://www.schedulr.site/schedule/works/",
+}
 

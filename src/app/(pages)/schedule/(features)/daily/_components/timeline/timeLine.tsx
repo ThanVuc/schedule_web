@@ -35,7 +35,7 @@ const SECTION_INDEX: Record<DaySection, number> = {
 
 const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   const ButtonActive =
-    "border-2 p-5 w-15 h-15 rounded-full bg-[#0B1120] hover:scale-110 hover:bg-[#0B1120] border-blue-400 text-white";
+    "border-2 p-5 w-15 h-15 rounded-full bg-[#0B1120] hover:scale-[1.1] hover:bg-[#0B1120] border-blue-400 text-white";
   const timeLineTitle = "absolute right-10 text-xs font-semibold";
   const timeLineHour = "absolute left-10 w-22 text-xs font-semibold";
 

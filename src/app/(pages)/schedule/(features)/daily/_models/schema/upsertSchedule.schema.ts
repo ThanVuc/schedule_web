@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const upsertScheduleSchema = z.object({
-    name: z.string().min(1, "Tên mục tiêu không được để trống").max(100, "Tiêu đề không thể vượt quá 100 ký tự"),
+    name: z.string().min(1, "Tên công việc không được để trống").max(100, "Tên công việc không thể vượt quá 100 ký tự"),
     start_date: z.number(),
     end_date: z.number(),
     status_id: z.string(),
