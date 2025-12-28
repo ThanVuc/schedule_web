@@ -51,7 +51,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
                   <WorkCategory
                     key={category.id}
                     label={category.name}
-                    icon={category.key}
+                    keyIcon={category.key}
                     color={category.color}
                     label_type={category.label_type}
                   />
