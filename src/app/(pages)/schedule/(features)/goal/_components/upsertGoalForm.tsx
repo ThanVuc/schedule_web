@@ -93,7 +93,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                                             field.onChange(id);
                                                         }}
                                                         color={defaultLabel?.status?.color ?? ""}
-                                                        icon={defaultLabel?.status?.key ?? ""}
+                                                        keyIcon={defaultLabel?.status?.key ?? ""}
                                                         label={defaultLabel?.status?.name ?? ""}
                                                         label_type={defaultLabel?.status?.label_type ?? 0}
                                                         key={defaultLabel?.status?.id ?? ""}
@@ -119,7 +119,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                                             field.onChange(id)
                                                         }}
                                                         color={defaultLabel?.difficulty?.color ?? ""}
-                                                        icon={defaultLabel?.difficulty?.key ?? ""}
+                                                        keyIcon={defaultLabel?.difficulty?.key ?? ""}
                                                         label={defaultLabel?.difficulty?.name ?? ""}
                                                         label_type={defaultLabel?.difficulty?.label_type ?? 0}
                                                         key={defaultLabel?.difficulty?.id ?? ""}
@@ -145,7 +145,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                                             field.onChange(id);
                                                         }}
                                                         color={defaultLabel?.priority?.color ?? ""}
-                                                        icon={defaultLabel?.priority?.key ?? ""}
+                                                        keyIcon={defaultLabel?.priority?.key ?? ""}
                                                         label={defaultLabel?.priority?.name ?? ""}
                                                         label_type={defaultLabel?.priority?.label_type ?? 0}
                                                         key={defaultLabel?.priority?.id ?? ""}
@@ -171,7 +171,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                                             field.onChange(id);
                                                         }}
                                                         color={defaultLabel?.category?.color ?? ""}
-                                                        icon={defaultLabel?.category?.key ?? ""}
+                                                        keyIcon={defaultLabel?.category?.key ?? ""}
                                                         label={defaultLabel?.category?.name ?? ""}
                                                         label_type={defaultLabel?.category?.label_type ?? 0}
                                                         key={defaultLabel?.category?.id ?? ""}
