@@ -65,7 +65,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
                 <WorkLabel
                   key={label.id}
                   label={label.name}
-                  icon={label.key}
+                  keyIcon={label.key}
                   color={label.color}
                   label_type={label.label_type}
                 />
