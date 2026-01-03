@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { DaySection, ModelType } from "../../_constant/common";
-import { TimeLine } from "./_components";
 import { Title } from "../../_components/title";
 import { AddIcon, DateIcon, FourStarIcon, LoopIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
-
 import { useRouter, useSearchParams } from "next/navigation";
 import ListWork from "./container/listWork";
+import TimeLine from "./_components/timeline/timeLine";
 
 
 const DailySchedulePage = () => {
@@ -24,7 +23,6 @@ const DailySchedulePage = () => {
         } else {
             params.delete("id");
         }
-
         router.push(`/schedule/daily?${params.toString()}`, { scroll: false });
     }
     return (

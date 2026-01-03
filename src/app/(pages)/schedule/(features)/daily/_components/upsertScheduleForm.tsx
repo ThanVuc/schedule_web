@@ -48,7 +48,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             name="start_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker disabled={ disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
+                                    <DateTimePicker defaultValue={field.value} disabled={ disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
                                 </FormItem>
                             )}
                         />
@@ -57,7 +57,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             name="end_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker disabled={disabled} disabledDate={!currentTypeLabel} title="Đến" {...field} icon={<CalendarIcon />} />
+                                    <DateTimePicker defaultValue={field.value} disabled={disabled} disabledDate={!currentTypeLabel} title="Đến" {...field} icon={<CalendarIcon />} />
                                     <FormMessage />
                                 </FormItem>
                             )}
