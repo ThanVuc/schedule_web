@@ -14,7 +14,7 @@ interface LabelProps {
     classNameContentLabel?: string;
 }
 
-export const WorkCategory = ({ label, keyIcon, color, width, height, label_type, classNameContentLabel }: LabelProps) => {
+export const LabelCategory = ({ label, keyIcon, color, width, height, label_type, classNameContentLabel }: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
 
     const { data, refetch } = useAxios<{ labels: WorkLabelModel[] }>(
