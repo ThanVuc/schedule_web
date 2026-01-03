@@ -63,6 +63,7 @@ export interface label{
 
 
 export interface notifications {
+    id?: string;
     trigger_at: number;
     is_send_mail: boolean;
     is_active: boolean;
