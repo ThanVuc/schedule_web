@@ -4,12 +4,12 @@ import { UseFormReturn } from "react-hook-form";
 import { Checkbox, FormField, FormItem, FormMessage, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui";
 import { DateTimePicker } from "@/components/common/dateTimePicker";
 import { CalendarIcon } from "@/components/icon";
-import { WorkLabel } from "../../../_components";
 import InfoPopover from "./infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labelDefault } from "../_models/type/label";
 import { useState } from "react";
+import { LabelSelector } from "../../../_components";
 
 type ScheduleForm = z.infer<typeof upsertScheduleSchema>
 interface UpsertScheduleFormProps {
@@ -48,7 +48,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             name="start_date"
                             render={({ field }) => (
                                 <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker defaultValue={field.value} disabled={ disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
+                                    <DateTimePicker defaultValue={field.value} disabled={disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
                                 </FormItem>
                             )}
                         />
@@ -103,14 +103,14 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                     name="type_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} onchangeObject={(selectedKey) => {
+                                            <LabelSelector onchange={field.onChange} onchangeObject={(selectedKey) => {
                                                 if (selectedKey === "REPEATED") {
                                                     setCurrentTypeLabel(true);
                                                 }
                                                 else {
                                                     setCurrentTypeLabel(false);
                                                 }
-                                            }} disable={disabled} color={labelDefaultData?.type.color || "#E8E8E8"}  keyIcon={labelDefaultData?.type.key || "IN_DAY"} label={labelDefaultData?.type.name || "Trong Ngày"} label_type={labelDefaultData?.type.label_type || 1} classNameContentLabel="z-161" />
+                                            }} disable={disabled} color={labelDefaultData?.type.color || "#E8E8E8"} keyIcon={labelDefaultData?.type.key || "IN_DAY"} label={labelDefaultData?.type.name || "Trong Ngày"} label_type={labelDefaultData?.type.label_type || 1} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -125,7 +125,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                     name="status_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel disable={disabled} onchange={field.onChange} color={labelDefaultData?.status.color || "#FFEA00"} keyIcon={labelDefaultData?.status.key || "PENDING"} label={labelDefaultData?.status.name || "Chờ làm"} label_type={labelDefaultData?.status.label_type || 2} classNameContentLabel="z-161" />
+                                            <LabelSelector disable={disabled} onchange={field.onChange} color={labelDefaultData?.status.color || "#FFEA00"} keyIcon={labelDefaultData?.status.key || "PENDING"} label={labelDefaultData?.status.name || "Chờ làm"} label_type={labelDefaultData?.status.label_type || 2} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -140,7 +140,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                     name="difficulty_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.difficulty.color || "#13C540"} keyIcon={labelDefaultData?.difficulty.key || "EASY"} label={labelDefaultData?.difficulty.name || "Dễ"} label_type={labelDefaultData?.difficulty.label_type || 3} classNameContentLabel="z-161" />
+                                            <LabelSelector onchange={field.onChange} disable={disabled} color={labelDefaultData?.difficulty.color || "#13C540"} keyIcon={labelDefaultData?.difficulty.key || "EASY"} label={labelDefaultData?.difficulty.name || "Dễ"} label_type={labelDefaultData?.difficulty.label_type || 3} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -156,7 +156,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                     name="priority_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.priority.color || "#13C540"} keyIcon={labelDefaultData?.priority.key || "IMPORTANT_NOT_URGENT"} label={labelDefaultData?.priority.name || "Quan trọng & Không khẩn cấp"} label_type={labelDefaultData?.priority.label_type || 4} classNameContentLabel="z-161" />
+                                            <LabelSelector onchange={field.onChange} disable={disabled} color={labelDefaultData?.priority.color || "#13C540"} keyIcon={labelDefaultData?.priority.key || "IMPORTANT_NOT_URGENT"} label={labelDefaultData?.priority.name || "Quan trọng & Không khẩn cấp"} label_type={labelDefaultData?.priority.label_type || 4} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
@@ -171,7 +171,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                     name="category_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <WorkLabel onchange={field.onChange} disable={disabled} color={labelDefaultData?.category.color || "#3B82F6"} keyIcon={labelDefaultData?.category.key || "WORK"} label={labelDefaultData?.category.name || "Công việc"} label_type={labelDefaultData?.category.label_type || 5} classNameContentLabel="z-161" />
+                                            <LabelSelector onchange={field.onChange} disable={disabled} color={labelDefaultData?.category.color || "#3B82F6"} keyIcon={labelDefaultData?.category.key || "WORK"} label={labelDefaultData?.category.name || "Công việc"} label_type={labelDefaultData?.category.label_type || 5} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />

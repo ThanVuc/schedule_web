@@ -6,9 +6,9 @@ import { FormField, FormItem, FormMessage, Input, Textarea } from "@/components/
 import { DateTimePicker } from "@/components/common/dateTimePicker";
 import { CalendarIcon } from "lucide-react";
 import InfoPopover from "../../daily/_components/infoPopover";
-import { WorkLabel } from "../../../_components";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { GoalLabelsGroup } from "../_models/type";
+import { LabelSelector } from "../../../_components";
 
 type GoalForm = z.infer<typeof UpsertGoalSchema>
 
@@ -88,7 +88,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             name="status_id"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <WorkLabel
+                                                    <LabelSelector
                                                         onchange={(id: string) => {
                                                             field.onChange(id);
                                                         }}
@@ -114,7 +114,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             name="difficulty_id"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <WorkLabel
+                                                    <LabelSelector
                                                         onchange={(id: string) => {
                                                             field.onChange(id)
                                                         }}
@@ -140,7 +140,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             name="priority_id"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <WorkLabel
+                                                    <LabelSelector
                                                         onchange={(id: string) => {
                                                             field.onChange(id);
                                                         }}
@@ -166,7 +166,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             name="category_id"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <WorkLabel
+                                                    <LabelSelector
                                                         onchange={(id: string) => {
                                                             field.onChange(id);
                                                         }}
