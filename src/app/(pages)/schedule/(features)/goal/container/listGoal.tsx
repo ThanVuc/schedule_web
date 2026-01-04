@@ -136,7 +136,9 @@ export const ListGoal = () => {
                         <p className="text-gray-500 text-center max-w-md">
                             {listParams.search
                                 ? `Không tìm thấy mục tiêu nào với từ khóa "${listParams.search}"`
-                                : "Chưa có mục tiêu nào được tạo. Hãy tạo mục tiêu đầu tiên của bạn!"
+                                : listParams.status_id
+                                    ? `Chưa có mục tiêu nào với trạng thái "${statusLabelData?.labels.find(s => s.id === listParams.status_id)?.name || 'này'}"`
+                                    : "Chưa có mục tiêu nào được tạo. Hãy tạo mục tiêu đầu tiên của bạn!"
                             }
                         </p>
                     </div>

@@ -12,9 +12,10 @@ interface LabelProps {
     height?: string;
     label_type: number;
     classNameContentLabel?: string;
+    onchange?: (value: string) => void;
 }
 
-export const WorkCategory = ({ label, keyIcon, color, width, height, label_type, classNameContentLabel }: LabelProps) => {
+export const LabelCategory = ({ label, keyIcon, color, width, height, label_type, classNameContentLabel, onchange }: LabelProps) => {
     const [OpenSelector, setOpenSelector] = useState(false);
 
     const { data, refetch } = useAxios<{ labels: WorkLabelModel[] }>(
@@ -37,6 +38,7 @@ export const WorkCategory = ({ label, keyIcon, color, width, height, label_type,
     return (
         <div className="flex">
             <SelectLabel
+                onchangeValue={onchange}
                 label={currentLabel}
                 Open={OpenSelector}
                 onOpenChange={handleOpenLabel}

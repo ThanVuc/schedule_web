@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui";
-import { WorkCategory, WorkLabel } from "../../../_components";
+import { LabelCategory, LabelSelector } from "../../../_components";
 import { GoalCardModel, GoalLabelModel } from "../_models/type/goalCard.type";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ContextMenuItem } from "@radix-ui/react-context-menu";
@@ -48,7 +48,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
               </p>
               <div className="flex justify-center sm:justify-end">
                 {category && (
-                  <WorkCategory
+                  <LabelCategory
                     key={category.id}
                     label={category.name}
                     keyIcon={category.key}
@@ -62,7 +62,7 @@ const GoalCard = ({ GoalCard }: GoalCardProps) => {
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
               <Time Begin={begin} End={end} Icon={"Goal"} />
               {labels.map(label => (
-                <WorkLabel
+                <LabelSelector
                   key={label.id}
                   label={label.name}
                   keyIcon={label.key}

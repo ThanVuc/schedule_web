@@ -68,18 +68,13 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
     const updatePosition = () => {
       const now = new Date();
       const minutes = now.getHours() * 60 + now.getMinutes();
-
       const { start, end } = SECTION_TIME[highlight];
       const sectionIndex = SECTION_INDEX[highlight];
+      const minutesIntoSection = minutes - start;
+      const sectionDuration = end - start;
+      const sectionPercent = Math.max(0, Math.min(1, minutesIntoSection / sectionDuration));
+      const globalPercent = (sectionIndex * 20) + (sectionPercent * 20);
 
-      const sectionPercent =
-        ((minutes - start) / (end - start)) * 100;
-      const safePercent = Math.max(0, Math.min(100, sectionPercent));
-
-      const sectionHeight = 100 / 5;
-      const globalPercent =
-        sectionIndex * sectionHeight +
-        (safePercent / 100) * sectionHeight;
       setPercent(globalPercent);
     };
 
@@ -130,8 +125,6 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
     },
   ];
 
-  const percentStep = Math.max(0, Math.min(100, Math.round(percent / 5) * 5));
-
   const bgFilter = "!bg-[#CED0D2] text-black";
   const bgHighlight =
     "bg-[#2A97EA] animate-[glow-blue_2s_infinite_ease-in-out] hover:bg-[#2A97EA] text-black";
@@ -139,10 +132,11 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   return (
     <div className="pr-8">
       <div className="relative flex flex-col gap-45 items-center h-full">
-        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] bg-blue-500 h-300" />
-        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-300 bg-blue-500">
+        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] bg-blue-500 h-200" />
+        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-340 bg-blue-500">
           <div
-            className={`${styles.progress} ${styles[`p-${percentStep}`]}`}
+            className={styles.progress}
+            style={{ height: `${percent}%` }}
           />
         </div>
 

@@ -63,6 +63,7 @@ export interface label{
 
 
 export interface notifications {
+    id?: string;
     trigger_at: number;
     is_send_mail: boolean;
     is_active: boolean;
@@ -72,4 +73,9 @@ export interface SubTask {
     id?: string;
     name: string;
     is_completed: boolean;
+}
+
+export interface QuickSwapLabelRequest {
+    label_type: number;
+    label_id: string;
 }

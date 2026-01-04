@@ -368,18 +368,21 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             detailed_description: values.detailed_description ?? "",
             notifications: [
                 {
+                    id: dataGetById?.notifications.find(n => n.trigger_at === beforeFiveMin && !n.is_send_mail)?.id,
                     trigger_at: beforeFiveMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeFiveMinApp || false,
                     link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
+                    id: dataGetById?.notifications.find(n => n.trigger_at === beforeThirtyMin && !n.is_send_mail)?.id,
                     trigger_at: beforeThirtyMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeThirtyMinApp || false,
                     link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
+                    id: dataGetById?.notifications.find(n => n.trigger_at === timeNotificationMail && n.is_send_mail)?.id,
                     trigger_at: timeNotificationMail,
                     is_send_mail: StateNotificationMail,
                     is_active: StateNotificationMail || false,
