@@ -74,3 +74,8 @@ export interface SubTask {
     name: string;
     is_completed: boolean;
 }
+
+export interface QuickSwapLabelRequest {
+    label_type: number;
+    label_id: string;
+}
