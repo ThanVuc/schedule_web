@@ -41,16 +41,14 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
     }
   });
   const handleQuickSwap = async (label_type: number, label_id: string) => {
-    try {
-      await sendRequest({ label_type, label_id });
-    }
-    catch (error) {
-      setToast({
+      const {error} = await sendRequest({ label_type, label_id });
+      if (error) {
+        setToast({
         title: "Lỗi hệ thống",
         message: "Không thể chuyển đổi nhãn nhanh",
         variant: "error",
       });
-    }
+      }
   }
   return (
     <ContextMenu>
