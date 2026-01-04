@@ -7,12 +7,16 @@ import { DraftLabel, ModelType } from "../../../_constant/common";
 import Time from "../../../_components/time";
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
+import { useAxiosMutation, useToastState } from "@/hooks";
+import { QuickSwapLabelRequest } from "../_models/type/mutation.type";
+import quickSwapLabelApiUrl from "@/api/quickSwapLabel";
 
 interface ScheduleCardProps {
   workCard: WorkCardModel;
 }
 
 const WorkCard = ({ workCard }: ScheduleCardProps) => {
+  const {setToast} = useToastState();
   const labels = Array.isArray(workCard.labels) ? workCard.labels : [];
   const Draft = labels.find(label => label.key === DraftLabel.DRAFT);
   const BorderColor = labels.find(label => label.color);
@@ -29,7 +33,25 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
 
     router.push(`/schedule/daily?${params.toString()}`, { scroll: false });
   }
-
+  const { sendRequest } = useAxiosMutation<QuickSwapLabelRequest>({
+    method: "PATCH",
+    url: `${quickSwapLabelApiUrl.quickSwapLabel}/${workCard.id}`,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const handleQuickSwap = async (label_type: number, label_id: string) => {
+    try {
+      await sendRequest({ label_type, label_id });
+    }
+    catch (error) {
+      setToast({
+        title: "Lỗi hệ thống",
+        message: "Không thể chuyển đổi nhãn nhanh",
+        variant: "error",
+      });
+    }
+  }
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -48,7 +70,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                 {workCard.name}
               </p>
               <div className="flex justify-center sm:justify-end">
-                <LabelCategory label={workCard.category.name} keyIcon={workCard.category.key} color={workCard.category.color} label_type={workCard.category.label_type} />
+                <LabelCategory label={workCard.category.name} onchange={( LabelId) => handleQuickSwap(workCard.category.label_type, LabelId)} keyIcon={workCard.category.key} color={workCard.category.color} label_type={workCard.category.label_type} />
               </div>
             </div>
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
@@ -60,8 +82,8 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                 End={formatDate.numberToDate(workCard.end_date)?.toString()}
                 Icon="Work"
               />
-              {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).map(label => {
-                return <LabelSelector key={label.id} label={label.name} keyIcon={label.key} color={label.color} label_type={label.label_type} />;
+              {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).sort((a, b) => a.label_type - b.label_type).map(label => {
+                return <LabelSelector onchange={( LabelId) => handleQuickSwap(label.label_type, LabelId)} key={label.id} label={label.name} keyIcon={label.key} color={label.color} label_type={label.label_type} />;
               })}
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2">
@@ -83,5 +105,6 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
     </ContextMenu>
   );
 };
+
 
 export default WorkCard;
