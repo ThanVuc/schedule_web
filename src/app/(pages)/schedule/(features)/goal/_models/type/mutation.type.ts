@@ -13,3 +13,7 @@ export type UpdateGoalMutationResponse = {
     is_success: boolean;
     message: string;
 }
+export type QuickSwapLabelMutationResponse = {
+    is_success: boolean;
+    message: string;
+}
