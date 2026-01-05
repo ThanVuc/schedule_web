@@ -35,9 +35,10 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                     <Input
                                         disabled={isDisabled}
                                         {...field}
-                                        className="rounded-sm"
+                                        className="rounded-sm disabled:opacity-90"
                                         placeholder="Tên mục tiêu"
                                         id={field.name}
+                                        maxLength={126}
                                     />
                                     <FormMessage />
                                 </FormItem>
@@ -55,6 +56,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             title="Từ"
                                             {...field}
                                             icon={<CalendarIcon />}
+                                            disabledTime
                                         />
                                         <FormMessage />
                                     </FormItem>
@@ -71,6 +73,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             title="Đến"
                                             {...field}
                                             icon={<CalendarIcon />}
+                                            disabledTime
                                         />
                                         <FormMessage />
                                     </FormItem>
@@ -160,7 +163,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 </div>
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-6 items-center">
-                                        <span className={titleLabel}>Danh Mục</span>
+                                        <span className={titleLabel}>Danh mục</span>
                                         <FormField
                                             control={form.control}
                                             name="category_id"
@@ -192,7 +195,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 name="tasks"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <MiniTask {...field} disable={isDisabled} />
+                                        <MiniTask {...field} disable={isDisabled} type="Goal" />
                                     </FormItem>
                                 )}
                             />
@@ -209,11 +212,12 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem className="flex flex-col mb-4">
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed"
+                                        className="border-dashed disabled:opacity-90"
                                         {...field}
                                         placeholder="Mô tả ngắn"
                                         id={field.name}
                                         rows={5}
+                                        maxLength={256}
                                     />
                                 </FormItem>
                             )}
@@ -225,11 +229,12 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem>
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed w-full h-32"
+                                        className="border-dashed w-full h-32 disabled:opacity-90"
                                         {...field}
                                         placeholder="Mô tả chi tiết"
                                         id={field.name}
                                         rows={8}
+                                        maxLength={512}
                                     />
                                 </FormItem>
                             )}

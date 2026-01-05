@@ -163,6 +163,7 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                                 onBlur={() => handleSaveEdit(index)}
                                 autoFocus
                                 disabled={disable}
+                                maxLength={126}
                             />
                         ) : (
                             <span
