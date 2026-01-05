@@ -57,7 +57,7 @@ export const ListGoal = () => {
                 variant: "error"
             });
         }
-    }, [error]);
+    }, [error, setToast]);
 
     const handleFilterStatus = (value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -147,7 +147,7 @@ export const ListGoal = () => {
                     <GoalCard
                         GoalCard={goal}
                         key={goal.id}
-                    />
+                        onRefetch={refetch} />
                 ))}
                 {!loading && view.totalPages > 1 && (
                     <AppPagination
