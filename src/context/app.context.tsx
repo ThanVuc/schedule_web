@@ -8,6 +8,7 @@ import { useAxios } from "@/hooks";
 import { NotificationApiUrl, utilsApiUrl } from "@/api";
 import { NotificationProvider } from "./notification.context";
 import { Notification } from "@/models";
+import { setCsrfTokenGlobal } from "@/lib/csrfToken";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
     const [csrfToken, setCsrfToken] = useState<string>("");
@@ -17,6 +18,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             try {
                 const token = await getCSRFToken();
                 setCsrfToken(token || "");
+                setCsrfTokenGlobal(token || "");
             } catch {
                 setCsrfToken("");
             }

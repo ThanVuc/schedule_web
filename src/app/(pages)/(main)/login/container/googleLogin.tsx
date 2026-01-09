@@ -5,7 +5,7 @@ import "./googleLogin.scss";
 import "@/../public/assets/stars.webp";
 import { useAxiosMutation } from '@/hooks';
 import { authApiUrl } from '@/api';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import useToastState from '@/hooks/useToasts';
 import { useMe } from '@/context/me.context';
 
@@ -17,6 +17,7 @@ export const GoogleLoginContainer = () => {
     }
   );
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setToast } = useToastState();
   const meContext = useMe();
 
@@ -43,7 +44,8 @@ export const GoogleLoginContainer = () => {
       closeable: true,
     });
     meContext?.refetchMe();
-    router.push('/');
+    const redirectTo = searchParams.get("redirect") || "/";
+    router.push(redirectTo);
   };
 
   const handleLoginError = () => {
