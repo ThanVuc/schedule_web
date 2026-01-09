@@ -6,6 +6,7 @@ import { ApiResponse } from "@/models/response";
 import { useCsrfToken } from "@/context/csrf.context";
 import { authApiUrl } from "@/api";
 import { useRouter } from "next/navigation";
+import api from "@/lib/axiosInstance";
 
 type UseAxiosResult<T> = {
   data: T | null;
@@ -27,8 +28,6 @@ export const useAxios = <T = unknown>(
   const [error, setError] = useState<AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(0);
-  const csrfToken = useCsrfToken();
-  const router = useRouter();
 
   const stableConfig = useMemo(() => config, [JSON.stringify(config)]);
 
@@ -43,7 +42,7 @@ export const useAxios = <T = unknown>(
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response: AxiosResponse<ApiResponse<T>> = await axios({
+        const response: AxiosResponse<ApiResponse<T>> = await api({
           ...config,
           signal: controller.signal,
           withCredentials: true,
@@ -56,22 +55,6 @@ export const useAxios = <T = unknown>(
       } catch (err) {
         if (!axios.isCancel(err)) {
           setError(err as AxiosError);
-        }
-
-        if ((err as AxiosError).response?.status === 401) {
-          const refreshResponse = await axios({
-            method: 'POST',
-            url: authApiUrl.refreshToken,
-            withCredentials: true,
-            headers: { 'X-CSRF-Token': csrfToken },
-          });
-
-          if (refreshResponse.status === 200) {
-            return fetchData();
-          } else {
-            router.push('/login');
-            return { data: null, error: err as AxiosError };
-          }
         }
       } finally {
         setLoading(false);
