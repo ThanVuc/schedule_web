@@ -8,12 +8,16 @@ export enum DaySection {
 export enum DraftLabel {
     DRAFT = "DRAFT"
 }
+export enum OverdueLabel {
+    OVERDUE = "OVER_DUE"
+}
 
 export enum ModelType {
     CREATE = "Create",
     UPDATE = "Update",
     DELETE = "Delete",
-    VIEW = "View"
+    VIEW = "View",
+    RECOVERY = "Recovery"
 }
 export enum DaySectionText {
   MORNING = "MORNING",

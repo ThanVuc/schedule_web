@@ -10,6 +10,7 @@ import { DownIcon, FilterIcon } from "@/components/icon";
 import UpsertSchedule from "./upsertWork";
 import { Session } from "../_components";
 import { DaySection, DaySectionText } from "../../../_constant/common";
+import Recovery from "./recovery";
 
 interface ListWorkProps {
     activeTime: DaySection | null;
@@ -91,6 +92,7 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
             </div>
         </div>
         <UpsertSchedule refetch={refetch} />
+        <Recovery refetch={refetch} />
         <div>
             <Session morningTasks={sessionData?.morning} afternoonTasks={sessionData?.noon} eveningTasks={sessionData?.afternoon} nightTasks={sessionData?.night} midnightTasks={sessionData?.evernight} session={activeTime} />
         </div>

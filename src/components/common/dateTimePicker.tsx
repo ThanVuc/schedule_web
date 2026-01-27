@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 
 interface DateTimePickerProps {
-  title: string;
+  title?: string;
   defaultValue?: number;
   onChange?: (date: number | undefined) => void;
   icon?: React.ReactNode;
@@ -111,12 +111,12 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             )}
 
             <div className="flex items-center w-full justify-between p-2">
-              {date ? (
+              {defaultValue ? (
                 disabledTime
                   ? format(date, "dd/MM/yyyy")
                   : format(date, "dd/MM/yyyy hh:mm aa")
               ) : (
-                <span>{disabledTime ? "DD/MM/YYYY" : "DD/MM/YYYY hh:mm aa"}</span>
+                <span>{disabledTime ? "dd/MM/yyyy" : "dd/MM/yyyy hh:mm aa"}</span>
               )}
 
               {icon && <span className="ml-2">{icon}</span>}

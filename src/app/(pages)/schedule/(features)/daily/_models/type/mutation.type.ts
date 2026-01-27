@@ -79,3 +79,12 @@ export interface QuickSwapLabelRequest {
     label_type: number;
     label_id: string;
 }
+export interface recoveryRequest {
+    target_date: number;
+    source_date: number;
+}
+export type RecoveryMutationResponseType = {
+    is_success: boolean;
+    message: string;
+    errorCode?: string;
+}

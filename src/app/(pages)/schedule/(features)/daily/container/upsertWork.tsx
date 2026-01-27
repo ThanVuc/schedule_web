@@ -382,7 +382,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                     link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
-                    id: dataGetById?.notifications.find(n => n.trigger_at === timeNotificationMail && n.is_send_mail)?.id,
+                    id: dataGetById?.notifications.find(n => n.trigger_at === timeNotificationMail && !n.is_send_mail)?.id,
                     trigger_at: timeNotificationMail,
                     is_send_mail: StateNotificationMail,
                     is_active: StateNotificationMail || false,
