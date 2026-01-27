@@ -218,7 +218,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                         control={form.control}
                         name="detailed_description"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
                                     className="border-dashed w-full h-32 disabled:opacity-100 disabled:cursor-not-allowed"
