@@ -45,44 +45,49 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         const date = new Date(timestamp);
         const hour = date.getHours();
 
-        if (hour >= 0 && hour < 10) return DaySectionText.MORNING;   
-        if (hour >= 10 && hour < 14) return DaySectionText.NOON;        
-        if (hour >= 14 && hour < 18) return DaySectionText.AFTERNOON;   
-        if (hour >= 18 && hour < 22) return DaySectionText.NIGHT;      
-        return DaySectionText.EVERNIGHT;                              
+        if (hour >= 0 && hour < 4) return DaySectionText.NIGHT;
+        if (hour >= 4 && hour < 8) return DaySectionText.EARLY_MORNING;
+        if (hour >= 8 && hour < 12) return DaySectionText.MORNING;
+        if (hour >= 12 && hour < 16) return DaySectionText.AFTERNOON;
+        if (hour >= 16 && hour < 20) return DaySectionText.EVENING;
+        return DaySectionText.LATE_EVENING;
     };
 
     const works = data?.works ?? [];
 
     const sessionData = useMemo(() => {
-        const morning: typeof works = [];
-        const noon: typeof works = [];
-        const afternoon: typeof works = [];
         const night: typeof works = [];
-        const evernight: typeof works = [];
+        const earlyMorning: typeof works = [];
+        const morning: typeof works = [];
+        const afternoon: typeof works = [];
+        const evening: typeof works = [];
+        const lateEvening: typeof works = [];
 
         works.forEach((w) => {
             const section = getSessionFromDate(w.start_date);
             switch (section) {
+                case DaySectionText.NIGHT:
+                    night.push(w);
+                    break;
+                case DaySectionText.EARLY_MORNING:
+                    earlyMorning.push(w);
+                    break;
                 case DaySectionText.MORNING:
                     morning.push(w);
-                    break;
-                case DaySectionText.NOON:
-                    noon.push(w);
                     break;
                 case DaySectionText.AFTERNOON:
                     afternoon.push(w);
                     break;
-                case DaySectionText.NIGHT:
-                    night.push(w);
+                case DaySectionText.EVENING:
+                    evening.push(w);
                     break;
-                case DaySectionText.EVERNIGHT:
-                    evernight.push(w);
+                case DaySectionText.LATE_EVENING:
+                    lateEvening.push(w);
                     break;
             }
         });
 
-        return { morning, noon, afternoon, night, evernight };
+        return { morning, earlyMorning, afternoon, night, evening, lateEvening };
     }, [data]);
     return (<>
         <div className="flex justify-between mb-3">
@@ -94,7 +99,17 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         <UpsertSchedule refetch={refetch} />
         <Recovery refetch={refetch} />
         <div>
-            <Session morningTasks={sessionData?.morning} afternoonTasks={sessionData?.noon} eveningTasks={sessionData?.afternoon} nightTasks={sessionData?.night} midnightTasks={sessionData?.evernight} session={activeTime} />
+            <Session
+                morningTasks={sessionData?.morning}
+                earlyMorningTasks={sessionData?.earlyMorning}
+                afternoonTasks={sessionData?.afternoon}
+                eveningTasks={sessionData?.evening}
+                nightTasks={sessionData?.night}
+                lateEveningTasks={sessionData?.lateEvening}
+                session={activeTime}
+            />
+
+
         </div>
     </>);
 }

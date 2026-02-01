@@ -23,6 +23,8 @@ export interface UpsertWorkRequest {
     name: string;
     start_date: number;
     end_date: number;
+    repeat_start_date?: number;
+    repeat_end_date?: number;
     goal_id: string | undefined;
     type_id: string;
     status_id: string;
@@ -38,7 +40,7 @@ export interface ViewUpWorkRequest {
     name: string;
     start_date: number;
     end_date: number;
-    goal_id: string | undefined;
+    goal: goalList | undefined;
     labels: labelDefault;
     short_descriptions: string;
     detailed_description: string;
@@ -59,7 +61,10 @@ export interface label{
     key: string,
     label_type: number,
 }
-
+export interface goalList{
+    id: string,
+    name: string,
+}
 
 
 export interface notifications {

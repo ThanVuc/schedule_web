@@ -10,6 +10,7 @@ import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import { QuickSwapLabelRequest } from "../_models/type/mutation.type";
 import quickSwapLabelApiUrl from "@/api/quickSwapLabel";
+import Label from "../../../_components/label";
 
 interface ScheduleCardProps {
   workCard: WorkCardModel;
@@ -20,7 +21,6 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
   const labels = Array.isArray(workCard.labels) ? workCard.labels : [];
   const Draft = workCard.draft?.key === DraftLabel.DRAFT ? workCard.draft : undefined;
   const Overdue = workCard.overdue?.key === OverdueLabel.OVERDUE ? workCard.overdue : undefined;
-  console.log("Overdue", Overdue);
   const BorderColor = labels.find(label => label.color);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -89,17 +89,17 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
               </div>
               <div>
                 {
-                  Overdue && <LabelSelector label={Overdue.name} keyIcon={Overdue.key} color={Overdue.color} label_type={Overdue.label_type} />
+                  Overdue && <Label label={Overdue.name} heightIcon={4} textSize="sm" widthIcon={4}  icon={Overdue.key} color={Overdue.color} />
                 }
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2">
               <p className="font-bold italic text-sm text-white">Mục tiêu:</p>
-              <p className="text-[#AFEEBF] font-light italic text-sm">{workCard.goal}</p>
+              <p className="text-[#AFEEBF] font-light italic text-sm line-clamp-2 ">{workCard.goal}</p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:gap-2">
-              <p className="font-bold italic text-sm text-white">Mô tả ngắn:</p>
-              <p className="font-light italic text-sm text-slate-200">{workCard.short_descriptions}</p>
+            <div className="flex flex-col sm:flex-row sm:gap-2 ">
+              <p className="font-bold italic text-sm text-white w-25">Mô tả ngắn:</p>
+              <p className="font-light italic text-sm text-slate-200 line-clamp-1 sm:max-w-150 max-w-50">{workCard.short_descriptions}</p>
             </div>
           </div>
         </Card>

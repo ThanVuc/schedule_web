@@ -27,7 +27,7 @@ const DailySchedulePage = () => {
     }
     return (
         <div className="flex gap-7 h-full">
-            <TimeLine activeTime={activeTime} setActiveTime={setActiveTime} />
+            <div className="sm:block hidden"><TimeLine activeTime={activeTime} setActiveTime={setActiveTime} /></div>
             <div className="flex-1">
                 <div className="block md:flex justify-between space-between mb-5">
                     <div className="flex gap-2 p-3">
