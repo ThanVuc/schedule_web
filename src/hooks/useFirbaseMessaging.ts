@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { messaging, getToken, onMessage } from "@/lib/firebase";
 import { globalConfig } from "@/global/global";
 import { MeModel } from "@/models";
@@ -16,11 +16,15 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
         showNotification,
         NotificationComponent
     } = useAppNotification();
+    const initializedRef = useRef(false);
 
     useEffect(() => {
+        if (initializedRef.current) return; // Prevent multiple initializations
         if (!me) return; // User must be logged in
         if (!messaging) return;
         if (!csrfToken) return;
+
+        initializedRef.current = true;
 
         const init = async () => {
             try {
@@ -37,8 +41,8 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                         return;
                     }
                     setFcmToken(token);
-                    const lastToken = localStorage.getItem("fcm_token");
-                    const lastUserId = localStorage.getItem("user_id");
+                    const lastToken = sessionStorage.getItem("fcm_token");
+                    const lastUserId = sessionStorage.getItem("user_id");
                     if (lastToken === token && lastUserId === me.user_id) {
                         return;
                     }
@@ -57,8 +61,8 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                         console.error("FCM token registration failed:", resp.error);
                     }
 
-                    localStorage.setItem("fcm_token", token);
-                    localStorage.setItem("user_id", me.user_id);
+                    sessionStorage.setItem("fcm_token", token);
+                    sessionStorage.setItem("user_id", me.user_id);
                 } else {
                     console.warn("❌ Notification permission denied");
                 }
