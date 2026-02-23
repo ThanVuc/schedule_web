@@ -15,12 +15,13 @@ import { useEffect, useState } from "react";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 
 interface DateTimePickerProps {
-  title: string;
+  title?: string;
   defaultValue?: number;
   onChange?: (date: number | undefined) => void;
   icon?: React.ReactNode;
   disabledTime?: boolean;
   disabledDate?: boolean;
+  hideDate?: boolean;
   disabled?: boolean;
 }
 
@@ -30,6 +31,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   title,
   disabledTime = false,
   disabledDate = false,
+  hideDate = false,
   disabled = false,
   icon,
 }) => {
@@ -111,12 +113,20 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             )}
 
             <div className="flex items-center w-full justify-between p-2">
-              {date ? (
-                disabledTime
-                  ? format(date, "dd/MM/yyyy")
-                  : format(date, "dd/MM/yyyy hh:mm aa")
+              {defaultValue ? (
+                !hideDate
+                  ? disabledTime
+                    ? format(date, "dd/MM/yyyy")
+                    : format(date, "dd/MM/yyyy hh:mm aa")
+                  : format(date, "hh:mm aa")
               ) : (
-                <span>{disabledTime ? "DD/MM/YYYY" : "DD/MM/YYYY hh:mm aa"}</span>
+                <span>
+                  {!hideDate
+                    ? disabledTime
+                      ? "dd/MM/yyyy"
+                      : "dd/MM/yyyy hh:mm aa"
+                    : "hh:mm aa"}
+                </span>
               )}
 
               {icon && <span className="ml-2">{icon}</span>}
@@ -127,7 +137,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
       <PopoverContent className="w-auto p-0 z-160">
         <div className="sm:flex">
-          <Calendar
+          {!hideDate && (<Calendar
             mode="single"
             selected={date}
             initialFocus
@@ -141,7 +151,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 setIsOpen(false);
               }
             }}
-          />
+          />)}
 
           {!disabledTime && (
             <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
@@ -185,9 +195,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                       ?.scrollBy({ top: e.deltaY });
                   }}
                 >
-                  
+
                   {minutes.map((minute) => (
-                    
+
                     <Button
                       key={minute}
                       size="icon"

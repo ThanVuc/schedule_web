@@ -2,22 +2,24 @@ import z from "zod";
 import { upsertScheduleSchema } from "../_models/schema";
 import { UseFormReturn } from "react-hook-form";
 import { Checkbox, FormField, FormItem, FormMessage, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui";
-import { DateTimePicker } from "@/components/common/dateTimePicker";
-import { CalendarIcon } from "@/components/icon";
-import InfoPopover from "./infoPopover";
+import InfoPopover from "./info/infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labelDefault } from "../_models/type/label";
 import { useState } from "react";
 import { LabelSelector } from "../../../_components";
+import { goalList } from "../_models/type/mutation.type";
+import TimePicker from "@/components/common/timePicker";
+import DatepickerWithRange from "@/components/common/dateTimepickerWithRange";
 
 type ScheduleForm = z.infer<typeof upsertScheduleSchema>
 interface UpsertScheduleFormProps {
     form: UseFormReturn<ScheduleForm>
     labelDefaultData?: labelDefault
     disabled?: boolean
+    goalList?: goalList[]
 }
-const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertScheduleFormProps) => {
+const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: UpsertScheduleFormProps) => {
     const titleLabel = "border-2 p-2 rounded-md bg-white/10 md:min-w-35 max-w-21"
     const [currentTypeLabel, setCurrentTypeLabel] = useState(false);
     return (<>
@@ -42,13 +44,19 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             </FormItem>
                         )}
                     />
-                    <div className="flex w-full gap-4">
+                    <div className="flex justify-center items-center w-full gap-4">
                         <FormField
                             control={form.control}
                             name="start_date"
                             render={({ field }) => (
-                                <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker defaultValue={field.value} disabled={disabled} disabledDate={!currentTypeLabel} title="Từ" {...field} icon={<CalendarIcon />} />
+                                <FormItem className="flex flex-col mb-4">
+                                    <TimePicker
+                                        title="Từ"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        disabled={disabled}
+                                    />
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -56,12 +64,31 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             control={form.control}
                             name="end_date"
                             render={({ field }) => (
-                                <FormItem className="flex w-full flex-col mb-4">
-                                    <DateTimePicker defaultValue={field.value} disabled={disabled} disabledDate={!currentTypeLabel} title="Đến" {...field} icon={<CalendarIcon />} />
-                                    <FormMessage />
+                                <FormItem className="flex flex-col mb-4">
+                                    <TimePicker
+                                        title="Đến"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        disabled={disabled}
+                                    />
+                                    <FormMessage  />
                                 </FormItem>
                             )}
                         />
+                            <FormField
+                                control={form.control}
+                                name="repeat_range"
+                                render={({ field }) => (
+                                    <FormItem className="flex w-full flex-col mb-4">
+                                        <DatepickerWithRange
+                                            disabled={!currentTypeLabel}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                     </div>
                     <div>
                         <FormField
@@ -81,15 +108,15 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                                         <SelectContent className="z-160">
                                             <SelectGroup>
                                                 <SelectItem value={"0"}>Không Mục tiêu</SelectItem>
-                                                <SelectItem value="6925c69c83828e4ac22388fa">Mục tiêu 2</SelectItem>
-                                                <SelectItem value="6925c73183828e4ac22388fb">Mục tiêu 1</SelectItem>
+                                                {goalList && goalList.map((goal) => (
+                                                    <SelectItem key={goal.id} value={goal.id.toString()}>{goal.name}</SelectItem>
+                                                ))}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
                                 </FormItem>
                             )}
                         />
-
                     </div>
                 </div>
                 <Label className="text-lg my-5 text-[#FFF583] font-bold border-t-2 pt-4">Nhãn Dán & Danh Mục</Label>
@@ -205,12 +232,21 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
-                                    className="border-dashed disabled:opacity-100 disabled:cursor-not-allowed"
+                                    className="
+                                        border-dashed 
+                                        h-18
+                                        w-full
+                                        resize-none break-all
+                                        whitespace-pre-wrap
+                                        disabled:opacity-100 
+                                        disabled:cursor-not-allowed
+                                    "
                                     {...field}
                                     placeholder="Mô tả ngắn"
                                     id={field.name}
-                                    rows={5}
+                                    rows={4}
                                 />
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -218,15 +254,17 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled }: UpsertSchedule
                         control={form.control}
                         name="detailed_description"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
-                                    className="border-dashed w-full h-32 disabled:opacity-100 disabled:cursor-not-allowed"
+                                    className="border-dashed w-full h-32 resize-none break-all
+                                        whitespace-pre-wrap disabled:opacity-100 disabled:cursor-not-allowed"
                                     {...field}
                                     placeholder="Mô tả chi tiết"
                                     id={field.name}
                                     rows={8}
                                 />
+                                <FormMessage />
                             </FormItem>
                         )}
                     />

@@ -9,13 +9,13 @@ import { useModalParams } from "../hooks";
 import { useConfirmDialog } from "@/hooks/useConfirmAlertDialog";
 import UpsertScheduleForm from "../_components/upsertScheduleForm";
 import { useAlertDialog, useAxios, useAxiosMutation } from "@/hooks";
-import { CreateWorkMutationResponseType, DeleteWorkMutationResponseType, UpdateWorkMutationResponseType, UpsertWorkRequest, ViewUpWorkRequest } from "../_models/type/mutation.type";
+import { CreateWorkMutationResponseType, DeleteWorkMutationResponseType, goalList, UpdateWorkMutationResponseType, UpsertWorkRequest, ViewUpWorkRequest } from "../_models/type/mutation.type";
 import { worksApiUrl } from "@/api/work";
 import useToastState from "@/hooks/useToasts";
 import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 import { labelDefault } from "../_models/type/label";
 import { LabelApiUrl } from "@/api/label";
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "@/components/common/spinner";
 import { LinkNotification, ModelType } from "../../../_constant";
 
@@ -50,6 +50,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     const { mode, id } = useModalParams();
     const openDialog = mode === ModelType.CREATE || mode === ModelType.UPDATE || mode === ModelType.VIEW;
     const isCreateMode = mode === ModelType.CREATE;
+    const isCUMode = mode === ModelType.CREATE || mode === ModelType.UPDATE;
     const isDisabled = mode === ModelType.VIEW;
     const buttonData = buttonProps[mode as keyof typeof buttonProps] ?? buttonProps.Create;
     const { confirm, dialog } = useConfirmDialog();
@@ -57,6 +58,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
     const { setToast } = useToastState();
     const [formReady, setFormReady] = useState(false);
+    const [UpdateType, setUpdateType] = useState<number>(0);
     const handlePageQueryToModal = (mode: string, id?: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("mode", mode);
@@ -88,7 +90,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 if (n.is_send_mail) result.beforeFiveMinEmail = n.is_active;
                 else result.beforeFiveMinApp = n.is_active;
             }
-
             if (Math.abs(diff) === 30 * 60 * 1000) {
                 if (n.is_send_mail) result.beforeThirtyMinEmail = n.is_active;
                 else result.beforeThirtyMinApp = n.is_active;
@@ -102,6 +103,11 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         method: "GET",
         url: LabelApiUrl.getDefault,
     }, undefined, !isCreateMode);
+
+    const { data: goalList } = useAxios<goalList[]>({
+        method: "GET",
+        url: worksApiUrl.getGoal,
+    }, undefined, !isCUMode);
 
     const { sendRequest } = useAxiosMutation<CreateWorkMutationResponseType, UpsertWorkRequest>({
         method: "POST",
@@ -131,6 +137,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             "Content-Type": "application/json"
         }
     });
+
     const form = useForm<z.infer<typeof upsertScheduleSchema>>({
         resolver: zodResolver(upsertScheduleSchema),
         defaultValues: {
@@ -186,7 +193,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 name: dataGetById.name,
                 start_date: dataGetById.start_date,
                 end_date: dataGetById.end_date,
-                goal_id: dataGetById.goal_id ?? "",
+                goal_id: dataGetById.goal?.id ?? "",
                 type_id: dataGetById.labels.type.id,
                 status_id: dataGetById.labels.status.id,
                 difficulty_id: dataGetById.labels.difficulty.id,
@@ -204,8 +211,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
 
         }
     }, [mode, dataGetById]);
-
-
     useEffect(() => {
         if (mode === ModelType.CREATE) {
             form.reset({
@@ -240,6 +245,8 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         form.clearErrors();
     }
     const handleCreate = async (values: z.infer<typeof upsertScheduleSchema>) => {
+        const repeatStartDate = values.repeat_range?.from;
+        const repeatEndDate = values.repeat_range?.to;
         const currentDate = values.start_date ?? 0;
         const beforeThirtyMin = currentDate - 30 * 60 * 1000;
         const beforeFiveMin = currentDate - 5 * 60 * 1000;
@@ -262,6 +269,8 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             end_date: values.end_date,
             goal_id: values.goal_id,
             type_id: values.type_id,
+            repeat_start_date: repeatStartDate,
+            repeat_end_date: repeatEndDate,
             status_id: values.status_id,
             difficulty_id: values.difficulty_id,
             priority_id: values.priority_id,
@@ -338,9 +347,13 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         }
     };
     const handleEdit = async (values: z.infer<typeof upsertScheduleSchema>) => {
+        const repeatStartDate = values.repeat_range?.from;
+        const repeatEndDate = values.repeat_range?.to;
+
         const currentDate = values.start_date ?? 0;
         const beforeThirtyMin = currentDate - 30 * 60 * 1000;
         const beforeFiveMin = currentDate - 5 * 60 * 1000;
+
         let StateNotificationMail = false;
         let timeNotificationMail = 0;
         if (values.notifications.beforeThirtyMinEmail) {
@@ -360,29 +373,32 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             end_date: values.end_date,
             goal_id: values.goal_id,
             type_id: values.type_id,
+            repeat_start_date: repeatStartDate,
+            repeat_end_date: repeatEndDate,
             status_id: values.status_id,
             difficulty_id: values.difficulty_id,
             priority_id: values.priority_id,
             category_id: values.category_id,
             short_descriptions: values.short_descriptions ?? "",
             detailed_description: values.detailed_description ?? "",
+            update_type: UpdateType,
             notifications: [
                 {
-                    id: dataGetById?.notifications.find(n => n.trigger_at === beforeFiveMin && !n.is_send_mail)?.id,
+                    id: dataGetById?.notifications[0]?.id,
                     trigger_at: beforeFiveMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeFiveMinApp || false,
                     link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
-                    id: dataGetById?.notifications.find(n => n.trigger_at === beforeThirtyMin && !n.is_send_mail)?.id,
+                    id: dataGetById?.notifications[1]?.id,
                     trigger_at: beforeThirtyMin,
                     is_send_mail: false,
                     is_active: values.notifications.beforeThirtyMinApp || false,
                     link: LinkNotification.LinkNotificationSchedule + searchParams.get("id"),
                 },
                 {
-                    id: dataGetById?.notifications.find(n => n.trigger_at === timeNotificationMail && n.is_send_mail)?.id,
+                    id: dataGetById?.notifications[2]?.id,
                     trigger_at: timeNotificationMail,
                     is_send_mail: StateNotificationMail,
                     is_active: StateNotificationMail || false,
@@ -448,7 +464,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 description: "Bạn có chắc chắn muốn xóa công việc này? Hành động này không thể hoàn tác.",
                 submitText: "Xóa",
                 onSubmit: async () => {
-                    const { error } = await sendRequestDelete( undefined, id?.toString() || "");
+                    const { error } = await sendRequestDelete(undefined, id?.toString() || "");
                     if (error) {
                         setToast({
                             title: "Xóa công việc",
@@ -468,7 +484,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 setOpen: setOpenAlertDialog,
             });
             setOpenAlertDialog(true);
-
         }
     }, [mode]);
     const onSubmit = async (values: z.infer<typeof upsertScheduleSchema>) => {
@@ -477,7 +492,30 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         if (!isConfirmed) return;
         if (mode === ModelType.CREATE) {
             await handleCreate(values);
-        } else if (mode === ModelType.UPDATE) {
+        } 
+        if (mode === ModelType.UPDATE && dataGetById?.labels.type.key === "REPEATED") {
+            setOpenAlertDialog(true);
+            setAlertDialogProps({
+                title: "Bạn có muốn cập nhật tất cả các mục tiêu lặp lại từ mục tiêu hiện tại trở đi ?",
+                description: "Bạn có thể nhấn hủy để chỉ cập nhật mục tiêu hiện tại.",
+                submitText: "Cập nhật tất cả",
+                onSubmit: async () => {
+                    setUpdateType(2);
+                    await handleEdit(values);
+                    refetch?.();
+                },
+                onClose: async () => {
+                    setUpdateType(1);
+                    await handleEdit(values);
+                    refetch?.();
+                },
+                open: true,
+                setOpen: setOpenAlertDialog,
+            });
+            setOpenAlertDialog(true);
+        }
+        else if (mode === ModelType.UPDATE) {
+            setUpdateType(0);
             await handleEdit(values);
         }
     }
@@ -507,7 +545,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} >
-                    {formReady ? (<UpsertScheduleForm disabled={isDisabled} form={form} labelDefaultData={isCreateMode ? (labelDefaultData || undefined) : (dataGetById?.labels || undefined)} />
+                    {formReady ? (<UpsertScheduleForm disabled={isDisabled} goalList={goalList || []} form={form} labelDefaultData={isCreateMode ? (labelDefaultData || undefined) : (dataGetById?.labels || undefined)} />
                     ) : (
                         <div className="flex items-center justify-center min-h-[300px]">
                             <Spinner />

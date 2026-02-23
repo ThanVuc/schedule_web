@@ -6,7 +6,6 @@ import { ContextMenuItem } from "@radix-ui/react-context-menu";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { useRouter, useSearchParams } from "next/navigation";
 import Time from "../../../_components/time";
-import { stringToDate } from "../utils";
 import { ModelType } from "../../../_constant";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import GoalApiUrl from "@/api/goal";
@@ -27,8 +26,6 @@ const GoalCard = ({ GoalCard, availableLabels, onRefetch }: GoalCardProps) => {
   const searchParams = useSearchParams();
   const labels: GoalLabelModel[] = GoalCard?.labels ?? [];
   const category: GoalLabelModel | null = GoalCard?.category ?? null;
-  const begin = stringToDate(GoalCard?.start_date);
-  const end = stringToDate(GoalCard?.end_date);
 
 
   const { setToast } = useToastState();
@@ -150,7 +147,7 @@ const GoalCard = ({ GoalCard, availableLabels, onRefetch }: GoalCardProps) => {
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap justify-start sm:gap-3 gap-2 text-xs sm:text-sm">
-              <Time Begin={begin} End={end} Icon={"Goal"} />
+              <Time Begin={Number(GoalCard?.start_date)} End={Number(GoalCard?.end_date)} Icon={"Goal"} />
               {labels.map((label) => (
                 <LabelSelector
                   key={label.id}

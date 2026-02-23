@@ -5,7 +5,7 @@ import { Label } from "@radix-ui/react-label";
 import { FormField, FormItem, FormMessage, Input, Textarea } from "@/components/ui";
 import { DateTimePicker } from "@/components/common/dateTimePicker";
 import { CalendarIcon } from "lucide-react";
-import InfoPopover from "../../daily/_components/infoPopover";
+import InfoPopover from "../../daily/_components/info/infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { GoalLabelsGroup } from "../_models/type";
 import { LabelSelector } from "../../../_components";

@@ -1,26 +1,33 @@
 export enum DaySection {
-    MORNING = 1,
-    AFTERNOON = 2,
-    EVENING = 3,
-    NIGHT = 4,
-    MIDNIGHT = 5
+    NIGHT = 1,
+    EARLY_MORNING = 2,
+    MORNING = 3,
+    AFTERNOON = 4,
+    EVENING = 5,
+    LATE_EVENING = 6
 }
 export enum DraftLabel {
     DRAFT = "DRAFT"
+}
+export enum OverdueLabel {
+    OVERDUE = "OVER_DUE"
 }
 
 export enum ModelType {
     CREATE = "Create",
     UPDATE = "Update",
     DELETE = "Delete",
-    VIEW = "View"
+    VIEW = "View",
+    RECOVERY = "Recovery",
+    GENERATEWORKAI = "GenerateWorkAI"
 }
 export enum DaySectionText {
-  MORNING = "MORNING",
-  NOON = "NOON",
-  AFTERNOON = "AFTERNOON",
   NIGHT = "NIGHT",
-  EVERNIGHT = "EVERNIGHT"
+    EARLY_MORNING = "EARLY_MORNING",
+    MORNING = "MORNING",
+    AFTERNOON = "AFTERNOON",
+    EVENING = "EVENING",
+    LATE_EVENING = "LATE_EVENING"
 }
 export enum LinkNotification {
     LinkNotificationSchedule = "https://www.schedulr.site/schedule/works/",

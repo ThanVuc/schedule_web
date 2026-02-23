@@ -6,6 +6,7 @@ import {
   MorningIcon,
   StarIcon,
   SunIcon,
+  CloudyNightIcon,
 } from "@/components/icon";
 import { Button } from "@/components/ui";
 import { useEffect, useState } from "react";
@@ -18,20 +19,24 @@ interface TimeLineProps {
 }
 
 const SECTION_TIME: Record<DaySection, { start: number; end: number }> = {
-  [DaySection.MORNING]: { start: 0, end: 600 },
-  [DaySection.AFTERNOON]: { start: 600, end: 840 },
-  [DaySection.EVENING]: { start: 840, end: 1080 },
-  [DaySection.NIGHT]: { start: 1080, end: 1320 },
-  [DaySection.MIDNIGHT]: { start: 1320, end: 1440 },
+  [DaySection.NIGHT]: { start: 0, end: 240 },            // 00:00 - 04:00
+  [DaySection.EARLY_MORNING]: { start: 240, end: 480 }, // 04:00 - 08:00
+  [DaySection.MORNING]: { start: 480, end: 720 },       // 08:00 - 12:00
+  [DaySection.AFTERNOON]: { start: 720, end: 960 },     // 12:00 - 16:00
+  [DaySection.EVENING]: { start: 960, end: 1200 },      // 16:00 - 20:00
+  [DaySection.LATE_EVENING]: { start: 1200, end: 1440 } // 20:00 - 24:00
 };
 
+
 const SECTION_INDEX: Record<DaySection, number> = {
-  [DaySection.MORNING]: 0,
-  [DaySection.AFTERNOON]: 1,
-  [DaySection.EVENING]: 2,
-  [DaySection.NIGHT]: 3,
-  [DaySection.MIDNIGHT]: 4,
+  [DaySection.NIGHT]: 0,
+  [DaySection.EARLY_MORNING]: 1,
+  [DaySection.MORNING]: 2,
+  [DaySection.AFTERNOON]: 3,
+  [DaySection.EVENING]: 4,
+  [DaySection.LATE_EVENING]: 5,
 };
+
 
 const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
   const ButtonActive =
@@ -46,17 +51,14 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
     const updateHighlight = () => {
       const minutes = new Date().getHours() * 60 + new Date().getMinutes();
 
-      if (minutes >= 0 && minutes < 600)
-        setHighlight(DaySection.MORNING);
-      else if (minutes >= 600 && minutes < 840)
-        setHighlight(DaySection.AFTERNOON);
-      else if (minutes >= 840 && minutes < 1080)
-        setHighlight(DaySection.EVENING);
-      else if (minutes >= 1080 && minutes < 1320)
-        setHighlight(DaySection.NIGHT);
-      else
-        setHighlight(DaySection.MIDNIGHT);
+      if (minutes < 240) setHighlight(DaySection.NIGHT);
+      else if (minutes < 480) setHighlight(DaySection.EARLY_MORNING);
+      else if (minutes < 720) setHighlight(DaySection.MORNING);
+      else if (minutes < 960) setHighlight(DaySection.AFTERNOON);
+      else if (minutes < 1200) setHighlight(DaySection.EVENING);
+      else setHighlight(DaySection.LATE_EVENING);
     };
+
     updateHighlight();
     const timer = setInterval(updateHighlight, 60_000);
     return () => clearInterval(timer);
@@ -72,8 +74,18 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
       const sectionIndex = SECTION_INDEX[highlight];
       const minutesIntoSection = minutes - start;
       const sectionDuration = end - start;
-      const sectionPercent = Math.max(0, Math.min(1, minutesIntoSection / sectionDuration));
-      const globalPercent = (sectionIndex * 20) + (sectionPercent * 20);
+      const sectionPercent = Math.max(
+        0,
+        Math.min(1, minutesIntoSection / sectionDuration)
+      );
+
+      const TOTAL_SECTION = Object.keys(SECTION_INDEX).length;
+
+      const globalPercent =
+        sectionIndex * (100 / TOTAL_SECTION) +
+        sectionPercent * (100 / TOTAL_SECTION);
+
+
 
       setPercent(globalPercent);
     };
@@ -89,41 +101,49 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
 
   const items = [
     {
+      key: DaySection.NIGHT,
+      label: "Đêm",
+      hour: "00:00 - 04:00",
+      icon: <CloudyNightIcon className="!w-11 !h-20" />,
+      glow: "hover:animate-[glow-midnight_2s_infinite_ease-in-out]",
+    },
+    {
+      key: DaySection.EARLY_MORNING,
+      label: "Sáng sớm",
+      hour: "04:00 - 08:00",
+      icon: <MoonIcon className="!w-11 !h-20" />,
+      glow: "hover:animate-[glow-purple_2s_infinite_ease-in-out]",
+    },
+    {
       key: DaySection.MORNING,
       label: "Sáng",
-      hour: "0:00 - 10:00",
+      hour: "08:00 - 12:00",
       icon: <MorningIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-blue_2s_infinite_ease-in-out]",
     },
     {
       key: DaySection.AFTERNOON,
-      label: "Trưa",
-      hour: "10:00 - 14:00",
+      label: "Chiều",
+      hour: "12:00 - 16:00",
       icon: <SunIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-yellow_2s_infinite_ease-in-out]",
     },
     {
       key: DaySection.EVENING,
-      label: "Chiều",
-      hour: "14:00 - 18:00",
+      label: "Tối",
+      hour: "16:00 - 20:00",
       icon: <CloudIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-red_2s_infinite_ease-in-out]",
     },
     {
-      key: DaySection.NIGHT,
-      label: "Tối",
-      hour: "18:00 - 22:00",
-      icon: <MoonIcon className="!w-11 !h-20" />,
-      glow: "hover:animate-[glow-purple_2s_infinite_ease-in-out]",
-    },
-    {
-      key: DaySection.MIDNIGHT,
+      key: DaySection.LATE_EVENING,
       label: "Khuya",
-      hour: "22:00 - 24:00",
+      hour: "20:00 - 00:00",
       icon: <StarIcon className="!w-11 !h-20" />,
       glow: "hover:animate-[glow-midnight_2s_infinite_ease-in-out]",
     },
   ];
+
 
   const bgFilter = "!bg-[#CED0D2] text-black";
   const bgHighlight =
@@ -131,15 +151,14 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
 
   return (
     <div className="pr-8">
-      <div className="relative flex flex-col gap-45 items-center h-full">
-        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] bg-blue-500 h-200" />
-        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-340 bg-blue-500">
+      <div className="relative flex flex-col gap-30 items-center h-full">
+        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] bg-blue-500 h-300" />
+        <div className="absolute left-1/2 -translate-x-1/2 w-[3px] h-300 bg-blue-500">
           <div
             className={styles.progress}
             style={{ height: `${percent}%` }}
           />
         </div>
-
         {items.map((item) => (
           <div
             key={item.key}
