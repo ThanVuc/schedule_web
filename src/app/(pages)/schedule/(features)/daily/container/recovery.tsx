@@ -12,7 +12,7 @@ import RecoveryForm from "../_components/recoveryForm";
 import { useAlertDialog, useAxiosMutation, useConfirmDialog, useToastState } from "@/hooks";
 import { Form } from "@/components/ui";
 import recoveryApiUrl from "@/api/recovery.api";
-import { RecoveryMutationResponseType, recoveryRequest } from "../_models/type/mutation.type";
+import { RecoveryMutationResponseType, RecoveryRequest, recoveryRequest } from "../_models/type/mutation.type";
 
 
 
@@ -59,14 +59,19 @@ const Recovery = ({ refetch }: RecoveryProps) => {
         }
     };
     const HandleRecovery = async (value: z.infer<typeof recoverySchema>) => {
+        
 
+        const Recovery: RecoveryRequest = {
+            source_date: value.source_date + 86400000,
+            target_date: value.target_date + 86400000,
+        };
         setOpenAlertDialog(true);
         setAlertDialogProps({
             title: "Xác nhận khôi phục công việc",
             description: "Bạn có chắc chắn muốn khôi phục công việc này? Hành động này không thể hoàn tác.",
             submitText: "Khôi phục",
             onSubmit: async () => {
-                const { error } = await sendRequest(value);
+                const { error } = await sendRequest(Recovery);
                 if (error) {
                     setToast({
                         title: "Khôi phục công việc",

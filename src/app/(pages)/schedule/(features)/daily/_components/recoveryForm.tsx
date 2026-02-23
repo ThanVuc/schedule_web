@@ -23,11 +23,11 @@ const RecoveryForm = ({ form }: RecoveryFormProps) => {
             <Label className="text-white font-bold text-lg">
                 Bạn có chắc muốn khôi phục công việc của ngày:{" "}
                 <span className="text-yellow-400">
-                    {getDate ? formatDate(getDate) : "--/--/----"}
+                    {applyDate ? formatDate(applyDate) : "--/--/----"}
                 </span>{" "}
                 cho ngày:{" "}
                 <span className="text-yellow-400">
-                    {applyDate ? formatDate(applyDate) : "--/--/----"}
+                    { getDate ? formatDate(getDate) : "--/--/----"}
                 </span>{" "}
                 không?
             </Label>

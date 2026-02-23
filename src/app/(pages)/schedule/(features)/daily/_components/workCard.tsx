@@ -6,10 +6,10 @@ import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { DraftLabel, ModelType, OverdueLabel } from "../../../_constant/common";
 import Time from "../../../_components/time";
 import { useRouter, useSearchParams } from "next/navigation";
-import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import { QuickSwapLabelRequest } from "../_models/type/mutation.type";
 import quickSwapLabelApiUrl from "@/api/quickSwapLabel";
+import Label from "../../../_components/label";
 
 interface ScheduleCardProps {
   workCard: WorkCardModel;
@@ -20,7 +20,6 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
   const labels = Array.isArray(workCard.labels) ? workCard.labels : [];
   const Draft = workCard.draft?.key === DraftLabel.DRAFT ? workCard.draft : undefined;
   const Overdue = workCard.overdue?.key === OverdueLabel.OVERDUE ? workCard.overdue : undefined;
-  console.log("Overdue", Overdue);
   const BorderColor = labels.find(label => label.color);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -79,8 +78,8 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                   Draft && <LabelSelector label={Draft.name} keyIcon={Draft.key} color={Draft.color} label_type={Draft.label_type} />
                 }
                 <Time
-                  Begin={formatDate.numberToDate(workCard.start_date)?.toString()}
-                  End={formatDate.numberToDate(workCard.end_date)?.toString()}
+                  Begin={workCard.start_date}
+                  End={workCard.end_date}
                   Icon="Work"
                 />
                 {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).sort((a, b) => a.label_type - b.label_type).map(label => {
@@ -89,17 +88,17 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
               </div>
               <div>
                 {
-                  Overdue && <LabelSelector label={Overdue.name} keyIcon={Overdue.key} color={Overdue.color} label_type={Overdue.label_type} />
+                  Overdue && <Label label={Overdue.name} heightIcon={4} textSize="sm" widthIcon={4}  icon={Overdue.key} color={Overdue.color} />
                 }
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2">
               <p className="font-bold italic text-sm text-white">Mục tiêu:</p>
-              <p className="text-[#AFEEBF] font-light italic text-sm">{workCard.goal}</p>
+              <p className="text-[#AFEEBF] font-light italic text-sm line-clamp-2 ">{workCard.goal}</p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:gap-2">
-              <p className="font-bold italic text-sm text-white">Mô tả ngắn:</p>
-              <p className="font-light italic text-sm text-slate-200">{workCard.short_descriptions}</p>
+            <div className="flex flex-col sm:flex-row sm:gap-2 ">
+              <p className="font-bold italic text-sm text-white w-25">Mô tả ngắn:</p>
+              <p className="font-light italic text-sm text-slate-200 line-clamp-1 sm:max-w-150 max-w-50">{workCard.short_descriptions}</p>
             </div>
           </div>
         </Card>

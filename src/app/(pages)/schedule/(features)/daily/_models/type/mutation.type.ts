@@ -23,6 +23,8 @@ export interface UpsertWorkRequest {
     name: string;
     start_date: number;
     end_date: number;
+    repeat_start_date?: number;
+    repeat_end_date?: number;
     goal_id: string | undefined;
     type_id: string;
     status_id: string;
@@ -31,14 +33,21 @@ export interface UpsertWorkRequest {
     category_id: string;
     short_descriptions: string;
     detailed_description: string;
+    update_type?: number;
     notifications: notifications[];
     sub_tasks: SubTask[];
 }
+
+export interface RecoveryRequest {
+    target_date: number;
+    source_date: number;
+}
+
 export interface ViewUpWorkRequest {
     name: string;
     start_date: number;
     end_date: number;
-    goal_id: string | undefined;
+    goal: goalList | undefined;
     labels: labelDefault;
     short_descriptions: string;
     detailed_description: string;
@@ -59,7 +68,10 @@ export interface label{
     key: string,
     label_type: number,
 }
-
+export interface goalList{
+    id: string,
+    name: string,
+}
 
 
 export interface notifications {
@@ -87,4 +99,14 @@ export type RecoveryMutationResponseType = {
     is_success: boolean;
     message: string;
     errorCode?: string;
+}
+export type GenerationMutationResponseType = {
+    is_success: boolean;
+    message: string;
+    errorCode?: string;
+}
+export interface GenerationRequest {
+    prompts: string[];
+    local_date: string;
+    additional_context?: string;
 }
