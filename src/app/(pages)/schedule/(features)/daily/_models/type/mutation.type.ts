@@ -33,9 +33,16 @@ export interface UpsertWorkRequest {
     category_id: string;
     short_descriptions: string;
     detailed_description: string;
+    update_type?: number;
     notifications: notifications[];
     sub_tasks: SubTask[];
 }
+
+export interface RecoveryRequest {
+    target_date: number;
+    source_date: number;
+}
+
 export interface ViewUpWorkRequest {
     name: string;
     start_date: number;
@@ -92,4 +99,14 @@ export type RecoveryMutationResponseType = {
     is_success: boolean;
     message: string;
     errorCode?: string;
+}
+export type GenerationMutationResponseType = {
+    is_success: boolean;
+    message: string;
+    errorCode?: string;
+}
+export interface GenerationRequest {
+    prompts: string[];
+    local_date: string;
+    additional_context?: string;
 }

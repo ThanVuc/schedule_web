@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { number } from "zod";
 
 export const upsertScheduleSchema = z.object({
     name: z.string().min(1, "Tên công việc không được để trống").max(126, "Tên công việc không thể vượt quá 126 ký tự"),
@@ -22,12 +22,13 @@ export const upsertScheduleSchema = z.object({
         beforeFiveMinEmail: z.boolean().optional(),
         beforeThirtyMinEmail: z.boolean().optional(),
     }),
+    update_type: number().optional(),
     sub_tasks: z.array(z.object({
         name: z.string().min(1).max(100),
         is_completed: z.boolean(),
     })).optional(),
 }
 ).refine((data) => data.end_date > data.start_date, {
-    message: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+    message: "Giờ kết thúc phải lớn hơn giờ bắt đầu",
     path: ["end_date"],
 })

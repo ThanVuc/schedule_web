@@ -6,7 +6,6 @@ import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { DraftLabel, ModelType, OverdueLabel } from "../../../_constant/common";
 import Time from "../../../_components/time";
 import { useRouter, useSearchParams } from "next/navigation";
-import { formatDate } from "@/app/(pages)/(main)/profile/utils";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import { QuickSwapLabelRequest } from "../_models/type/mutation.type";
 import quickSwapLabelApiUrl from "@/api/quickSwapLabel";
@@ -79,8 +78,8 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                   Draft && <LabelSelector label={Draft.name} keyIcon={Draft.key} color={Draft.color} label_type={Draft.label_type} />
                 }
                 <Time
-                  Begin={formatDate.numberToDate(workCard.start_date)?.toString()}
-                  End={formatDate.numberToDate(workCard.end_date)?.toString()}
+                  Begin={workCard.start_date}
+                  End={workCard.end_date}
                   Icon="Work"
                 />
                 {workCard.labels.filter(label => label.key !== DraftLabel.DRAFT).sort((a, b) => a.label_type - b.label_type).map(label => {

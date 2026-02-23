@@ -2,6 +2,7 @@ import { JSX } from "react";
 import WorkCard from "../workCard";
 import { WorkCardModel } from "../../_models/type";
 import SkeletonCard from "@/components/common/skeleton";
+import LazyLoad from "../lazyLoad";
 
 interface SessionBlockProps {
   icon: JSX.Element;
@@ -25,8 +26,8 @@ const SessionBlock = ({ icon, title, time, tasks, loading }: SessionBlockProps) 
       </div>
       <div className="flex flex-col gap-3 ">
         {loading ? (<SkeletonCard />) : tasks.length > 0 ? (
-          tasks.map((task) => (
-            <WorkCard key={task.id} workCard={task} />
+          tasks.slice(0, tasks.length).map((task) => (
+            <LazyLoad key={task.id}><WorkCard key={task.id} workCard={task} /></LazyLoad>
           ))
         ) : (
           <div className="flex items-center justify-center text-sm italic text-slate-400">

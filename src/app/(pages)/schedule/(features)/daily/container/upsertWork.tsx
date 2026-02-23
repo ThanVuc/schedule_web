@@ -58,6 +58,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
     const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
     const { setToast } = useToastState();
     const [formReady, setFormReady] = useState(false);
+    const [UpdateType, setUpdateType] = useState<number>(0);
     const handlePageQueryToModal = (mode: string, id?: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("mode", mode);
@@ -89,7 +90,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 if (n.is_send_mail) result.beforeFiveMinEmail = n.is_active;
                 else result.beforeFiveMinApp = n.is_active;
             }
-
             if (Math.abs(diff) === 30 * 60 * 1000) {
                 if (n.is_send_mail) result.beforeThirtyMinEmail = n.is_active;
                 else result.beforeThirtyMinApp = n.is_active;
@@ -211,14 +211,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
 
         }
     }, [mode, dataGetById]);
-    const findOldNotiId = (triggerAt: number, isSendMail: boolean) => {
-        return dataGetById?.notifications.find(
-            n => n.trigger_at === triggerAt && n.is_send_mail === isSendMail
-        )?.id;
-    };
-    
-
-
     useEffect(() => {
         if (mode === ModelType.CREATE) {
             form.reset({
@@ -389,6 +381,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             category_id: values.category_id,
             short_descriptions: values.short_descriptions ?? "",
             detailed_description: values.detailed_description ?? "",
+            update_type: UpdateType,
             notifications: [
                 {
                     id: dataGetById?.notifications[0]?.id,
@@ -491,7 +484,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 setOpen: setOpenAlertDialog,
             });
             setOpenAlertDialog(true);
-
         }
     }, [mode]);
     const onSubmit = async (values: z.infer<typeof upsertScheduleSchema>) => {
@@ -500,7 +492,30 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         if (!isConfirmed) return;
         if (mode === ModelType.CREATE) {
             await handleCreate(values);
-        } else if (mode === ModelType.UPDATE) {
+        } 
+        if (mode === ModelType.UPDATE && dataGetById?.labels.type.key === "REPEATED") {
+            setOpenAlertDialog(true);
+            setAlertDialogProps({
+                title: "Bạn có muốn cập nhật tất cả các mục tiêu lặp lại từ mục tiêu hiện tại trở đi ?",
+                description: "Bạn có thể nhấn hủy để chỉ cập nhật mục tiêu hiện tại.",
+                submitText: "Cập nhật tất cả",
+                onSubmit: async () => {
+                    setUpdateType(2);
+                    await handleEdit(values);
+                    refetch?.();
+                },
+                onClose: async () => {
+                    setUpdateType(1);
+                    await handleEdit(values);
+                    refetch?.();
+                },
+                open: true,
+                setOpen: setOpenAlertDialog,
+            });
+            setOpenAlertDialog(true);
+        }
+        else if (mode === ModelType.UPDATE) {
+            setUpdateType(0);
             await handleEdit(values);
         }
     }

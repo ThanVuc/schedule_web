@@ -18,7 +18,8 @@ export enum ModelType {
     UPDATE = "Update",
     DELETE = "Delete",
     VIEW = "View",
-    RECOVERY = "Recovery"
+    RECOVERY = "Recovery",
+    GENERATEWORKAI = "GenerateWorkAI"
 }
 export enum DaySectionText {
   NIGHT = "NIGHT",

@@ -9,4 +9,5 @@ export const worksApiUrl = {
     getWorkById: createAPI('works'),
     deleteWork: createAPI('works'),
     getGoal: createAPI('goals/dialog/list'),
+    generation: createAPI('works/generation'),
 }

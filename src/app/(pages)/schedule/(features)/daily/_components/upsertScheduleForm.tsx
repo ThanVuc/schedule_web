@@ -2,7 +2,7 @@ import z from "zod";
 import { upsertScheduleSchema } from "../_models/schema";
 import { UseFormReturn } from "react-hook-form";
 import { Checkbox, FormField, FormItem, FormMessage, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui";
-import InfoPopover from "./infoPopover";
+import InfoPopover from "./info/infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labelDefault } from "../_models/type/label";
@@ -44,12 +44,12 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             </FormItem>
                         )}
                     />
-                    <div className="flex w-full gap-4">
+                    <div className="flex justify-center items-center w-full gap-4">
                         <FormField
                             control={form.control}
                             name="start_date"
                             render={({ field }) => (
-                                <FormItem className="flex w-full flex-col mb-4">
+                                <FormItem className="flex flex-col mb-4">
                                     <TimePicker
                                         title="Từ"
                                         value={field.value}
@@ -64,20 +64,17 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             control={form.control}
                             name="end_date"
                             render={({ field }) => (
-                                <FormItem className="flex w-full flex-col mb-4">
+                                <FormItem className="flex flex-col mb-4">
                                     <TimePicker
                                         title="Đến"
                                         value={field.value}
                                         onChange={field.onChange}
                                         disabled={disabled}
                                     />
-                                    <FormMessage />
+                                    <FormMessage  />
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    {currentTypeLabel && (
-                        <div className="animate-slide-in">
                             <FormField
                                 control={form.control}
                                 name="repeat_range"
@@ -92,7 +89,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     </FormItem>
                                 )}
                             />
-                        </div>)}
+                    </div>
                     <div>
                         <FormField
                             control={form.control}

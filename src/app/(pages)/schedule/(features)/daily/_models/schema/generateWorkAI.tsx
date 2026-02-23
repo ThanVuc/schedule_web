@@ -1,0 +1,9 @@
+import z from "zod";
+
+export const generateWorkAISchema = z.object({
+  prompts: z.array(
+    z.string()
+  ).min(1, "Phải có ít nhất một yêu cầu"),
+  local_date: z.string(),
+  additional_context: z.string().optional(),
+});
