@@ -162,7 +162,7 @@ const TimeLine = ({ activeTime, setActiveTime }: TimeLineProps) => {
         {items.map((item) => (
           <div
             key={item.key}
-            className="flex flex-col gap-2 items-center relative z-10"
+            className="flex flex-col gap-2 items-center relative z-2"
           >
             <Button
               className={`${ButtonActive}

@@ -6,7 +6,7 @@ import InfoPopover from "./info/infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labelDefault } from "../_models/type/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LabelSelector } from "../../../_components";
 import { goalList } from "../_models/type/mutation.type";
 import TimePicker from "@/components/common/timePicker";
@@ -20,13 +20,22 @@ interface UpsertScheduleFormProps {
     goalList?: goalList[]
 }
 const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: UpsertScheduleFormProps) => {
-    const titleLabel = "border-2 p-2 rounded-md bg-white/10 md:min-w-35 max-w-21"
-    const [currentTypeLabel, setCurrentTypeLabel] = useState(false);
+    const titleLabel = "border-2 p-2 rounded-md bg-white/10 min-w-[100px] md:min-w-35 text-xs md:text-sm text-center"
+    const [currentTypeLabel, setCurrentTypeLabel] = useState(true);
+    const type = labelDefaultData?.type.key;
+
+    useEffect(() => {
+        if (type === "REPEATED") {
+            setCurrentTypeLabel(false);
+        } else {
+            setCurrentTypeLabel(true);
+        }
+    }, [type]);
     return (<>
-        <div className="flex justify-between gap-10">
-            <div className="basis-2/3 w-full">
-                <Label className="text-lg mb-5 text-[#94FEF5] font-bold">Thông Tin Cơ Bản</Label>
-                <div className="ml-8 ">
+        <div className="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10">
+            <div className="w-full lg:basis-2/3">
+                <Label className="text-base md:text-lg mb-3 md:mb-5 text-[#94FEF5] font-bold">Thông Tin Cơ Bản</Label>
+                <div className="ml-2 md:ml-8">
                     <FormField
                         control={form.control}
                         name="name"
@@ -44,7 +53,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             </FormItem>
                         )}
                     />
-                    <div className="flex justify-center items-center w-full gap-4">
+                    <div className="flex flex-col md:flex-row justify-center items-stretch md:items-center w-full gap-3 md:gap-4">
                         <FormField
                             control={form.control}
                             name="start_date"
@@ -56,7 +65,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                         onChange={field.onChange}
                                         disabled={disabled}
                                     />
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -71,24 +80,24 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                         onChange={field.onChange}
                                         disabled={disabled}
                                     />
-                                    <FormMessage  />
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />
-                            <FormField
-                                control={form.control}
-                                name="repeat_range"
-                                render={({ field }) => (
-                                    <FormItem className="flex w-full flex-col mb-4">
-                                        <DatepickerWithRange
-                                            disabled={!currentTypeLabel}
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                        />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="repeat_range"
+                            render={({ field }) => (
+                                <FormItem className="flex w-full flex-col mb-4 text-xs break-all line-clamp-1">
+                                    <DatepickerWithRange
+                                        disabled={currentTypeLabel}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                    <FormMessage className="text-xs break-all line-clamp-1" />
+                                </FormItem>
+                            )}
+                        />
                     </div>
                     <div>
                         <FormField
@@ -119,11 +128,11 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                         />
                     </div>
                 </div>
-                <Label className="text-lg my-5 text-[#FFF583] font-bold border-t-2 pt-4">Nhãn Dán & Danh Mục</Label>
-                <div className="ml-8 flex gap-5 border-b-2 pb-7">
-                    <div className="flex flex-col gap-4 w-full">
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-3 items-center">
+                <Label className="text-base md:text-lg my-3 md:my-5 text-[#FFF583] font-bold border-t-2 pt-3 md:pt-4">Nhãn Dán & Danh Mục</Label>
+                <div className="ml-2 md:ml-8 flex gap-3 md:gap-5 border-b-2 pb-5 md:pb-7">
+                    <div className="flex flex-col gap-3 md:gap-4 w-full">
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-2 sm:gap-0">
+                            <div className="flex gap-2 md:gap-3 items-center">
                                 <p className={titleLabel}>Loại công việc</p>
                                 <FormField
                                     control={form.control}
@@ -132,20 +141,20 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                         <FormItem>
                                             <LabelSelector onchange={field.onChange} onchangeObject={(selectedKey) => {
                                                 if (selectedKey === "REPEATED") {
-                                                    setCurrentTypeLabel(true);
+                                                    setCurrentTypeLabel(false);
                                                 }
                                                 else {
-                                                    setCurrentTypeLabel(false);
+                                                    setCurrentTypeLabel(true);
                                                 }
                                             }} disable={disabled} color={labelDefaultData?.type.color || "#E8E8E8"} keyIcon={labelDefaultData?.type.key || "IN_DAY"} label={labelDefaultData?.type.name || "Trong Ngày"} label_type={labelDefaultData?.type.label_type || 1} classNameContentLabel="z-161" />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="WorkType" />
+                            <div className="sm:block hidden"><InfoPopover label="WorkType" /></div>
                         </div>
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-3 items-center">
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-2 sm:gap-0">
+                            <div className="flex gap-2 md:gap-3 items-center">
                                 <p className={titleLabel}>Trạng thái</p>
                                 <FormField
                                     control={form.control}
@@ -157,10 +166,10 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="Status" />
+                            <div className="sm:block hidden"><InfoPopover label="Status" /></div>
                         </div>
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-3 items-center">
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-2 sm:gap-0">
+                            <div className="flex gap-2 md:gap-3 items-center">
                                 <p className={titleLabel}>Mức độ khó</p>
                                 <FormField
                                     control={form.control}
@@ -172,10 +181,10 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="Difficulty" />
+                            <div className="sm:block hidden"><InfoPopover label="Difficulty" /></div>
                         </div>
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-3 items-center">
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-2 sm:gap-0">
+                            <div className="flex gap-2 md:gap-3 items-center">
                                 <p className={titleLabel}>Mức độ ưu tiên</p>
 
                                 <FormField
@@ -188,10 +197,10 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="Priority" />
+                            <div className="sm:block hidden"><InfoPopover label="Priority" /></div>
                         </div>
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-3 items-center">
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-2 sm:gap-0">
+                            <div className="flex gap-2 md:gap-3 items-center">
                                 <p className={titleLabel}>Danh mục</p>
                                 <FormField
                                     control={form.control}
@@ -203,7 +212,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     )}
                                 />
                             </div>
-                            <InfoPopover label="Category" />
+                            <div className="sm:block hidden"><InfoPopover label="Category" /></div>
                         </div>
                     </div>
                 </div>
@@ -222,9 +231,9 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                     />
                 </div>
             </div>
-            <div className="basis-1/3">
-                <Label className="text-lg mb-5 text-[#97FB99] font-bold">Mô tả công việc</Label>
-                <div className="ml-8 border-b-1 pb-7">
+            <div className="w-full lg:basis-1/3">
+                <Label className="text-base md:text-lg mb-3 md:mb-5 text-[#97FB99] font-bold">Mô tả công việc</Label>
+                <div className="ml-2 md:ml-8 border-b-1 pb-5 md:pb-7">
                     <FormField
                         control={form.control}
                         name="short_descriptions"
@@ -236,7 +245,8 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                         border-dashed 
                                         h-18
                                         w-full
-                                        resize-none break-all
+                                        sm:w-100
+                                        resize-none
                                         whitespace-pre-wrap
                                         disabled:opacity-100 
                                         disabled:cursor-not-allowed
@@ -257,7 +267,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
-                                    className="border-dashed w-full h-32 resize-none break-all
+                                    className="border-dashed w-full sm:w-100 h-32 resize-none
                                         whitespace-pre-wrap disabled:opacity-100 disabled:cursor-not-allowed"
                                     {...field}
                                     placeholder="Mô tả chi tiết"
@@ -269,8 +279,8 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                         )}
                     />
                 </div>
-                <Label className="text-lg my-5 text-[#FFBF9C] font-bold">Cài đặt thông báo</Label>
-                <div className="flex flex-col gap-10 ml-8">
+                <Label className="text-base md:text-lg my-3 md:my-5 text-[#FFBF9C] font-bold">Cài đặt thông báo</Label>
+                <div className="flex flex-col gap-6 md:gap-10 ml-2 md:ml-8">
 
                     <FormField
                         control={form.control}

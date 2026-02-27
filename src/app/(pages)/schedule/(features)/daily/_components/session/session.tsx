@@ -39,7 +39,7 @@ const Session = ({ morningTasks = [], afternoonTasks = [], eveningTasks = [], ni
         (activeSession === DaySection.EVENING || activeSession === null) && (<LazyLoad><SessionBlock loading={loading} icon={<CloudIcon className="!w-6 !h-6" />} title="Tối" time="16:00 - 20:00" tasks={eveningTasks} /></LazyLoad>)
       }
       {
-        (activeSession === DaySection.LATE_EVENING || activeSession === null) && (<LazyLoad><SessionBlock loading={loading} icon={<StarIcon className="!w-6 !h-6" />} title="Khuya" time="22:00 - 00:00" tasks={lateEveningTasks} /></LazyLoad>)
+        (activeSession === DaySection.LATE_EVENING || activeSession === null) && (<LazyLoad><SessionBlock loading={loading} icon={<StarIcon className="!w-6 !h-6" />} title="Khuya" time="20:00 - 00:00" tasks={lateEveningTasks} /></LazyLoad>)
       }
     </div>
   );
