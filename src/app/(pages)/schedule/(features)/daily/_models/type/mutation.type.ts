@@ -49,6 +49,8 @@ export interface ViewUpWorkRequest {
     end_date: number;
     goal: goalList | undefined;
     labels: labelDefault;
+    repeat_series_start_date?: number;
+    repeat_series_end_date?: number;
     short_descriptions: string;
     detailed_description: string;
     notifications: notifications[];
