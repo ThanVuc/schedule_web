@@ -109,7 +109,14 @@ const TaskAI = ({ value = [], onChange, disable }: TaskAIProps) => {
           ))}
         </div>
 
-        {openInput && (
+        <div
+          className={`overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out ${
+            openInput
+              ? "max-h-16 opacity-100 translate-y-0"
+              : "max-h-0 opacity-0 -translate-y-1 pointer-events-none"
+          }`}
+          aria-hidden={!openInput}
+        >
           <div className="flex items-center mt-3 gap-5 border-b border-white/20 mb-5 pb-2">
             <Input
               className="disabled:opacity-80"
@@ -123,7 +130,7 @@ const TaskAI = ({ value = [], onChange, disable }: TaskAIProps) => {
                   setOpenInput(false);
                 }
               }}
-              disabled={disable}
+              disabled={!openInput || disable}
             />
             <TrashIcon
               className="!w-5 !h-5 text-[#FF6B6B] cursor-pointer"
@@ -133,7 +140,7 @@ const TaskAI = ({ value = [], onChange, disable }: TaskAIProps) => {
               }}
             />
           </div>
-        )}
+        </div>
       </div>
 
       <div className="flex justify-between gap-4 mt-4">

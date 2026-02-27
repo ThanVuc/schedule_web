@@ -8,6 +8,8 @@ export const worksApiUrl = {
     updateWork: createAPI('works'),
     getWorkById: createAPI('works'),
     deleteWork: createAPI('works'),
+    deleteWorkDraft: createAPI('works/drafts'),
+    acceptWorkDraft: createAPI('works/drafts'),
     getGoal: createAPI('goals/dialog/list'),
     generation: createAPI('works/generation'),
 }

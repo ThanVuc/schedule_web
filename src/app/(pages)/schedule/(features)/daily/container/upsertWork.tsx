@@ -194,6 +194,10 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 start_date: dataGetById.start_date,
                 end_date: dataGetById.end_date,
                 goal_id: dataGetById.goal?.id ?? "",
+                repeat_range: {
+                    from: dataGetById.repeat_series_start_date,
+                    to: dataGetById.repeat_series_end_date,
+                },
                 type_id: dataGetById.labels.type.id,
                 status_id: dataGetById.labels.status.id,
                 difficulty_id: dataGetById.labels.difficulty.id,

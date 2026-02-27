@@ -75,22 +75,29 @@ const SelectWorkLabel = ({
           </div>
         </SelectValue>
       </SelectTrigger>
-      {
-        Open && (<BackIcon className="!w-4 !h-4" />)
-      }
       <SelectContent
-        side="right"
-        className={cn("!w-full ml-3", classNameContent)}
+        className={cn("!w-full", classNameContent)}
       >
         <SelectGroup className="flex flex-col items-center w-full">
           {data.map((item) => (
-            <SelectItem key={item.id} value={item.name} onClick={onclick}>
-              <Label
-                className="min-w-[7rem] max-w-[9rem] text-center"
-                label={item.name}
-                color={item.color}
-                icon={item.key}
-              />
+            <SelectItem
+              key={item.id}
+              value={item.name}
+              onClick={onclick}
+              className="group pr-2 [&>span]:hidden"
+            >
+              <div className="flex w-full items-center justify-between gap-2">
+                <Label
+                  className="min-w-[7rem] max-w-[9rem] text-center"
+                  label={item.name}
+                  color={item.color}
+                  icon={item.key}
+                />
+                <BackIcon
+                  className="!w-3.5 !h-3.5 opacity-0 transition-opacity group-data-[state=checked]:opacity-100"
+                  style={{ color: item.color }}
+                />
+              </div>
             </SelectItem>
           ))}
         </SelectGroup>

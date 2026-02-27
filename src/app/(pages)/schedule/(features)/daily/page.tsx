@@ -28,8 +28,10 @@ const DailySchedulePage = () => {
 
 
     return (
-        <div className="flex gap-7 h-full">
-            <div className="sm:block hidden"><TimeLine activeTime={activeTime} setActiveTime={setActiveTime} /></div>
+        <div className="flex gap-10 h-full">
+            <div className="sm:block hidden">
+                <TimeLine activeTime={activeTime} setActiveTime={setActiveTime} />
+            </div>
             <div className="flex-1">
                 <div className="block md:flex justify-between space-between mb-5">
                     <div className="flex gap-2 p-3">
@@ -44,10 +46,10 @@ const DailySchedulePage = () => {
                             onClick={() => { handlePageQueryToModal(ModelType.RECOVERY) }}
                         > <LoopIcon />  Khôi Phục</Button>
                         <Button className="bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] hover:from-[#D946EF] hover:to-[#8B5CF6] text-white"
-                        onClick={()=> {handlePageQueryToModal(ModelType.GENERATEWORKAI)}}
+                            onClick={() => { handlePageQueryToModal(ModelType.GENERATEWORKAI) }}
                         > <FourStarIcon />  AI Tạo Lịch</Button>
                     </div>
-                    
+
                 </div>
                 <ListWork activeTime={activeTime} />
             </div>

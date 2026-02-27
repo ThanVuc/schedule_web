@@ -14,6 +14,7 @@ export interface WorkCardModel {
     goal: string;
     short_descriptions: string;
     detailed_description: string;
+    work_type: WorkLabelModel;
     labels: WorkLabelModel[];
     overdue: WorkLabelModel;
     draft: WorkLabelModel;

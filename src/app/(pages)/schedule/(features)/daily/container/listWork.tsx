@@ -1,4 +1,4 @@
-import { useAlertDialog, useAxios, useConfirmDialog } from "@/hooks";
+import { useAlertDialog, useAxios, useAxiosMutation, useConfirmDialog } from "@/hooks";
 import { worksApiUrl } from "@/api/work";
 import { AppAlertDialog, AppSearch } from "@/components/common";
 import { WorkCardListModel } from "../_models/type";
@@ -6,12 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 import useToastState from "@/hooks/useToasts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
-import { DownIcon, FilterIcon, SaveIcon, TrashIcon } from "@/components/icon";
+import { SaveIcon, TrashIcon } from "@/components/icon";
 import UpsertSchedule from "./upsertWork";
 import { Session } from "../_components";
 import { DaySection, DaySectionText } from "../../../_constant/common";
 import Recovery from "./recovery";
 import GenerateWorkAI from "./generateWorkAI";
+import { RefetchProvider } from "../_components/refetchContext";
 
 interface ListWorkProps {
     activeTime: DaySection | null;
@@ -33,21 +34,43 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         url: worksApiUrl.getWork,
         params: { ...listParams },
     });
+    const { sendRequest: acceptWork } = useAxiosMutation({
+        method: "POST",
+        url: worksApiUrl.acceptWorkDraft,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const { sendRequest: deleteWorkDraft } = useAxiosMutation({
+        method: "DELETE",
+        url: worksApiUrl.deleteWorkDraft,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
 
     useEffect(() => {
-        const now = new Date();
-
-        const startOfDay = new Date(now);
-        startOfDay.setHours(0, 0, 0, 0);
-        startOfDay.setTime(startOfDay.getTime() + 7 * 60 * 60 * 1000);
-
-        const endOfDay = new Date(now);
-        endOfDay.setHours(23, 59, 59, 999);
-        endOfDay.setTime(endOfDay.getTime() + 7 * 60 * 60 * 1000);
+        const vietnamOffset = 7 * 60 * 60 * 1000;
+        const nowUTC = new Date();
+        const nowVietnam = new Date(nowUTC.getTime() + vietnamOffset);
+        const startOfDayVietnam = new Date(Date.UTC(
+            nowVietnam.getUTCFullYear(),
+            nowVietnam.getUTCMonth(),
+            nowVietnam.getUTCDate(),
+            0, 0, 0, 0
+        ));
+        const endOfDayVietnam = new Date(Date.UTC(
+            nowVietnam.getUTCFullYear(),
+            nowVietnam.getUTCMonth(),
+            nowVietnam.getUTCDate(),
+            23, 59, 59, 999
+        ));
+        const startOfDayUTC = startOfDayVietnam.getTime() - vietnamOffset;
+        const endOfDayUTC = endOfDayVietnam.getTime() - vietnamOffset;
 
         const params = new URLSearchParams(searchParams.toString());
-        params.set("start_date", startOfDay.getTime().toString());
-        params.set("end_date", endOfDay.getTime().toString());
+        params.set("start_date", startOfDayUTC.toString());
+        params.set("end_date", endOfDayUTC.toString());
 
         router.push(`/schedule/daily?${params.toString()}`, { scroll: false });
     }, [data]);
@@ -120,25 +143,25 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
             onSubmit={() => alertDialogProps.onSubmit?.()}
         />
         <div className="flex justify-between mb-3">
-            <div><AppSearch className="flex-2s" placeholder="Tìm kiếm Theo tên, danh mục, mô tả ngắn" /></div>
-            <div>
-                <Button className="bg-null text-white hover:bg-null"> <FilterIcon />  Filter<DownIcon /></Button>
-            </div>
+            <div><AppSearch className="flex-2" placeholder="Tìm kiếm Theo tên và danh mục" /></div>
         </div>
         {DraftWorks.length > 0 && (<div className="flex justify-end gap-2 mb-3 animate-slide-in">
             <Button className=" bg-[#FF4848]/20 border-2 border-[#FF4848] text-[#FF4848] hover:bg-[#FF4848]/40"
                 onClick={() => {
                     setAlertDialogProps({
-                        title: "Xác nhận lưu công việc",
-                        description: "Bạn có chắc chắn muốn lưu tất cả công việc?",
-                        submitText: "Lưu",
+                        title: "Xác nhận Xoá tất cả công việc",
+                        description: "Bạn có chắc chắn muốn xoá tất cả công việc?",
+                        submitText: "Xoá",
                         onSubmit: async () => {
+                            deleteWorkDraft();
                             setToast({
-                                title: "Lưu công việc",
-                                message: "Lưu thành công",
+                                title: "Xoá Công việc",
+                                message: "Xoá thành công",
                                 variant: "success",
                             });
-                            refetch?.();
+                            if (refetch) {
+                                refetch();
+                            }
                         },
                         open: true,
                         setOpen: setOpenAlertDialog,
@@ -154,12 +177,15 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
                         description: "Bạn có chắc chắn muốn lưu tất cả công việc?",
                         submitText: "Lưu",
                         onSubmit: async () => {
+                            acceptWork()
                             setToast({
                                 title: "Lưu công việc",
                                 message: "Lưu thành công",
                                 variant: "success",
                             });
-                            refetch?.();
+                            if (refetch) {
+                                refetch();
+                            }
                         },
                         open: true,
                         setOpen: setOpenAlertDialog,
@@ -174,15 +200,17 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
         <Recovery refetch={refetch} />
         <GenerateWorkAI refetch={refetch} />
         <div>
-            <Session
-                morningTasks={sessionData?.morning}
-                earlyMorningTasks={sessionData?.earlyMorning}
-                afternoonTasks={sessionData?.afternoon}
-                eveningTasks={sessionData?.evening}
-                nightTasks={sessionData?.night}
-                lateEveningTasks={sessionData?.lateEvening}
-                session={activeTime}
-            />
+            <RefetchProvider value={refetch}>
+                <Session
+                    morningTasks={sessionData?.morning}
+                    earlyMorningTasks={sessionData?.earlyMorning}
+                    afternoonTasks={sessionData?.afternoon}
+                    eveningTasks={sessionData?.evening}
+                    nightTasks={sessionData?.night}
+                    lateEveningTasks={sessionData?.lateEvening}
+                    session={activeTime}
+                />
+            </RefetchProvider>
             {dialog}
         </div>
     </>);
