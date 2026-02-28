@@ -103,7 +103,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2 ">
               <p className="font-bold italic text-sm text-white w-25">Mô tả ngắn:</p>
-              <p className="font-light italic text-sm text-slate-200 line-clamp-2 break-all overflow-hidden">{workCard.short_descriptions}</p>
+              <p className="font-light italic text-sm text-slate-200 break-words line-clamp-2 overflow-hidden">{workCard.short_descriptions}</p>
             </div>
           </div>
         </Card>
