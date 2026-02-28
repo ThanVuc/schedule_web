@@ -1,4 +1,4 @@
-import z, { number } from "zod";
+import z from "zod";
 
 export const upsertScheduleSchema = z.object({
     name: z.string().trim().min(1, "Tên công việc không được để trống").max(126, "Tên công việc không thể vượt quá 126 ký tự"),
@@ -24,7 +24,7 @@ export const upsertScheduleSchema = z.object({
     }),
     update_type: z.number().optional(),
     sub_tasks: z.array(z.object({
-        name: z.string().min(1).max(126),
+        name: z.string().trim().min(1).max(126),
         is_completed: z.boolean(),
     })).optional(),
 }
