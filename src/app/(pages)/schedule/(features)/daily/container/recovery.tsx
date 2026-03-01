@@ -62,8 +62,8 @@ const Recovery = ({ refetch }: RecoveryProps) => {
         
 
         const Recovery: RecoveryRequest = {
-            source_date: value.source_date + 86400000,
-            target_date: value.target_date + 86400000,
+            source_date: value.source_date,
+            target_date: value.target_date,
         };
         setOpenAlertDialog(true);
         setAlertDialogProps({
