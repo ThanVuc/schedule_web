@@ -482,7 +482,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                         message: "Xoá công việc thành công",
                         variant: "success",
                     });
-                    refetch?.();
+                    if (refetch) refetch();
                 },
                 open: true,
                 setOpen: setOpenAlertDialog,
@@ -496,7 +496,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         if (!isConfirmed) return;
         if (mode === ModelType.CREATE) {
             await handleCreate(values);
-        } 
+        }
         if (mode === ModelType.UPDATE && dataGetById?.labels.type.key === "REPEATED") {
             setOpenAlertDialog(true);
             setAlertDialogProps({

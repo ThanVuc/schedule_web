@@ -62,13 +62,13 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
           style={{
             "--border-color": BorderColor?.color,
           } as React.CSSProperties}
-          className={`border-l-4 border-[color:var(--border-color)] pt-0 pb-2`}
+          className={`border-l-4 border-[color:var(--border-color)]  pt-0 pb-2 overflow-hidden`}
         >
           <div className="px-1 sm:px-3 py-2 flex flex-col gap-1 sm:gap-3">
-            <div className="flex sm:flex-row justify-between sm:items-center  border-b-2 border-slate-600 gap-2 pb-2">
+            <div className="flex sm:flex-row justify-between sm:items-center  border-b-2 border-slate-600 gap-2 pb-2 min-w-0">
               <p
-                style={{ "--text-color": BorderColor?.color } as React.CSSProperties}
-                className="text-[color:var(--text-color)] font-semibold font-family-Poppins text-sm sm:text-xl line-clamp-2 sm:line-clamp-1 break-all"
+                style={{ "--text-color": BorderColor?.color, overflowWrap: "anywhere" } as React.CSSProperties}
+                className="text-[color:var(--text-color)] font-semibold text-sm sm:text-xl line-clamp-2 sm:line-clamp-1 overflow-hidden w-0 flex-1"
               >
                 {workCard.name}
               </p>
@@ -97,13 +97,13 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
                 }
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:gap-2">
-              <p className="font-bold italic text-sm text-white">Mục tiêu:</p>
-              <p className="text-[#AFEEBF] font-light italic text-sm line-clamp-2 ">{workCard.goal}</p>
+            <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
+              <p className="font-bold italic text-sm text-white flex-shrink-0">Mục tiêu:</p>
+              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="text-[#AFEEBF] font-light italic text-sm line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.goal}</p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:gap-2 ">
-              <p className="font-bold italic text-sm text-white w-25">Mô tả ngắn:</p>
-              <p className="font-light italic text-sm text-slate-200 line-clamp-2 break-all overflow-hidden">{workCard.short_descriptions}</p>
+            <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
+              <p className="font-bold italic text-sm text-white w-25 flex-shrink-0">Mô tả ngắn:</p>
+              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light italic text-sm text-slate-200 line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.short_descriptions}</p>
             </div>
           </div>
         </Card>
