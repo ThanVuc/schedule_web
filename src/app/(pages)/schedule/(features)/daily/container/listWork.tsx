@@ -143,7 +143,7 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
             onSubmit={() => alertDialogProps.onSubmit?.()}
         />
         <div className="flex justify-between mb-3">
-            <div><AppSearch className="flex-2" placeholder="Tìm kiếm Theo tên và danh mục" /></div>
+            <div><AppSearch className="flex-2" placeholder="Tìm kiếm theo Tên và Danh mục" /></div>
         </div>
         {DraftWorks.length > 0 && (<div className="flex justify-end gap-2 mb-3 animate-slide-in">
             <Button className=" bg-[#FF4848]/20 border-2 border-[#FF4848] text-[#FF4848] hover:bg-[#FF4848]/40"

@@ -30,8 +30,8 @@ const SessionBlock = ({ icon, title, time, tasks, loading }: SessionBlockProps) 
             <LazyLoad key={task.id}><WorkCard key={task.id} workCard={task} /></LazyLoad>
           ))
         ) : (
-          <div className="flex items-center justify-center text-sm italic text-slate-400">
-            <p>không có công việc trong khoảng thời gian này</p>
+          <div className="flex items-center justify-center text-sm text-slate-400">
+            <p>Không có công việc trong khoảng thời gian này</p>
           </div>
         )}
       </div>
