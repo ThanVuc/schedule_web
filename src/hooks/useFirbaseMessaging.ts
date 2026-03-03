@@ -73,7 +73,6 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
         // Listen for foreground messages
         const unsubscribe = onMessage(messaging, (payload) => {
             const { title, body, url, src } = payload.data || {};
-            console.log("📩 Received foreground message:", payload);
             if (title && body) {
                 showNotification({
                     title,
