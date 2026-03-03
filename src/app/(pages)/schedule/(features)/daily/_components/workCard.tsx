@@ -98,12 +98,12 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
-              <p className="font-bold italic text-sm text-white flex-shrink-0">Mục tiêu:</p>
-              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="text-[#AFEEBF] font-light italic text-sm line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.goal}</p>
+              <p className="font-bold  text-sm text-white flex-shrink-0">Mục tiêu:</p>
+              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="text-[#AFEEBF] font-light text-sm line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.goal}</p>
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
-              <p className="font-bold italic text-sm text-white w-25 flex-shrink-0">Mô tả ngắn:</p>
-              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light italic text-sm text-slate-200 line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.short_descriptions}</p>
+              <p className="font-bold  text-sm text-white w-25 flex-shrink-0">Mô tả ngắn:</p>
+              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light text-sm text-slate-200 line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.short_descriptions}</p>
             </div>
           </div>
         </Card>

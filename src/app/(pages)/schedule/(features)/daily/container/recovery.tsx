@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { recoverySchema } from "../_models/schema/recovery.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
+import z, { date } from "zod";
 import { AppAlertDialog, AppDialog } from "@/components/common";
 import { ModelType } from "../../../_constant";
 import { useModalParams } from "../hooks";
@@ -29,6 +29,9 @@ const Recovery = ({ refetch }: RecoveryProps) => {
     const { mode } = useModalParams();
     const openDialog = mode === ModelType.RECOVERY;
     const { setToast } = useToastState();
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
     const { sendRequest } = useAxiosMutation<RecoveryMutationResponseType, recoveryRequest>({
         method: "POST",
@@ -37,11 +40,12 @@ const Recovery = ({ refetch }: RecoveryProps) => {
             "Content-Type": "application/json"
         }
     });
+
     const form = useForm<z.infer<typeof recoverySchema>>({
         resolver: zodResolver(recoverySchema),
         defaultValues: {
-            target_date: 0,
-            source_date: 0,
+            target_date: today.getTime(),
+            source_date: yesterday.getTime(),
         },
     });
     const closeModal = () => {
@@ -85,7 +89,7 @@ const Recovery = ({ refetch }: RecoveryProps) => {
                     message: "Khôi phục công việc thành công",
                     variant: "success",
                 });
-                refetch?.();
+                if (refetch) refetch();
             },
             open: true,
             setOpen: setOpenAlertDialog,

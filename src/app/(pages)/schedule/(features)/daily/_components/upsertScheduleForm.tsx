@@ -46,6 +46,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                                     value={field.value ?? ""}
                                     className="rounded-sm disabled:opacity-100 disabled:cursor-not-allowed"
                                     placeholder="Tên công việc"
+                                    maxLength={126}
                                     id={field.name}
                                     disabled={disabled}
                                 />
@@ -241,6 +242,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
+                                    maxLength={256}
                                     className="
                                         border-dashed 
                                         h-18
@@ -267,6 +269,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
                             <FormItem className="flex flex-col mb-4">
                                 <Textarea
                                     disabled={disabled}
+                                    maxLength={512}
                                     className="border-dashed w-full sm:w-100 h-32 resize-none
                                         whitespace-pre-wrap disabled:opacity-100 disabled:cursor-not-allowed"
                                     {...field}
