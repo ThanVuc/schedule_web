@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { recoverySchema } from "../_models/schema/recovery.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z, { date } from "zod";
+import z from "zod";
 import { AppAlertDialog, AppDialog } from "@/components/common";
 import { ModelType } from "../../../_constant";
 import { useModalParams } from "../hooks";
