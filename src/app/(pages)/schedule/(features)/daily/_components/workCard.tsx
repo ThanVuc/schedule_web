@@ -2,7 +2,7 @@ import { Card } from "@/components/ui";
 import { LabelCategory, LabelSelector } from "../../../_components";
 import { WorkCardModel } from "../_models/type";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
+import { ExclamationIcon, EyeIcon, PencilIcon, TrashIcon } from "@/components/icon";
 import { DraftLabel, ModelType, OverdueLabel } from "../../../_constant/common";
 import Time from "../../../_components/time";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -22,7 +22,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
   const labels = Array.isArray(workCard.labels) ? workCard.labels : [];
   const Draft = workCard.draft?.key === DraftLabel.DRAFT ? workCard.draft : undefined;
   const Overdue = workCard.overdue?.key === OverdueLabel.OVERDUE ? workCard.overdue : undefined;
-  const BorderColor = labels.find(label => label.color);
+  const BorderColor =  workCard.is_conflict ? "#FF0000" : Draft ? workCard.draft.color : labels.find(label => label.color)?.color;
   const searchParams = useSearchParams();
   const router = useRouter();
   const handlePageQueryToModal = (mode: string, id?: string) => {
@@ -60,14 +60,14 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
       <ContextMenuTrigger>
         <Card
           style={{
-            "--border-color": BorderColor?.color,
+            "--border-color": BorderColor,
           } as React.CSSProperties}
           className={`border-l-4 border-[color:var(--border-color)]  pt-0 pb-2 overflow-hidden`}
         >
           <div className="px-1 sm:px-3 py-2 flex flex-col gap-1 sm:gap-3">
             <div className="flex sm:flex-row justify-between sm:items-center  border-b-2 border-slate-600 gap-2 pb-2 min-w-0">
               <p
-                style={{ "--text-color": BorderColor?.color, overflowWrap: "anywhere" } as React.CSSProperties}
+                style={{ "--text-color": BorderColor, overflowWrap: "anywhere" } as React.CSSProperties}
                 className="text-[color:var(--text-color)] font-semibold text-sm sm:text-xl line-clamp-2 sm:line-clamp-1 overflow-hidden w-0 flex-1"
               >
                 {workCard.name}
@@ -103,7 +103,10 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
             </div>
             <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
               <p className="font-bold  text-sm text-white w-25 flex-shrink-0">Mô tả ngắn:</p>
-              <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light text-sm text-slate-200 line-clamp-2 overflow-hidden w-full sm:w-0 sm:flex-1">{workCard.short_descriptions}</p>
+              <div className="flex items-start gap-2 w-full sm:w-0 sm:flex-1">
+                <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light text-sm text-slate-200 line-clamp-2 overflow-hidden flex-1">{workCard.short_descriptions}</p>
+                {workCard.is_conflict && (<ExclamationIcon className="!w-6 !h-6 text-[#FF0000] mt-0.5 flex-shrink-0" />)}
+              </div>
             </div>
           </div>
         </Card>

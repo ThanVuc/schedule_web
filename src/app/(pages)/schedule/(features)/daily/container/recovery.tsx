@@ -76,6 +76,12 @@ const Recovery = ({ refetch }: RecoveryProps) => {
             submitText: "Khôi phục",
             onSubmit: async () => {
                 const { error } = await sendRequest(Recovery);
+                setToast({
+                    title: "Khôi phục công việc",
+                    message: "Khôi phục công việc thành công",
+                    variant: "success",
+                });
+                if (refetch) refetch();
                 if (error) {
                     setToast({
                         title: "Khôi phục công việc",
@@ -84,12 +90,6 @@ const Recovery = ({ refetch }: RecoveryProps) => {
                     });
                     return;
                 }
-                setToast({
-                    title: "Khôi phục công việc",
-                    message: "Khôi phục công việc thành công",
-                    variant: "success",
-                });
-                if (refetch) refetch();
             },
             open: true,
             setOpen: setOpenAlertDialog,
