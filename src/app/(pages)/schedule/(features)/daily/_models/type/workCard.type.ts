@@ -9,6 +9,7 @@ export interface WorkCardModel {
     id: string;
     name: string;
     start_date: number;
+    is_conflict: boolean;
     end_date: number;
     category: WorkLabelModel;
     goal: string;
