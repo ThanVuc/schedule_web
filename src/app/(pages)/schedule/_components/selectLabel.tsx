@@ -58,7 +58,7 @@ const SelectWorkLabel = ({
       <SelectTrigger className="border-0 p-0 bg-transparent [&>svg]:hidden disabled:opacity-100 disabled:cursor-not-allowed" disabled={disable}>
         <SelectValue>
           <div
-            className="flex w-full justify-center gap-2 p-1.5 text-sm rounded-md border-2 items-center"
+            className="flex w-full justify-center gap-2 p-1.5 text-xs rounded-md border-2 items-center"
             style={{
               color: selected.color,
               backgroundColor: formatColor(selected.color),
