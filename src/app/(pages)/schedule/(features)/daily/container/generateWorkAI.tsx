@@ -51,16 +51,16 @@ const GenerateWorkAI = ({ refetch }: GenerateWorkAIProps) => {
         if (error) {
             setToast({
                 title: "Lỗi hệ thống",
-                message: "Tạo công việc thất bại",
+                message: "Đã có lỗi xảy ra khi tạo công việc bằng AI, vui lòng thử lại sau",
                 variant: "error",
             });
             return;
         }
         refetch?.();
         setToast({
-            title: "Thành công",
-            message: "Tạo công việc thành công",
-            variant: "success",
+            title: "Đang xử lý",
+            message: "AI đang xử lý, vui lòng chờ giây lát...",
+            variant: "default",
         })
         closeModal();
     }
