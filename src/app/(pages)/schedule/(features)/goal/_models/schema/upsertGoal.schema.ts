@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const UpsertGoalSchema = z.object({
-  name: z.string().trim().min(1, "Tên mục tiêu không được để trống").max(126, "Tiêu đề không thể vượt quá 126 ký tự"),
+  name: z.string().trim().min(5, "Tên mục tiêu quá ngắn").max(126, "Tiêu đề không thể vượt quá 126 ký tự"),
   start_date: z.number(),
   end_date: z.number(),
   status_id: z.string(),

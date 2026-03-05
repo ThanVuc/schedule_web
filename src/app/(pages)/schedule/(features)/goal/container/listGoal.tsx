@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 
 export const ListGoal = () => {
+    const PAGE_SIZE = 5;
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -38,7 +39,7 @@ export const ListGoal = () => {
     const { data, error, loading, refetch } = useAxios<GoalsResponse>({
         method: "GET",
         url: GoalApiUrl.getListGoals,
-        params: { ...listParams },
+        params: { ...listParams, page_size: PAGE_SIZE },
     });
 
     const { setToast } = useToastState();
@@ -73,13 +74,12 @@ export const ListGoal = () => {
     const view = useMemo(() => {
         const goals = data?.items ?? [];
         const page = data?.page ?? 1;
-        const page_size = data?.page_size ?? 10;
         const totalPages = data?.total_pages ?? 1;
         const hasNext = data?.has_next ?? false;
         const hasPrev = data?.has_prev ?? false;
         const totalGoals = data?.total_goals ?? 0;
 
-        return { goals, page, pageSize: page_size, totalPages, hasNext, hasPrev, totalGoals };
+        return { goals, page, pageSize: PAGE_SIZE, totalPages, hasNext, hasPrev, totalGoals };
     }, [data]);
 
     if (loading && isLoading) {
@@ -155,7 +155,7 @@ export const ListGoal = () => {
                         total_pages={view.totalPages}
                         has_next={view.hasNext}
                         has_prev={view.hasPrev}
-                        size={view.pageSize}
+                        size={PAGE_SIZE}
                     />
                 )}
             </div>

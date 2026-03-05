@@ -120,7 +120,7 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                     <p>Xoá tất cả</p>
                 </Button>
             </div>
-            <div className="ml-8">
+            <div className="ml-8 flex-col items-center gap-3 border-b border-white/10 py-2 w-full min-w-0">
                 <div className="flex items-center gap-3">
                     <p className="font-bold">
                         {value.length > 0
@@ -138,7 +138,7 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                 {value.map((item, index) => (
                     <div
                         key={index}
-                        className="flex items-center gap-3 border-b border-white/10 py-2"
+                        className="flex items-center gap-3 border-b border-white/10 py-2 z flex-1 min-w-0 overflow-hidden break-all"
                     >
                         <Checkbox
                             className="w-5 h-5 border-white/60 border-3 disabled:opacity-80"
@@ -164,14 +164,12 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                                 autoFocus
                                 disabled={disable}
                                 maxLength={126}
+
                             />
                         ) : (
                             <span
-                                className={
-                                    item.is_completed
-                                        ? "line-through text-gray-400 flex-1 cursor-pointer"
-                                        : "flex-1 cursor-pointer"
-                                }
+                                className={`flex-1 min-w-0 cursor-pointer ${item.is_completed ? "line-through text-gray-400" : ""
+                                    }`}
                                 onDoubleClick={() => handleDoubleClick(index)}
                             >
                                 {item.name}
@@ -191,7 +189,7 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                     <div className="flex items-center gap-5 border-b border-white/20 mb-5 pb-2">
                         <Checkbox className="w-5 h-5 border-white/60 border-3" disabled />
                         <Input
-                            className="disabled:opacity-80"
+                            className="disabled:opacity-80 break-words flex-1 min-w-0 overflow-hidden"
                             placeholder="Nhập công việc cần thêm"
                             value={newInput}
                             onChange={(e) => setNewInput(e.target.value)}
@@ -202,6 +200,7 @@ const MiniTask = ({ value = [], onChange, disable, type = 'Work' }: MiniTaskProp
                                 }
                             }}
                             disabled={disable}
+                            maxLength={126}
                         />
                     </div>
                 )}

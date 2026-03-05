@@ -127,7 +127,7 @@ const GoalCard = ({ GoalCard, availableLabels, onRefetch }: GoalCardProps) => {
           <div className="px-1 sm:px-3 py-2 flex flex-col gap-2 sm:gap-3">
             <div className="flex sm:flex-row justify-between sm:items-center mb-2 border-b-2 border-slate-600 gap-2 pb-2">
               <p
-                className=" font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left"
+                className=" font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left line-clamp-1 flex-1 max-w-fit"
                 style={{ color: statusColor + "CC" }}
               >
                 {GoalCard?.name ?? "-"}

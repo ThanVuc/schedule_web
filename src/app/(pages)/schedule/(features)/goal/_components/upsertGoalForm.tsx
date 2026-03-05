@@ -19,14 +19,15 @@ interface UpsertGoalFormProps {
 }
 
 const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFormProps) => {
-    const titleLabel = "border-2 span-2 rounded-md bg-white/10 md:w-27 lg:w-30 sm:w-25 h-9 flex items-center justify-center"
+    const titleLabel = "border-2 rounded-md bg-white/10 w-28 h-9 flex items-center justify-center text-sm";
 
     return (
         <>
-            <div className="flex justify-between gap-10">
-                <div className="basis-2/3 w-full">
-                    <Label className="text-lg mb-5 text-[#94FEF5] font-bold pb-4">Thông Tin Cơ Bản</Label>
-                    <div className="pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 w-full">
+                    <Label className="text-lg mb-4 text-[#94FEF5] font-bold block">Thông Tin Cơ Bản</Label>
+
+                    <div className="pt-2">
                         <FormField
                             control={form.control}
                             name="name"
@@ -44,12 +45,12 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 </FormItem>
                             )}
                         />
-                        <div className="flex w-full gap-4 pb-4">
+                        <div className="flex flex-col md:flex-row w-full gap-4 pb-4">
                             <FormField
                                 control={form.control}
                                 name="start_date"
                                 render={({ field }) => (
-                                    <FormItem className="flex w-full flex-col mb-4">
+                                    <FormItem className="flex-1 flex flex-col mb-0">
                                         <DateTimePicker
                                             defaultValue={field.value}
                                             disabledDate={isDisabled}
@@ -66,7 +67,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 control={form.control}
                                 name="end_date"
                                 render={({ field }) => (
-                                    <FormItem className="flex w-full flex-col mb-4">
+                                    <FormItem className="flex-1 flex flex-col mb-0">
                                         <DateTimePicker
                                             defaultValue={field.value}
                                             disabledDate={isDisabled}
@@ -80,11 +81,13 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 )}
                             />
                         </div>
-                        <Label className="text-lg my-5 text-[#FFF583] font-bold">Nhãn Dán</Label>
-                        <div className="ml-8 flex gap-5 border-b-2 pb-7 pt-6">
+
+                        <Label className="text-lg my-4 text-[#FFF583] font-bold block">Nhãn Dán</Label>
+
+                        <div className="ml-0 md:ml-8 flex flex-col gap-5 border-b-2 pb-6 pt-4">
                             <div className="flex flex-col gap-4 w-full">
-                                <div className="flex justify-between w-full">
-                                    <div className="flex gap-6 items-center">
+                                <div className="flex sm:flex-row sm:items-center justify-between w-full gap-3">
+                                    <div className="flex items-center gap-4">
                                         <span className={titleLabel}>Trạng thái</span>
                                         <FormField
                                             control={form.control}
@@ -107,10 +110,13 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             )}
                                         />
                                     </div>
-                                    <InfoPopover label="Status" />
+                                    <div className="flex-shrink-0">
+                                        <InfoPopover label="Status" />
+                                    </div>
                                 </div>
-                                <div className="flex justify-between w-full">
-                                    <div className="flex gap-6 items-center">
+
+                                <div className="flex sm:flex-row sm:items-center justify-between w-full gap-3">
+                                    <div className="flex items-center gap-4">
                                         <span className={titleLabel}>Độ khó</span>
                                         <FormField
                                             control={form.control}
@@ -133,11 +139,14 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             )}
                                         />
                                     </div>
-                                    <InfoPopover label="Difficulty" />
+                                    <div className="flex-shrink-0">
+                                        <InfoPopover label="Difficulty" />
+                                    </div>
                                 </div>
-                                <div className="flex justify-between w-full">
-                                    <div className="flex gap-6 items-center">
-                                        <span className={titleLabel}> Độ ưu tiên</span>
+
+                                <div className="flex sm:flex-row sm:items-center justify-between w-full gap-3">
+                                    <div className="flex items-center gap-4">
+                                        <span className={titleLabel}>Độ ưu tiên</span>
                                         <FormField
                                             control={form.control}
                                             name="priority_id"
@@ -159,10 +168,13 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             )}
                                         />
                                     </div>
-                                    <InfoPopover label="Priority" />
+                                    <div className="flex-shrink-0">
+                                        <InfoPopover label="Priority" />
+                                    </div>
                                 </div>
-                                <div className="flex justify-between w-full">
-                                    <div className="flex gap-6 items-center">
+
+                                <div className="flex sm:flex-row sm:items-center justify-between w-full gap-3">
+                                    <div className="flex items-center gap-4">
                                         <span className={titleLabel}>Danh mục</span>
                                         <FormField
                                             control={form.control}
@@ -185,10 +197,13 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                             )}
                                         />
                                     </div>
-                                    <InfoPopover label="Category" />
+                                    <div className="flex-shrink-0">
+                                        <InfoPopover label="Category" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                         <div className="pt-3">
                             <FormField
                                 control={form.control}
@@ -202,9 +217,9 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                         </div>
                     </div>
                 </div>
-                <div className="basis-1/3">
-                    <Label className="text-lg mb-5 text-[#97FB99] font-bold">Mô tả mục tiêu</Label>
-                    <div className="ml-8 pb-7 pt-4">
+                <div className="w-full">
+                    <Label className="text-lg mb-4 text-[#97FB99] font-bold block">Mô tả mục tiêu</Label>
+                    <div className="ml-0 md:ml-6 pb-4 pt-2">
                         <FormField
                             control={form.control}
                             name="short_descriptions"
@@ -212,11 +227,11 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem className="flex flex-col mb-4">
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed disabled:opacity-90"
+                                        className="border-dashed disabled:opacity-90 resize-none"
                                         {...field}
                                         placeholder="Mô tả ngắn"
                                         id={field.name}
-                                        rows={5}
+                                        rows={4}
                                         maxLength={256}
                                     />
                                 </FormItem>
@@ -229,11 +244,11 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem>
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed w-full h-32 disabled:opacity-90"
+                                        className="border-dashed w-full h-32 disabled:opacity-90 resize-y"
                                         {...field}
                                         placeholder="Mô tả chi tiết"
                                         id={field.name}
-                                        rows={8}
+                                        rows={6}
                                         maxLength={512}
                                     />
                                 </FormItem>
