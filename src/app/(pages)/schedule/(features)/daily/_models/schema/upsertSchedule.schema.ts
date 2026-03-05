@@ -8,6 +8,7 @@ export const upsertScheduleSchema = z.object({
         from: z.number().optional(),
         to: z.number().optional(),
     }).optional(),
+    draft_id: z.string().optional(),
     status_id: z.string(),
     goal_id: z.string().optional(),
     type_id: z.string(),

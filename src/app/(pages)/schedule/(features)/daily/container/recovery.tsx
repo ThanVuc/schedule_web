@@ -4,12 +4,11 @@ import { recoverySchema } from "../_models/schema/recovery.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { AppAlertDialog, AppDialog } from "@/components/common";
+import { AppDialog } from "@/components/common";
 import { ModelType } from "../../../_constant";
 import { useModalParams } from "../hooks";
-import { useState } from "react";
 import RecoveryForm from "../_components/recoveryForm";
-import { useAlertDialog, useAxiosMutation, useConfirmDialog, useToastState } from "@/hooks";
+import { useAxiosMutation, useConfirmDialog, useToastState } from "@/hooks";
 import { Form } from "@/components/ui";
 import recoveryApiUrl from "@/api/recovery.api";
 import { RecoveryMutationResponseType, RecoveryRequest, recoveryRequest } from "../_models/type/mutation.type";
@@ -23,9 +22,7 @@ interface RecoveryProps {
 const Recovery = ({ refetch }: RecoveryProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { confirm, dialog } = useConfirmDialog();
-    const [openAlertDialog, setOpenAlertDialog] = useState(false);
-    const { alertDialogProps, setAlertDialogProps } = useAlertDialog();
+    const { confirm, dialog } = useConfirmDialog({title: "Xác nhận khôi phục công việc", description: "Bạn có chắc chắn muốn khôi phục công việc?"});
     const { mode } = useModalParams();
     const openDialog = mode === ModelType.RECOVERY;
     const { setToast } = useToastState();
@@ -63,37 +60,26 @@ const Recovery = ({ refetch }: RecoveryProps) => {
         }
     };
     const HandleRecovery = async (value: z.infer<typeof recoverySchema>) => {
-        
-
         const Recovery: RecoveryRequest = {
             source_date: value.source_date,
             target_date: value.target_date,
         };
-        setOpenAlertDialog(true);
-        setAlertDialogProps({
-            title: "Xác nhận khôi phục công việc",
-            description: "Bạn có chắc chắn muốn khôi phục công việc này? Hành động này không thể hoàn tác.",
-            submitText: "Khôi phục",
-            onSubmit: async () => {
-                const { error } = await sendRequest(Recovery);
-                setToast({
-                    title: "Khôi phục công việc",
-                    message: "Khôi phục công việc thành công",
-                    variant: "success",
-                });
-                if (refetch) refetch();
-                if (error) {
-                    setToast({
-                        title: "Khôi phục công việc",
-                        message: "Khôi phục công việc thất bại",
-                        variant: "error",
-                    });
-                    return;
-                }
-            },
-            open: true,
-            setOpen: setOpenAlertDialog,
+        const { error } = await sendRequest(Recovery);
+        setToast({
+            title: "Khôi phục công việc",
+            message: "Khôi phục công việc thành công",
+            variant: "success",
         });
+        if (refetch) refetch();
+        if (error) {
+            setToast({
+                title: "Khôi phục công việc",
+                message: "Khôi phục công việc thất bại",
+                variant: "error",
+            });
+            return;
+        }
+        closeModal();
     }
     const onSubmit = async (values: z.infer<typeof recoverySchema>) => {
         const isConfirmed = await confirm();
@@ -104,15 +90,6 @@ const Recovery = ({ refetch }: RecoveryProps) => {
     }
     return (
         <>
-            <AppAlertDialog
-                title={alertDialogProps.title}
-                description={alertDialogProps.description}
-                open={openAlertDialog}
-                setOpen={setOpenAlertDialog}
-                submitText={alertDialogProps.submitText}
-                onSubmit={() => alertDialogProps.onSubmit?.()}
-                onClose={closeModal}
-            />
             <AppDialog
                 cancelButtonText={buttonProps.Recovery.cancelButtonText}
                 submitButtonText={buttonProps.Recovery.submitButtonText}

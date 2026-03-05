@@ -28,6 +28,7 @@ export interface UpsertWorkRequest {
     goal_id: string | undefined;
     type_id: string;
     status_id: string;
+    draft_id?: string;
     difficulty_id: string;
     priority_id: string;
     category_id: string;
@@ -48,6 +49,7 @@ export interface ViewUpWorkRequest {
     start_date: number;
     end_date: number;
     goal: goalList | undefined;
+    draft?: label;
     labels: labelDefault;
     repeat_series_start_date?: number;
     repeat_series_end_date?: number;

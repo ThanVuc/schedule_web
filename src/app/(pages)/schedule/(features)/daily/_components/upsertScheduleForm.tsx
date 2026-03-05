@@ -5,12 +5,13 @@ import { Checkbox, FormField, FormItem, FormMessage, Input, Label, Select, Selec
 import InfoPopover from "./info/infoPopover";
 import MiniTask from "../../../_components/miniTask/miniTask";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { labelDefault } from "../_models/type/label";
+import { label, labelDefault } from "../_models/type/label";
 import { useEffect, useState } from "react";
 import { LabelSelector } from "../../../_components";
 import { goalList } from "../_models/type/mutation.type";
 import TimePicker from "@/components/common/timePicker";
 import DatepickerWithRange from "@/components/common/dateTimepickerWithRange";
+import DraftLabel from "../../../_components/label";
 
 type ScheduleForm = z.infer<typeof upsertScheduleSchema>
 interface UpsertScheduleFormProps {
@@ -18,11 +19,13 @@ interface UpsertScheduleFormProps {
     labelDefaultData?: labelDefault
     disabled?: boolean
     goalList?: goalList[]
+    draftLabel?: label
 }
-const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: UpsertScheduleFormProps) => {
+const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList, draftLabel }: UpsertScheduleFormProps) => {
     const titleLabel = "border-2 p-2 rounded-md bg-white/10 min-w-[100px] md:min-w-35 text-xs md:text-sm text-center"
     const [currentTypeLabel, setCurrentTypeLabel] = useState(true);
     const type = labelDefaultData?.type.key;
+
 
     useEffect(() => {
         if (type === "REPEATED") {
@@ -32,6 +35,7 @@ const UpsertScheduleForm = ({ form, labelDefaultData, disabled, goalList }: Upse
         }
     }, [type]);
     return (<>
+        {draftLabel && (<DraftLabel className="text-xs" color={draftLabel?.color || ""} icon={draftLabel?.key || ""} label={draftLabel?.name || ""} />)}
         <div className="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10">
             <div className="w-full lg:basis-2/3">
                 <Label className="text-base md:text-lg mb-3 md:mb-5 text-[#94FEF5] font-bold">Thông Tin Cơ Bản</Label>
