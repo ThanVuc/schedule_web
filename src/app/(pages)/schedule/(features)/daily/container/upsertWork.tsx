@@ -123,7 +123,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             "Content-Type": "application/json"
         }
     });
-    const { data: dataGetById, error: errorGetById } = useAxios<ViewUpWorkRequest>({
+    const { data: dataGetById, error: errorGetById, loading: loadingGetById } = useAxios<ViewUpWorkRequest>({
         method: "GET",
         url: `${worksApiUrl.getWorkById}/${id}`,
     },
@@ -147,6 +147,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             goal_id: "",
             type_id: "",
             status_id: "",
+            draft_id: "",
             difficulty_id: "",
             priority_id: "",
             category_id: "",
@@ -175,7 +176,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 priority_id: labelDefaultData?.priority.id,
                 category_id: labelDefaultData?.category.id,
             });
-            setFormReady(true);
         }
     }, [labelDefaultData]);
     useEffect(() => {
@@ -185,6 +185,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 message: "Không thể tải thông tin công việc",
                 variant: "error",
             });
+            setFormReady(true);
         }
     }, [errorGetById]);
     useEffect(() => {
@@ -211,7 +212,6 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 ),
                 sub_tasks: dataGetById.sub_tasks ?? [],
             });
-            setFormReady(true);
 
         }
     }, [mode, dataGetById]);
@@ -224,6 +224,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 goal_id: "",
                 type_id: "",
                 status_id: "",
+                draft_id: "",
                 difficulty_id: "",
                 priority_id: "",
                 category_id: "",
@@ -239,6 +240,29 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             });
         }
     }, [mode]);
+
+    useEffect(() => {
+        if (!openDialog) {
+            setFormReady(false);
+            return;
+        }
+
+        if (mode === ModelType.CREATE) {
+            setFormReady(Boolean(labelDefaultData));
+            return;
+        }
+
+        if (mode === ModelType.UPDATE || mode === ModelType.VIEW) {
+            if (loadingGetById) {
+                setFormReady(false);
+                return;
+            }
+            setFormReady(Boolean(dataGetById));
+            return;
+        }
+
+        setFormReady(false);
+    }, [openDialog, mode, labelDefaultData, loadingGetById, dataGetById]);
 
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -350,7 +374,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             }
         }
     };
-    const handleEdit = async (values: z.infer<typeof upsertScheduleSchema>) => {
+    const handleEdit = async (values: z.infer<typeof upsertScheduleSchema>, draftId?: string) => {
         const repeatStartDate = values.repeat_range?.from;
         const repeatEndDate = values.repeat_range?.to;
 
@@ -379,6 +403,7 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             type_id: values.type_id,
             repeat_start_date: repeatStartDate,
             repeat_end_date: repeatEndDate,
+            ...(draftId ? { draft_id: draftId } : {}),
             status_id: values.status_id,
             difficulty_id: values.difficulty_id,
             priority_id: values.priority_id,
@@ -490,10 +515,11 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             setOpenAlertDialog(true);
         }
     }, [mode]);
-    const onSubmit = async (values: z.infer<typeof upsertScheduleSchema>) => {
+    const handleSubmitWork = async (values: z.infer<typeof upsertScheduleSchema>, includeDraftId = false) => {
         if (isDisabled) return;
         const isConfirmed = await confirm();
         if (!isConfirmed) return;
+        const draftId = includeDraftId ? (dataGetById?.draft?.id || "") : undefined;
         if (mode === ModelType.CREATE) {
             await handleCreate(values);
         }
@@ -505,12 +531,12 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
                 submitText: "Cập nhật tất cả",
                 onSubmit: async () => {
                     setUpdateType(2);
-                    await handleEdit(values);
+                    await handleEdit(values, draftId);
                     refetch?.();
                 },
                 onClose: async () => {
                     setUpdateType(1);
-                    await handleEdit(values);
+                    await handleEdit(values, draftId);
                     refetch?.();
                 },
                 open: true,
@@ -520,8 +546,12 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
         }
         else if (mode === ModelType.UPDATE) {
             setUpdateType(0);
-            await handleEdit(values);
+            await handleEdit(values, draftId);
         }
+    }
+
+    const onSubmit = async (values: z.infer<typeof upsertScheduleSchema>) => {
+        await handleSubmitWork(values, false);
     }
     return (<>
         <AppAlertDialog
@@ -542,14 +572,27 @@ const UpsertSchedule = ({ refetch }: UpsertScheduleProps) => {
             onSubmit={() => form.handleSubmit(onSubmit)()}
             open={openDialog}
             BottomComponent={
-                (isDisabled && <Button onClick={() => handlePageQueryToModal(ModelType.UPDATE, searchParams.get("id") || undefined)}>
-                    Chuyển đến cập nhật
-                </Button>)
+                <div>
+                    {isDisabled && (<Button onClick={() => handlePageQueryToModal(ModelType.UPDATE, searchParams.get("id") || undefined)}>
+                        Chuyển đến cập nhật
+                    </Button>)}
+                    {mode === ModelType.UPDATE && dataGetById?.draft && (
+                        <Button
+                            className="bg-[#E879F9]"
+                            type="button"
+                            onClick={() => {
+                                form.handleSubmit((values) => handleSubmitWork(values, true))();
+                            }}
+                        >
+                            Lưu bản nháp
+                        </Button>
+                    )}
+                </div>
             }
         >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} >
-                    {formReady ? (<UpsertScheduleForm disabled={isDisabled} goalList={goalList || []} form={form} labelDefaultData={isCreateMode ? (labelDefaultData || undefined) : (dataGetById?.labels || undefined)} />
+                    {formReady ? (<UpsertScheduleForm draftLabel={mode === ModelType.CREATE ? undefined : dataGetById?.draft} disabled={isDisabled} goalList={goalList || []} form={form} labelDefaultData={isCreateMode ? (labelDefaultData || undefined) : (dataGetById?.labels || undefined)} />
                     ) : (
                         <div className="flex items-center justify-center min-h-[300px]">
                             <Spinner />

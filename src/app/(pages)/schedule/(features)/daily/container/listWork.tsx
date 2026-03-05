@@ -143,20 +143,20 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
             onSubmit={() => alertDialogProps.onSubmit?.()}
         />
         <div className="flex justify-between mb-3">
-            <div><AppSearch className="flex-2" placeholder="Tìm kiếm theo Tên và Danh mục" /></div>
+            <div><AppSearch className="flex-2" placeholder="Tìm kiếm theo Tên" /></div>
         </div>
         {DraftWorks.length > 0 && (<div className="flex justify-end gap-2 mb-3 animate-slide-in">
             <Button className=" bg-[#FF4848]/20 border-2 border-[#FF4848] text-[#FF4848] hover:bg-[#FF4848]/40"
                 onClick={() => {
                     setAlertDialogProps({
-                        title: "Xác nhận Xoá tất cả công việc",
-                        description: "Bạn có chắc chắn muốn xoá tất cả công việc?",
+                        title: "Xác nhận xoá tất cả bản nháp",
+                        description: "Bạn có chắc chắn muốn xoá tất cả bản nháp?",
                         submitText: "Xoá",
                         onSubmit: async () => {
-                            deleteWorkDraft();
+                            await deleteWorkDraft();
                             setToast({
-                                title: "Xoá Công việc",
-                                message: "Xoá thành công",
+                                title: "Xoá bản nháp",
+                                message: "Xoá bản nháp thành công",
                                 variant: "success",
                             });
                             if (refetch) {
@@ -173,14 +173,14 @@ const ListWork = ({ activeTime }: ListWorkProps) => {
                 className="bg-[#00FF00]/20 border-2 border-[#00FF00] text-[#00FF00] hover:bg-[#00FF00]/40"
                 onClick={() => {
                     setAlertDialogProps({
-                        title: "Xác nhận lưu công việc",
-                        description: "Bạn có chắc chắn muốn lưu tất cả công việc?",
+                        title: "Xác nhận lưu bản nháp",
+                        description: "Bạn có chắc chắn muốn lưu tất cả bản nháp?",
                         submitText: "Lưu",
                         onSubmit: async () => {
-                            acceptWork()
+                            await acceptWork()
                             setToast({
-                                title: "Lưu công việc",
-                                message: "Lưu thành công",
+                                title: "Lưu bản nháp",
+                                message: "Lưu bản nháp thành công",
                                 variant: "success",
                             });
                             if (refetch) {

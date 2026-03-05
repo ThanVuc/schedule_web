@@ -88,7 +88,7 @@ const SelectWorkLabel = ({
             >
               <div className="flex w-full items-center justify-between gap-2">
                 <Label
-                  className="min-w-[7rem] max-w-[9rem] text-center"
+                  className="min-w-[7rem] max-w-[20rem] text-center"
                   label={item.name}
                   color={item.color}
                   icon={item.key}
