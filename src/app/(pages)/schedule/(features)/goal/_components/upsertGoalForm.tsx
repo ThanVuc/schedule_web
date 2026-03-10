@@ -227,7 +227,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem className="flex flex-col mb-4">
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed disabled:opacity-90 resize-none"
+                                        className="border-dashed disabled:opacity-90 resize-y w-full h-30"
                                         {...field}
                                         placeholder="Mô tả ngắn"
                                         id={field.name}
@@ -244,7 +244,7 @@ const UpsertGoalForm = ({ form, isDisabled = false, defaultLabel }: UpsertGoalFo
                                 <FormItem>
                                     <Textarea
                                         disabled={isDisabled}
-                                        className="border-dashed w-full h-32 disabled:opacity-90 resize-y"
+                                        className="border-dashed w-full h-40 disabled:opacity-90 resize-y"
                                         {...field}
                                         placeholder="Mô tả chi tiết"
                                         id={field.name}
