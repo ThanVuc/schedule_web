@@ -49,6 +49,18 @@ export const ListGoal = () => {
             setIsLoading(false);
         }
     }, [data, isLoading]);
+    useEffect(() => {
+        if (!loading && data) {
+            const goals = data?.items ?? [];
+            const currentPage = data?.page ?? 1;
+
+            if (goals.length === 0 && currentPage > 1) {
+                const params = new URLSearchParams(searchParams.toString());
+                params.set("page", String(currentPage - 1));
+                router.replace(`/schedule/goal?${params.toString()}`, { scroll: false });
+            }
+        }
+    }, [data, loading]);
 
     useEffect(() => {
         if (error) {
