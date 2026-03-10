@@ -121,13 +121,13 @@ const GoalCard = ({ GoalCard, availableLabels, onRefetch }: GoalCardProps) => {
     <ContextMenu>
       <ContextMenuTrigger>
         <Card
-          className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4"
+          className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 bg-white/2 rounded-2xl p-3 sm:p-1 border-l-4 overflow-hidden"
           style={{ borderColor: statusColor + "B3" }}
         >
-          <div className="px-1 sm:px-3 py-2 flex flex-col gap-2 sm:gap-3">
-            <div className="flex sm:flex-row justify-between sm:items-center mb-2 border-b-2 border-slate-600 gap-2 pb-2">
+          <div className="px-1 sm:px-3 py-2 flex flex-col gap-2 sm:gap-3 min-w-0">
+            <div className="flex sm:flex-row justify-between sm:items-center mb-2 border-b-2 border-slate-600 gap-2 pb-2 min-w-0">
               <p
-                className=" font-semibold font-family-Poppins italic text-sm sm:text-xl text-center sm:text-left line-clamp-1 flex-1 max-w-fit"
+                className=" font-semibold font-family-Poppins text-sm sm:text-xl text-center sm:text-left flex-1 line-clamp-1 break-words min-w-0"
                 style={{ color: statusColor + "CC" }}
               >
                 {GoalCard?.name ?? "-"}
@@ -160,9 +160,9 @@ const GoalCard = ({ GoalCard, availableLabels, onRefetch }: GoalCardProps) => {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:gap-2">
-              <p className="font-bold italic text-sm text-white">Mô tả ngắn:</p>
-              <p className="font-light italic text-sm text-slate-200">{GoalCard?.short_descriptions ?? "-"}</p>
+            <div className="flex flex-col sm:flex-row sm:gap-2 min-w-0">
+              <p className="font-bold text-sm text-white">Mô tả ngắn:</p>
+              <p className="font-light text-sm text-slate-200 line-clamp-2 break-words min-w-0">{GoalCard?.short_descriptions ?? "-"}</p>
             </div>
           </div>
         </Card>
