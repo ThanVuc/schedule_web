@@ -1,3 +1,5 @@
+import { BoardWorkPage } from "../../../_components/features/group/work/index";
+
 export default async function GroupDetailRoute({
   params,
 }: {
@@ -8,6 +10,7 @@ export default async function GroupDetailRoute({
   return (
     <>
       <h1>Hello, World with param: {id}</h1>
+      <BoardWorkPage />
     </>
   );
 }
