@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <>
-        <h1>Hello, World</h1>
-    </>
-  );
+const TeamSchedulePage = () => {
+  redirect("/te/group");
 }
+
+export default TeamSchedulePage;

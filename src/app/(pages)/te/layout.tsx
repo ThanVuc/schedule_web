@@ -1,10 +1,10 @@
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes';
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist } from 'next/font/google'
+import { Sidebar } from './_components/common';
 
 const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: 'Team Groups - SaaS Management',
@@ -42,9 +42,11 @@ export default function TeamLayout({
             disableTransitionOnChange
         >
             <Toaster richColors position="top-right" expand={false} theme="dark" className="app-toaster" />
-            <div className={`${_geist.className} ${_geistMono.className}`}>
-                {children}
-            </div>
+            <Sidebar currentPage='/te/group'>
+                <div className={`${_geist.className} ${_geist.className}`}>
+                    {children}
+                </div>
+            </Sidebar>
         </ThemeProvider>
     )
 }
