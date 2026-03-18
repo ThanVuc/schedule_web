@@ -14,6 +14,7 @@ export enum OverdueLabel {
 }
 
 export enum ModelType {
+    ASSIGN = "Assign",
     CREATE = "Create",
     UPDATE = "Update",
     DELETE = "Delete",

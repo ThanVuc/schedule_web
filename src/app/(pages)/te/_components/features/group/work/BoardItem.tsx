@@ -1,14 +1,16 @@
 'use client';
+import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { ThreeDotVertical } from "@/components/icon";
 import { Button, Card, CardContent } from "@/components/ui";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSortable } from '@dnd-kit/react/sortable';
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface BoardItemProps {
     id: string;
     index: number;
     title: string;
-    state: "Todo" | "In Progress" | "Review" | "Completed";
+    state: number;
     name: string;
     number: number;
     date?: string;
@@ -23,7 +25,19 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
         accept: 'item',
         group: column
     });
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const handlePageQueryToModal = (mode: string, id?: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("mode", mode);
+    if (id) {
+      params.set("id", id)
+    } else {
+      params.delete("id");
+    }
 
+    router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+  }
     return (
         <Card
             ref={ref}
@@ -31,7 +45,9 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
         >
             <CardContent className="  p-0 ">
                 <div className="flex justify-between items-center gap-2">
-                    <p className=" hover:text-blue-500 ">{title}</p>
+                    <p className=" hover:text-blue-500 "
+                    onClick={()=>{handlePageQueryToModal(ModelType.UPDATE, id)}}
+                    >{title}</p>
                     <DropdownMenu >
                         <DropdownMenuTrigger asChild>
                             <Button className=" w-2 p-0 bg-transparent text-white hover:bg-[#2A3A4F]">
@@ -39,16 +55,20 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent >
-                            <DropdownMenuItem className="cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]">
+                            <DropdownMenuItem className="cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
+                            onClick={()=>{handlePageQueryToModal(ModelType.ASSIGN, id)}}
+                            >
                                 Cấp quyền
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-[#EF4444] cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]">
+                            <DropdownMenuItem className="text-[#EF4444] cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
+                            onClick={()=>{handlePageQueryToModal(ModelType.DELETE, id)}}
+                            >
                                 Xoá công việc
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className={`p-1 w-max text-xs rounded-lg ${state === "Todo" ? "" : state === "In Progress" ? "bg-[#2A97EA] text-black" : state === "Review" ? "bg-[#F8AF18] text-black" : ""}`}>
+                <div className={`p-1 w-max text-xs rounded-lg ${state === 1 ? "" : state === 2 ? "bg-[#2A97EA] text-black" : state === 3 ? "bg-[#F8AF18] text-black" : ""}`}>
                     {state}
                 </div>
                 <div className="flex justify-between items-center mt-2">
