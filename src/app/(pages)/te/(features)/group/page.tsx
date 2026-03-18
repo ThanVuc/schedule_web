@@ -8,7 +8,7 @@ import { Users, Plus, MoreVertical, Pencil, Trash2, LogOut, Clock } from "lucide
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle, SubmitConfirmModal
-} from "../../_components/common/dialogTeam";
+} from "../../_components/common/teamDialog";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuItem, DropdownMenuSeparator,

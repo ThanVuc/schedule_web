@@ -1,6 +1,7 @@
 import { Button, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { BoardWork } from "./index";
 import { AddIcon } from "@/components/icon";
+import { DrawerPage } from "../../../common";
 
 const BoardWorkPage = () => {
     return (<>
@@ -43,6 +44,7 @@ const BoardWorkPage = () => {
         </div>
         <div>
             <BoardWork />
+            <DrawerPage/>
         </div>
     </>);
 }

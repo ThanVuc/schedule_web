@@ -13,32 +13,32 @@ const BoardWork = () => {
             id: "todo",
             name: "Todo",
             tasks: [
-                { id: "task-1", name: "Design login page", assignee:{ id: "user-1", name: "Jane", avatar: "" }, story_point: 8, status: "Todo" as const, created_at: "2023-10-01" },
-                { id: "task-2", name: "Create API documentation", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 5, status: "Todo" as const, created_at: "2023-10-05" },
-                { id: "task-3", name: "Setup database schema", assignee: { id: "user-3", name: "Huan", avatar: "" }, story_point: 3, status: "Todo" as const, created_at: "2023-10-10" },
+                { id: "task-1", name: "Design login page", description: "", assignee:{ id: "user-1", name: "Jane", avatar: "" }, story_point: 8, status: 1, created_at: "2023-10-01" },
+                { id: "task-2", name: "Create API documentation", description: "", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 5, status: 1, created_at: "2023-10-05" },
+                { id: "task-3", name: "Setup database schema", description: "", assignee: { id: "user-3", name: "Huan", avatar: "" }, story_point: 3, status: 1, created_at: "2023-10-10" },
             ]
         },
         {
             id: "in-progress",
             name: "In Progress",
             tasks: [
-                { id: "task-4", name: "Implement authentication", assignee: { id: "user-3", name: "Huan", avatar: "" }, story_point: 13, status: "In Progress" as const, created_at: "2023-10-02" },
-                { id: "task-5", name: "Integrate payment gateway", assignee: { id: "user-4", name: "Alice", avatar: "" }, story_point: 8, status: "In Progress" as const, created_at: "2023-10-08" },
+                { id: "task-4", name: "Implement authentication", description: "", assignee: { id: "user-3", name: "Huan", avatar: "" }, story_point: 13, status: 2, created_at: "2023-10-02" },
+                { id: "task-5", name: "Integrate payment gateway", description: "", assignee: { id: "user-4", name: "Alice", avatar: "" }, story_point: 8, status: 2, created_at: "2023-10-08" },
             ]
         },
         {
             id: "review",
             name: "Review",
             tasks: [
-                { id: "task-8", name: "Code review for authentication", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 5, status: "Review" as const, created_at: "2023-10-15" },
+                { id: "task-8", name: "Code review for authentication", description: "", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 5, status: 3, created_at: "2023-10-15" },
             ]
         },
         {
             id: "completed",
             name: "Completed",
             tasks: [
-                { id: "task-6", name: "Project scaffolding", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 2, status: "Completed" as const, created_at: "2023-09-25" },
-                { id: "task-7", name: "Gather requirements", assignee: { id: "user-1", name: "Jane", avatar: "" }, story_point: 1, status: "Completed" as const, created_at: "2023-09-20" },
+                { id: "task-6", name: "Project scaffolding", description: "", assignee: { id: "user-2", name: "Bob", avatar: "" }, story_point: 2, status: 4, created_at: "2023-09-25" },
+                { id: "task-7", name: "Gather requirements", description: "", assignee: { id: "user-1", name: "Jane", avatar: "" }, story_point: 1, status: 4, created_at: "2023-09-20" },
             ]
         }
     ]);
