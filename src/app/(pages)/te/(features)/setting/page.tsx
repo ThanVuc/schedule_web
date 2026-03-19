@@ -1,10 +1,11 @@
-'use client';
+import { BoardSettingPage } from "../../_components/pages";
 
-
-export default function SettingPage() {
+const SettingPage = () => {
   return (
     <>
-        <h1>Hello, World - Settings!</h1>
+      <BoardSettingPage />
     </>
   );
 }
+
+export default SettingPage;

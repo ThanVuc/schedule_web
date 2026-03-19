@@ -5,17 +5,21 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { AlertTriangleIcon, CheckCircleIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import {
+    DialogContent as BaseDialogContent,
+    DialogFooter as BaseDialogFooter,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui"
 
 export {
     DialogClose,
     DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogOverlay,
-    DialogPortal,
     DialogTitle,
     DialogTrigger,
+    DialogPortal,
+    DialogOverlay,
 } from "@/components/ui/dialog"
+
 
 export type DialogSize = "sm" | "md" | "lg"
 
@@ -24,15 +28,13 @@ const dialogSizeClasses: Record<DialogSize, string> = {
     md: "sm:max-w-lg",
     lg: "sm:max-w-3xl",
 }
+
+
 export interface DialogProps extends React.ComponentProps<typeof DialogPrimitive.Root> {
     warnOnClose?: boolean
 }
 
-export function Dialog({
-    warnOnClose = false,
-    onOpenChange,
-    ...props
-}: DialogProps) {
+export function Dialog({ warnOnClose = false, onOpenChange, ...props }: DialogProps) {
     const [showExitAlert, setShowExitAlert] = React.useState(false)
     const resolveClose = React.useRef<((confirmed: boolean) => void) | null>(null)
 
@@ -53,7 +55,6 @@ export function Dialog({
     return (
         <>
             <DialogPrimitive.Root data-slot="dialog" onOpenChange={handleOpenChange} {...props} />
-
             {showExitAlert && (
                 <ExitConfirmAlert
                     onConfirm={() => { setShowExitAlert(false); resolveClose.current?.(true); resolveClose.current = null }}
@@ -64,33 +65,129 @@ export function Dialog({
     )
 }
 
-import {
-    DialogContent as BaseDialogContent,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui"
 
 export interface DialogContentProps extends React.ComponentProps<typeof BaseDialogContent> {
     size?: DialogSize
+    accentColor?: string
 }
 
 export function DialogContent({
     size = "md",
+    accentColor,
     className,
+    children,
     ...props
 }: DialogContentProps) {
     return (
         <BaseDialogContent
-            className={cn(dialogSizeClasses[size], className)}
+            className={cn(
+                dialogSizeClasses[size],
+                "bg-[#0B1120] border-[#1E2A3A] text-white p-0 overflow-hidden gap-0",
+                className,
+            )}
+            {...props}
+        >
+            {accentColor && (
+                <div className={cn("absolute inset-x-0 top-0 h-[3px]", accentColor)} />
+            )}
+            {children}
+        </BaseDialogContent>
+    )
+}
+
+
+export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+    icon?: React.ReactNode
+}
+
+export function DialogHeader({ icon, className, children, ...props }: DialogHeaderProps) {
+    return (
+        <div className={cn("px-6 pt-6 pb-4 border-b border-[#1E2A3A]", className)} {...props}>
+            {icon ? (
+                <div className="flex items-center gap-3">
+                    {icon}
+                    <div className="flex flex-col space-y-1.5">{children}</div>
+                </div>
+            ) : (
+                <div className="flex flex-col space-y-1.5">{children}</div>
+            )}
+        </div>
+    )
+}
+
+export function DialogBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    return <div className={cn("px-6 py-5", className)} {...props} />
+}
+
+
+export function DialogFooter({
+    className,
+    ...props
+}: React.ComponentProps<typeof BaseDialogFooter>) {
+    return <BaseDialogFooter className={cn("px-6 py-4", className)} {...props} />
+}
+
+export function DialogCancelButton({
+    className,
+    ...props
+}: React.ComponentProps<typeof Button>) {
+    return (
+        <Button
+            type="button"
+            className={cn(
+                "inline-flex h-9 items-center rounded-lg border border-[#1E2A3A] px-4",
+                "text-sm text-gray-400 bg-[#1E2A3A] transition-colors",
+                "hover:bg-[#F8AF18] hover:text-white",
+                className,
+            )}
             {...props}
         />
     )
 }
 
+export function DialogPrimaryButton({
+    disabled,
+    className,
+    ...props
+}: React.ComponentProps<typeof Button>) {
+    return (
+        <Button
+            type="button"
+            disabled={disabled}
+            className={cn(
+                "inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-bold",
+                !disabled
+                    ? "bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-95 shadow-md shadow-[#1565C0]/30"
+                    : "bg-[#1565C0]/40 text-gray-500 cursor-not-allowed",
+                className,
+            )}
+            {...props}
+        />
+    )
+}
+
+export function DialogDangerButton({
+    className,
+    ...props
+}: React.ComponentProps<typeof Button>) {
+    return (
+        <Button
+            type="button"
+            className={cn(
+                "inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-bold",
+                "bg-red-700 text-white hover:bg-red-600 active:scale-95 shadow-md shadow-red-900/40",
+                className,
+            )}
+            {...props}
+        />
+    )
+}
+
+
 function AlertCard({ children }: { children: React.ReactNode }) {
     return (
         <DialogPrimitive.Portal>
             <DialogPrimitive.Overlay className="fixed inset-0 z-[200] bg-black/60 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
-
             <DialogPrimitive.Content
                 className={cn(
                     "fixed left-1/2 top-1/2 z-[201] w-full max-w-sm -translate-x-1/2 -translate-y-1/2",
@@ -101,12 +198,12 @@ function AlertCard({ children }: { children: React.ReactNode }) {
                 <VisuallyHidden>
                     <DialogPrimitive.Title>Dialog</DialogPrimitive.Title>
                 </VisuallyHidden>
-
                 {children}
             </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
     )
 }
+
 
 export function ExitConfirmAlert({
     onConfirm,
@@ -128,8 +225,12 @@ export function ExitConfirmAlert({
                     </div>
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">Tiếp tục chỉnh sửa</Button>
-                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">Hủy các thay đổi</Button>
+                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        Tiếp tục chỉnh sửa
+                    </Button>
+                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        Hủy các thay đổi
+                    </Button>
                 </div>
             </AlertCard>
         </DialogPrimitive.Root>
@@ -162,8 +263,12 @@ export function SubmitConfirmModal({
                     </div>
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{cancelLabel}</Button>
-                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{confirmLabel}</Button>
+                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        {cancelLabel}
+                    </Button>
+                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        {confirmLabel}
+                    </Button>
                 </div>
             </AlertCard>
         </DialogPrimitive.Root>
@@ -191,11 +296,11 @@ export function useDialogSubmit({
 
     const handleSubmit = React.useCallback(() => {
         if (confirmSubmit) {
-            setShowConfirm(true);
+            setShowConfirm(true)
         } else {
-            onSubmit();
+            onSubmit()
         }
-    }, [confirmSubmit, onSubmit]);
+    }, [confirmSubmit, onSubmit])
 
     const confirmModal = showConfirm ? (
         <SubmitConfirmModal
