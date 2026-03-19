@@ -1,10 +1,11 @@
-'use client';
+import BoardNotificationPage from "../../_components/pages/boardNotificationPage";
 
-
-export default function NotificationPage() {
+const NotificationPage = () => {
   return (
     <>
-        <h1>Hello, World - Notification!</h1>
+      <BoardNotificationPage />
     </>
   );
 }
+
+export default NotificationPage;
