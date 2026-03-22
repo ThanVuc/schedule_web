@@ -145,26 +145,75 @@ export function DialogCancelButton({
     )
 }
 
+export interface DialogPrimaryButtonProps extends React.ComponentProps<typeof Button> {
+    confirmSubmit?: boolean
+    confirmTitle?: string
+    confirmDescription?: string
+    confirmLabel?: string
+    cancelLabel?: string
+}
+
 export function DialogPrimaryButton({
     disabled,
     className,
+    onClick,
+    confirmSubmit = false,
+    confirmTitle,
+    confirmDescription,
+    confirmLabel,
+    cancelLabel,
     ...props
-}: React.ComponentProps<typeof Button>) {
+}: DialogPrimaryButtonProps) {
+    const [showConfirm, setShowConfirm] = React.useState(false)
+
+    const handleClick = React.useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (confirmSubmit) {
+                setShowConfirm(true)
+            } else {
+                onClick?.(e)
+            }
+        },
+        [confirmSubmit, onClick],
+    )
+
+    const handleConfirm = React.useCallback(() => {
+        setShowConfirm(false)
+        onClick?.({} as React.MouseEvent<HTMLButtonElement>)
+    }, [onClick])
+
     return (
-        <Button
-            type="button"
-            disabled={disabled}
-            className={cn(
-                "inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-bold",
-                !disabled
-                    ? "bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-95 shadow-md shadow-[#1565C0]/30"
-                    : "bg-[#1565C0]/40 text-gray-500 cursor-not-allowed",
-                className,
+        <>
+            {showConfirm && (
+                <SubmitConfirmModal
+                    title={confirmTitle}
+                    description={confirmDescription}
+                    confirmLabel={confirmLabel}
+                    cancelLabel={cancelLabel}
+                    onConfirm={handleConfirm}
+                    onCancel={() => setShowConfirm(false)}
+                />
             )}
-            {...props}
-        />
+
+            <Button
+                type="button"
+                disabled={disabled}
+                className={cn(
+                    "inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-bold",
+                    !disabled
+                        ? "bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-95 shadow-md shadow-[#1565C0]/30"
+                        : "bg-[#1565C0]/40 text-gray-500 cursor-not-allowed",
+                    className,
+                )}
+                onClick={handleClick}
+                {...props}
+            />
+        </>
     )
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 export function DialogDangerButton({
     className,

@@ -7,8 +7,7 @@ import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogPrimaryButton,
-    SubmitConfirmModal,
-} from "../../common/teamDialog";
+} from "../../common/TeamDialog";
 
 
 export interface CreateGroupDialogProps {
@@ -20,7 +19,6 @@ export interface CreateGroupDialogProps {
 
 export const CreateGroupDialog = ({ open, onOpenChange, onConfirm }: CreateGroupDialogProps) => {
     const [name, setName] = useState("");
-    const [showConfirm, setShowConfirm] = useState(false);
 
     const isValid = name.trim().length > 0;
 
@@ -28,53 +26,43 @@ export const CreateGroupDialog = ({ open, onOpenChange, onConfirm }: CreateGroup
         if (open) setName("");
     }, [open]);
 
-    const handleConfirm = () => {
-        setShowConfirm(false);
-        onConfirm(name.trim());
-    };
-
     return (
-        <>
-            {showConfirm && (
-                <SubmitConfirmModal
-                    onConfirm={handleConfirm}
-                    onCancel={() => setShowConfirm(false)}
-                />
-            )}
+        <Dialog open={open} onOpenChange={onOpenChange} warnOnClose={isValid}>
+            <DialogContent size="md">
+                <DialogHeader>
+                    <DialogTitle className="text-white text-xl">Tạo nhóm mới</DialogTitle>
+                    <DialogDescription className="text-gray-500 text-sm">
+                        Nhóm giúp bạn tổ chức các thành viên và phối hợp làm việc hiệu quả hơn.
+                    </DialogDescription>
+                </DialogHeader>
 
-            <Dialog open={open} onOpenChange={onOpenChange} warnOnClose={isValid}>
-                <DialogContent size="md">
-                    <DialogHeader>
-                        <DialogTitle className="text-white text-xl">Tạo nhóm mới</DialogTitle>
-                        <DialogDescription className="text-gray-500 text-sm">
-                            Nhóm giúp bạn tổ chức các thành viên và phối hợp làm việc hiệu quả hơn.
-                        </DialogDescription>
-                    </DialogHeader>
+                <DialogBody>
+                    <label className="text-xs text-gray-400 uppercase pb-2 block">Tên nhóm</label>
+                    <Input
+                        type="text"
+                        placeholder="Nhập tên nhóm của bạn"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        maxLength={50}
+                        className="w-full rounded-lg border border-[#1E2A3A] bg-[#111820] px-3 py-2 text-sm
+                                   text-white placeholder:text-gray-600 focus:outline-none
+                                   focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]/40 transition-colors"
+                    />
+                </DialogBody>
 
-                    <DialogBody>
-                        <label className="text-xs text-gray-400 uppercase pb-2 block">Tên nhóm</label>
-                        <Input
-                            type="text"
-                            placeholder="Nhập tên nhóm của bạn"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            maxLength={50}
-                            className="w-full rounded-lg border border-[#1E2A3A] bg-[#111820] px-3 py-2 text-sm
-                                       text-white placeholder:text-gray-600 focus:outline-none
-                                       focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]/40 transition-colors"
-                        />
-                    </DialogBody>
-
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <DialogCancelButton>Thoát</DialogCancelButton>
-                        </DialogClose>
-                        <DialogPrimaryButton disabled={!isValid} onClick={() => setShowConfirm(true)}>
-                            <Plus size={14} /> Tạo nhóm
-                        </DialogPrimaryButton>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <DialogCancelButton>Thoát</DialogCancelButton>
+                    </DialogClose>
+                    <DialogPrimaryButton
+                        disabled={!isValid}
+                        confirmSubmit
+                        onClick={() => onConfirm(name.trim())}
+                    >
+                        <Plus size={14} /> Tạo nhóm
+                    </DialogPrimaryButton>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 };
