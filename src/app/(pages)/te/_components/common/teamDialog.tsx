@@ -179,10 +179,6 @@ export function DialogPrimaryButton({
 
     const handleConfirm = React.useCallback(() => {
         setShowConfirm(false)
-<<<<<<< HEAD
-=======
-        // Tạo synthetic event để thoả mãn kiểu của onClick
->>>>>>> faad0d12696c17af12a41df74aaabec2609c323d
         onClick?.({} as React.MouseEvent<HTMLButtonElement>)
     }, [onClick])
 
