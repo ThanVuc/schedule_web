@@ -1,3 +1,2 @@
-export { default as Sidebar } from "./TeamSidebar";
-export { Dialog } from "./TeamDialog";
-export * from "./DrawerPage";
+export { default as Sidebar } from "./teamSidebar";
+export { Dialog } from "./teamDialog";

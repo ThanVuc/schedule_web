@@ -82,29 +82,31 @@ const BoardWork = () => {
 
     return (
         <DragDropProvider onDragOver={handleDragOver}>
-            <div className="flex gap-4">
-                {initialBoardData.map((column) => (
-                    <BoardColumn
-                        key={column.id}
-                        id={column.id}
-                        title={column.name}
-                        count={column.tasks.length}
-                    >
-                        {column.tasks.map((task, index) => (
-                            <BoardItem
-                                key={task.id}
-                                column={column.id}
-                                id={task.id}
-                                index={index}
-                                title={task.name}
-                                name={task.assignee.name}
-                                number={task.story_point}
-                                state={task.status}
-                                date={task.created_at}
-                            />
-                        ))}
-                    </BoardColumn>
-                ))}
+            <div className="board-scroll w-full overflow-x-auto overscroll-x-contain pb-2">
+                <div className="flex min-w-max gap-4">
+                    {initialBoardData.map((column) => (
+                        <BoardColumn
+                            key={column.id}
+                            id={column.id}
+                            title={column.name}
+                            count={column.tasks.length}
+                        >
+                            {column.tasks.map((task, index) => (
+                                <BoardItem
+                                    key={task.id}
+                                    column={column.id}
+                                    id={task.id}
+                                    index={index}
+                                    title={task.name}
+                                    name={task.assignee.name}
+                                    number={task.story_point}
+                                    state={task.status}
+                                    date={task.created_at}
+                                />
+                            ))}
+                        </BoardColumn>
+                    ))}
+                </div>
             </div>
         </DragDropProvider>
     );

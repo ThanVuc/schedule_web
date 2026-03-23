@@ -1,4 +1,5 @@
-import { upsertWorkSchema } from "@/app/(pages)/te/_models/works/schema";
+
+import { UpdateWorkSchema } from "@/app/(pages)/te/_models/works/schema/UpdateWork";
 import {
     FormControl,
     FormField,
@@ -16,7 +17,7 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
 
-type DrawerForm = z.infer<typeof upsertWorkSchema>;
+type DrawerForm = z.infer<typeof UpdateWorkSchema>;
 
 interface DrawerFormProps {
     form: UseFormReturn<DrawerForm>;

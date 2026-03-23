@@ -6,7 +6,7 @@ import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogDangerButton,
-} from "../../common/TeamDialog";
+} from "../../common/teamDialog";
 import { type Group } from "./types";
 
 
