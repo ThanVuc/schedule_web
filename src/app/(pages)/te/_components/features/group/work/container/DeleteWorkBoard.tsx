@@ -2,35 +2,29 @@
 
 import React from "react";
 import { Trash2 } from "lucide-react";
-import {
-    Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
-    DialogHeader, DialogTitle, DialogBody,
-    DialogCancelButton, DialogDangerButton,
-} from "../../common/teamDialog";
-import { type Group } from "./types";
-import { TrashIcon } from "@/components/icon";
 
-export interface DeleteGroupDialogProps {
-    target: Group | null;
+import { TrashIcon } from "@/components/icon";
+import { Dialog, DialogClose, DialogDescription, DialogTitle } from "@/components/ui";
+import { DialogBody, DialogCancelButton, DialogContent, DialogDangerButton, DialogFooter, DialogHeader } from "../../../../common/teamDialog";
+
+export interface DeleteWorkBoardDialogProps {
+    open: boolean;
     onOpenChange: (open: boolean) => void;
-    onConfirm: (id: string) => void;
+    
 }
 
 
-export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGroupDialogProps) => {
-    const handleConfirm = () => {
-        if (!target) return;
-        onConfirm(target.id);
-    };
+export const DeleteWorkBoardDialog = ({ open, onOpenChange}: DeleteWorkBoardDialogProps) => {
+    
 
     return (
-        <Dialog open={!!target} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent size="sm" >
                 <DialogHeader
                     icon={<TrashIcon className="text-red-500" />
                     }
                 >
-                    <DialogTitle className="">Xóa nhóm</DialogTitle>
+                    <DialogTitle className="">Xóa bảng công việc</DialogTitle>
                     <DialogDescription className="">
                         Hành động này không thể hoàn tác.
                     </DialogDescription>
@@ -38,9 +32,8 @@ export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGro
 
                 <DialogBody>
                     <p className="text-sm text-gray-300 leading-relaxed">
-                        Bạn có chắc muốn xóa nhóm{" "}
-                        <span className="font-semibold text-white">{target?.name}</span>?{" "}
-                        Tất cả thành viên trong nhóm sẽ bị xóa khỏi nhóm này.
+                        Bạn có chắc muốn xóa bảng công việc này không?
+                        Tất cả công việc trong bảng sẽ bị xóa vĩnh viễn và không thể khôi phục.
                     </p>
                 </DialogBody>
 
@@ -50,8 +43,8 @@ export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGro
                             Hủy
                         </DialogCancelButton>
                     </DialogClose>
-                    <DialogDangerButton onClick={handleConfirm}>
-                        <Trash2 size={14} /> Xóa nhóm
+                    <DialogDangerButton >
+                        <Trash2 size={14} /> Xóa bảng công việc
                     </DialogDangerButton>
                 </DialogFooter>
             </DialogContent>

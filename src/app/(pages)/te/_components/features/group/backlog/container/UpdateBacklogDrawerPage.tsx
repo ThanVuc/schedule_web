@@ -1,7 +1,6 @@
 'use client';
-import { DrawerComponent } from "../features/group/work/Drawer";
 import { ModelType } from "@/app/(pages)/schedule/_constant/common";
-import { useModalParams } from "../../_hooks";
+import { useModalParams } from "../../../../../_hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,27 +8,29 @@ import {
     CreateChecklistItemRequest,
     UpdateChecklistItemRequest,
     UpdateChecklistItemResponse,
-    upsertWorkSchema,
 } from "@/app/(pages)/te/_models/works/schema/index";
 import { Form } from "@/components/ui";
 import z from "zod";
-import DrawerForm from "../features/group/work/DrawerForm";
-import CheckListComponent from "../features/group/work/CheckListComponent";
-import CommentComponent from "../features/group/work/CommentComponent";
+
 import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
 import { ChecklistApiUrl } from "@/api/checklist";
 import { ChecklistItemResponse } from "@/app/(pages)/te/_models/works/CheckList";
-import { WorkDetailResponse, WorkRequest } from "../../_models";
+import { WorkDetailResponse, WorkRequest } from "../../../../../_models";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useEffect } from "react";
+import { UpdateWorkSchema } from "@/app/(pages)/te/_models/works/schema/UpdateWork";
+import { DrawerComponent } from "../../work/Drawer";
+import DrawerForm from "../../work/DrawerForm";
+import CheckListComponent from "../../work/CheckListComponent";
+import CommentComponent from "../../work/CommentComponent";
 
-export const DrawerPage = () => {
+export const UpdateBacklogDrawerPage = () => {
     const { mode, id, workId } = useModalParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const openDrawer = mode === ModelType.UPDATE
     const { setToast } = useToastState();
-
+    
     const { sendRequest: createChecklistItem } = useAxiosMutation<ChecklistItemResponse, CreateChecklistItemRequest>({
         method: "POST",
         url: `${ChecklistApiUrl.CreateCheckList}/${workId}/checklists`,
@@ -57,7 +58,7 @@ export const DrawerPage = () => {
     });
 
     const form = useForm({
-        resolver: zodResolver(upsertWorkSchema),
+        resolver: zodResolver(UpdateWorkSchema),
         defaultValues: {
             name: "Name",
             description: "Create a modern and user-friendly login page with email and password fields, forgot password link, and sign-up option.",
@@ -72,7 +73,7 @@ export const DrawerPage = () => {
         }
     });
 
-    type UpsertWorkValues = z.infer<typeof upsertWorkSchema>;
+    type UpsertWorkValues = z.infer<typeof UpdateWorkSchema>;
     
     useEffect(() => {
          if (mode !== ModelType.CREATE && mode !== ModelType.DELETE && getBoardWorkDataById) {
