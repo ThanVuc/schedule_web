@@ -25,7 +25,7 @@ export const AppHeader = () => {
     const baseItem = [
         { href: "/", label: "Trang Chủ", icon: <HomeIcon className="!w-6 !h-6" /> },
         { href: "/schedule", label: "Lịch Trình", icon: <ScheduleIcon className="!w-6 !h-6" /> },
-        { href: "/teams", label: "Nhóm", icon: <TeamIcon className="!w-5 !h-5" /> },
+        { href: "/te", label: "Nhóm", icon: <TeamIcon className="!w-5 !h-5" /> },
     ]
     const adminAction = hasAdminPermission
         ? [{ href: "/admin", label: "Quản Trị", icon: <AdminIcon className="!w-5 !h-5" /> }]

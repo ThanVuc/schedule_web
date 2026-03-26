@@ -1,10 +1,8 @@
-'use client';
-
-
-export default function GroupPage() {
+const GroupPage = () => {
   return (
     <>
-        <h1>Hello, World - Group!</h1>
     </>
   );
 }
+
+export default GroupPage;
