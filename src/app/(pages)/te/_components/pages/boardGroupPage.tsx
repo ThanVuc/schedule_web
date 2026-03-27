@@ -4,7 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { Users, Plus } from "lucide-react";
-import { CreateGroupDialog, DeleteGroupDialog, EditGroupDialog, Group, GroupCard, LeaveGroupDialog } from "../features/group";
+import {
+    CreateGroupDialog,
+    DeleteGroupDialog,
+    EditGroupDialog,
+    GroupCard,
+    LeaveGroupDialog,
+} from "../features/group";
+import { type Group } from "../features/group/types";
 
 
 const MOCK_GROUPS: Group[] = [
@@ -41,6 +48,7 @@ export default function BoardGroupPage() {
         return () => { document.getElementById(id)?.remove(); };
     }, []);
 
+
     const handleCreate = (name: string) => {
         setGroups((prev) => [{
             id: String(Date.now()),
@@ -75,10 +83,12 @@ export default function BoardGroupPage() {
 
     const handleCardClick = (id: string) => {
         setSelectedId(id);
-        router.push(`/te/group/${id}/members`);
+        router.push(`/te/group/${id}?tab=members`);
     };
 
-    const filtered = groups.filter((g) => g.name.toLowerCase().includes(search.toLowerCase()));
+    const filtered = groups.filter((g) =>
+        g.name.toLowerCase().includes(search.toLowerCase()),
+    );
 
     return (
         <div className="min-h-full bg-[#0B1120]">
@@ -103,7 +113,8 @@ export default function BoardGroupPage() {
                 onOpenChange={(o) => { if (!o) setLeaveTarget(null); }}
                 onConfirm={handleLeave}
             />
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 border-b px-4">
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 border-b border-[#1E2A3A] px-4">
                 <div className="py-8 px-4">
                     <h1 className="text-3xl font-bold text-white leading-tight">Nhóm của bạn</h1>
                     <p className="mt-1 text-sm text-gray-500">
@@ -114,7 +125,7 @@ export default function BoardGroupPage() {
                 <Button
                     onClick={() => setCreateOpen(true)}
                     className="flex items-center gap-2 rounded-lg bg-[#1565C0] px-3 py-2 text-sm
-                     text-white hover:bg-[#1976D2] active:scale-95 shadow-md shadow-[#1565C0]/25"
+                               text-white hover:bg-[#1976D2] active:scale-95 shadow-md shadow-[#1565C0]/25"
                 >
                     <Plus size={15} /> Tạo nhóm mới
                 </Button>
