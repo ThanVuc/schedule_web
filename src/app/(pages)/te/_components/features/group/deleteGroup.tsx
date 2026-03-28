@@ -6,7 +6,7 @@ import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogDangerButton,
-} from "../../common/teamDialog";
+} from "../../common/TeamDialog";
 import { type Group } from "./types";
 import { TrashIcon } from "@/components/icon";
 
