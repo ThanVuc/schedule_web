@@ -7,7 +7,7 @@ import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogPrimaryButton,
-} from "../../common/teamDialog";
+} from "../../common/TeamDialog";
 
 
 export interface CreateGroupDialogProps {

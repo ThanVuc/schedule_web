@@ -1,0 +1,1 @@
+export { default as BoardSprintPage } from "./BoardSprintPage";

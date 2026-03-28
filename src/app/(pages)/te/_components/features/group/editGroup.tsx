@@ -8,7 +8,7 @@ import {
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogPrimaryButton,
     SubmitConfirmModal,
-} from "../../common/teamDialog";
+} from "../../common/TeamDialog";
 import { type Group } from "./types";
 
 
