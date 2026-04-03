@@ -19,3 +19,15 @@ export const CaculateTimeFromTimeToNow = (timestamp?: number): string => {
         return `${days} ngày trước`;
     }
 }
+
+export const FormatDateShort = (dateString?: string): string => {
+    if (!dateString) return "";
+    try {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        return `${day} th ${month}`;
+    } catch {
+        return dateString;
+    }
+}

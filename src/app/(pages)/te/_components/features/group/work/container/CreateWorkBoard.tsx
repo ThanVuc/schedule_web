@@ -2,43 +2,77 @@
 
 import { Form } from "@/components/ui";
 import { Plus } from "lucide-react";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton} from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import CreateWorkForm from "../CreateWorkForm";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateWorkSchema } from "@/app/(pages)/te/_models/works/schema";
-import { useRouter, useSearchParams } from "next/navigation";
+import { ListSimpleSprintResponse, WorkCreateWorkRequest } from "@/app/(pages)/te/_models";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { boardWorksApiUrl } from "@/api/boardWork";
+import Spinner from "@/components/common/spinner";
+import { useEffect, useState } from "react";
+import z from "zod";
+import { ModelType } from "@/app/(pages)/schedule/_constant";
+import { useModalParams } from "@/app/(pages)/te/_hooks";
 
 
 interface CreateWorkBoardDialogProps {
     open: boolean;
-    onConfirm: (name: string) => void;
+    loading?: boolean;
+    listSprint?: ListSimpleSprintResponse[];
+    onOpenChange?: (open: boolean) => void;
+    refreshListWork?: () => void;
 }
-export const CreateWorkBoardDialog = ({ open, onConfirm }: CreateWorkBoardDialogProps) => {
-    const searchParams = useSearchParams();
-    const router = useRouter();
+export const CreateWorkBoardDialog = ({ open,refreshListWork , loading, listSprint, onOpenChange }: CreateWorkBoardDialogProps) => {
+    const [formReady, setFormReady] = useState(false);
+    const { mode } = useModalParams();
 
+    const { sendRequest: createWork } = useAxiosMutation<WorkCreateWorkRequest>({
+        method: "POST",
+        url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+    })
+
+    useEffect(() => {
+        if (!open) {
+            setFormReady(false);
+            return;
+        }
+
+        if (loading) {
+            setFormReady(false);
+            return;
+        }
+
+        setFormReady(true);
+    }, [open, loading]);
 
     const form = useForm({
         resolver: zodResolver(CreateWorkSchema),
         defaultValues: {
             name: "",
             description: "",
-            Sprint_id: undefined,
+            sprint_id: undefined,
         }
     });
-    const closeModal = () => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete("mode");
-        params.delete("id");
-        router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+
+    useEffect(() => {
+        if (open) return;
         form.reset();
         form.clearErrors();
+    }, [open, form]);
+
+    const onSubmit = async (values: z.infer<typeof CreateWorkSchema>) => {
+        if (mode === ModelType.CREATE) {
+            await createWork(values);
+            onOpenChange?.(false);
+            refreshListWork?.();
+        }
     }
     return (
         <>
-            <Dialog open={open} onOpenChange={closeModal}>
+            <Dialog open={open} onOpenChange={onOpenChange}>
                 <DialogContent size="md">
                     <DialogHeader>
                         <DialogTitle className="text-white text-xl">Tạo công việc</DialogTitle>
@@ -46,11 +80,16 @@ export const CreateWorkBoardDialog = ({ open, onConfirm }: CreateWorkBoardDialog
                             Tạo một công việc mới để quản lý và theo dõi tiến độ.
                         </DialogDescription>
                     </DialogHeader>
-
                     <DialogBody>
                         <div>
                             <Form {...form}>
-                                <CreateWorkForm form={form} />
+                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                    {formReady ? (<CreateWorkForm form={form} sprints={listSprint || []} />
+                                    ) : (
+                                        <div className="flex items-center justify-center">
+                                            <Spinner />
+                                        </div>)}
+                                </form>
                             </Form>
                         </div>
                     </DialogBody>
@@ -61,11 +100,9 @@ export const CreateWorkBoardDialog = ({ open, onConfirm }: CreateWorkBoardDialog
                             </DialogCancelButton>
                         </DialogClose>
                         <DialogPrimaryButton
-                        disabled={!form.formState.isValid}
-                        confirmSubmit
-                        onClick={form.handleSubmit((data) => {
-                            onConfirm(data.name);
-                        })}
+                            disabled={!form.formState.isValid}
+                            confirmSubmit
+                            onClick={() => form.handleSubmit(onSubmit)()}
                         >
                             <Plus size={14} /> Tạo công việc
                         </DialogPrimaryButton>

@@ -6,16 +6,33 @@ import { Trash2 } from "lucide-react";
 import { TrashIcon } from "@/components/icon";
 import { Dialog, DialogClose, DialogDescription, DialogTitle } from "@/components/ui";
 import { DialogBody, DialogCancelButton, DialogContent, DialogDangerButton, DialogFooter, DialogHeader } from "../../../../common/teamDialog";
+import { useAxiosMutation } from "@/hooks";
+import { boardWorksApiUrl } from "@/api/boardWork";
+import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
+import { ModelType } from "@/app/(pages)/schedule/_constant";
 
 export interface DeleteWorkBoardDialogProps {
     open: boolean;
-    onOpenChange: (open: boolean) => void;
-    
+    onOpenChange?: (open: boolean) => void;
+    refreshListWork?: () => void;
 }
 
 
-export const DeleteWorkBoardDialog = ({ open, onOpenChange}: DeleteWorkBoardDialogProps) => {
-    
+export const DeleteWorkBoardDialog = ({ open, onOpenChange, refreshListWork }: DeleteWorkBoardDialogProps) => {
+    const { mode, id } = useModalParams();
+    const { sendRequest: DeleteWork } = useAxiosMutation({
+        method: "DELETE",
+        url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+    })
+
+    const onSubmit = async (id: string) => {
+        if (mode === ModelType.DELETE) {
+            await DeleteWork(undefined,id.toString());
+            onOpenChange?.(false);
+            refreshListWork?.();
+
+        }
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -43,7 +60,9 @@ export const DeleteWorkBoardDialog = ({ open, onOpenChange}: DeleteWorkBoardDial
                             Hủy
                         </DialogCancelButton>
                     </DialogClose>
-                    <DialogDangerButton >
+                    <DialogDangerButton
+                        onClick={() => onSubmit(id as string)}
+                    >
                         <Trash2 size={14} /> Xóa bảng công việc
                     </DialogDangerButton>
                 </DialogFooter>

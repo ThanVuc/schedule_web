@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
     DialogBody, DialogFooter, DialogCancelButton, DialogPrimaryButton, DialogClose,
-} from "../../../common/TeamDialog";
+} from "../../../common/teamDialog";
 import {
     DropdownMenu,
     DropdownMenuTrigger,

@@ -9,7 +9,9 @@ export const UpdateWorkSchema = z.object({
     due_date: z.string().optional(),
     story_point: z.number().int().positive().optional(),
     sprint_id: z.string().optional(),
-    assignee_id: z.string().optional(),
-    assignee_name: z.string().optional(),
+    assignee_id: z.object({
+        id: z.string(),
+        name: z.string(),
+    }).optional(),
     version: z.number().int().positive().optional(),
 })

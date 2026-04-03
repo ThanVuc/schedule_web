@@ -2,21 +2,61 @@
 
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton} from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { ListSimpleSprintResponse, WorkDetailResponse } from "@/app/(pages)/te/_models/works/WorkResponse";
+import { useState } from "react";
+import { boardWorksApiUrl } from "@/api/boardWork";
+import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
+import { ModelType } from "@/app/(pages)/schedule/_constant";
 
 
 
 export interface AddToSprintWorkBoardDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    refreshListWork?: () => void;
+    getBoardWorkDataById?: WorkDetailResponse;
+    GetListSprint?: ListSimpleSprintResponse[];
 }
-export const AddToSprintWorkBoardDialog = ({ open, onOpenChange }: AddToSprintWorkBoardDialogProps) => {
+export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork, getBoardWorkDataById, GetListSprint }: AddToSprintWorkBoardDialogProps) => {
+    const { id, mode } = useModalParams();
+    const [selectedSprintId, setSelectedSprintId] = useState<string | undefined>();
 
+    const handleOpenChange = (nextOpen: boolean) => {
+        if (!nextOpen) {
+            setSelectedSprintId(undefined);
+        }
+        onOpenChange(nextOpen);
+    };
+
+    const { sendRequest: sendUpdateRequest } = useAxiosMutation({
+        method: "PATCH",
+        url: `${boardWorksApiUrl.UpdateBoardWork}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    const onSubmit = async () => {
+        if (!selectedSprintId) return;
+
+        const sendRequestBody = {
+            sprint_id: selectedSprintId,
+            version: getBoardWorkDataById?.version || 0,
+        };
+
+        if (mode === ModelType.ADDSPRINT) {
+            await sendUpdateRequest(sendRequestBody);
+            refreshListWork?.();
+            handleOpenChange(false);
+        }
+    };
     return (
         <>
-            <Dialog open={open} onOpenChange={onOpenChange}>
+            <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogContent size="sm">
                     <DialogHeader>
                         <DialogTitle className="text-white text-xl">Thêm vào Sprint</DialogTitle>
@@ -27,18 +67,21 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange }: AddToSprintWo
                     <DialogBody>
                         <div className="flex flex-col gap-2"    >
                             <Label htmlFor="sprint-select" className="text-sm text-gray-300 mb-1">Chọn Sprint</Label>
-                            <Select>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Chọn sprint" />
-                            </SelectTrigger>
-                            <SelectContent className="z-200">
-                                <SelectGroup>
-                                    <SelectItem value="sprint1">Sprint 1</SelectItem>
-                                    <SelectItem value="sprint2">Sprint 2</SelectItem>
-                                    <SelectItem value="sprint3">Sprint 3</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                            <Select value={selectedSprintId} onValueChange={(value) => setSelectedSprintId(value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Chọn sprint" />
+                                </SelectTrigger>
+                                <SelectContent className="z-200">
+                                    <SelectGroup>
+                                        {GetListSprint?.map((sprint) => (
+                                            <SelectItem key={sprint.id} value={sprint.id}>
+                                                {sprint.name}
+                                            </SelectItem>
+                                        ))}
+
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </DialogBody>
                     <DialogFooter>
@@ -48,6 +91,8 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange }: AddToSprintWo
                             </DialogCancelButton>
                         </DialogClose>
                         <DialogPrimaryButton
+                            confirmSubmit
+                            onClick={() => { onSubmit() }}
                         >
                             Thêm vào
                         </DialogPrimaryButton>

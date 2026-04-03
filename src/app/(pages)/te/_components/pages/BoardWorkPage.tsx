@@ -9,15 +9,24 @@ import { useModalParams } from "../../_hooks";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { DeleteWorkBoardDialog } from "../features/group/work/container/DeleteWorkBoard";
 import { AssignWorkBoardDialog } from "../features/group/work/container/AssignWorkBoard";
+import { useAxios } from "@/hooks/useAxios";
+import { boardWorksApiUrl } from "@/api/boardWork";
+import { ListSimpleSprintResponse, ListSimpleUserResponse, WorkDetailResponse, WorkResponse } from "../../_models";
+import { useEffect, useMemo, useState } from "react";
+import { H1 } from "@/components/common";
 
 
 const BoardWorkPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { mode} = useModalParams();
+    const { mode, id } = useModalParams();
     const openDialogCreate = mode === ModelType.CREATE;
     const openDialogDelete = mode === ModelType.DELETE;
     const openDialogAssign = mode === ModelType.ASSIGN;
+    const listParams = useMemo(() => {
+        const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
+        return Object.fromEntries(entries);
+    }, [searchParams]);
     const handlePageQueryToModal = (mode: string, id?: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("mode", mode);
@@ -27,71 +36,156 @@ const BoardWorkPage = () => {
             params.delete("id");
         }
 
-        router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+        router.push(`?${params.toString()}`, { scroll: false });
     }
+    const { data: GetListSprint, loading: loadingGetListSprint } = useAxios<{ items: ListSimpleSprintResponse[] }>({
+        method: "GET",
+        url: `${boardWorksApiUrl.GetListSprint}2c9179a9-a279-4b26-851a-44e16b814d54/sprints/simple`,
+        params: { ...listParams },
+    }, [])
+    const { data: GetListUser } = useAxios<{ items: ListSimpleUserResponse[] }>({
+        method: "GET",
+        url: `${boardWorksApiUrl.GetListUser}2c9179a9-a279-4b26-851a-44e16b814d54/users/simple`,
+        params: { ...listParams },
+    }, [])
+    const { data: getListWork, refetch } = useAxios<{ items: WorkResponse[] }>({
+        method: "GET",
+        url: `${boardWorksApiUrl.GetListWork}2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        params: { ...listParams },
+
+    }, [])
+    const { data: getBoardWorkDataById, loading: loadingBoardWork, refetch: refetchBoardWork } = useAxios<{ item: WorkDetailResponse }>({
+        method: "GET",
+        url: `${boardWorksApiUrl.GetBoardWorks}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`
+    })
+    useEffect(() => {
+        const activeSprintId = GetListSprint?.items?.find((sprint) => sprint.status === 2)?.id;
+        if (!activeSprintId) return;
+
+        const currentSprint = searchParams.get("sprint_id");
+        if (currentSprint === activeSprintId) return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("sprint_id", activeSprintId);
+        router.replace(`?${params.toString()}`, { scroll: false });
+    }, [GetListSprint?.items, searchParams, router]);
+
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("mode");
         params.delete("id");
-        router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+        router.push(`?${params.toString()}`, { scroll: false });
     }
+
+    const handleCreateDialogOpenChange = (open: boolean) => {
+        if (open) {
+            handlePageQueryToModal(ModelType.CREATE);
+            return;
+        }
+
+        closeModal();
+    };
+
+    const handleDeleteDialogOpenChange = (open: boolean) => {
+        if (open) {
+            return;
+        }
+
+        closeModal();
+    };
+
+    const handleAssignDialogOpenChange = (open: boolean) => {
+        if (open) {
+            return;
+        }
+
+        closeModal();
+    };
+    const [sprintActive, setSprintActive] = useState("");
+    if (GetListSprint?.items?.find((sprint) => sprint.status === 2)) {
+        setSprintActive(GetListSprint?.items?.find((sprint) => sprint.status === 2)?.id || "");
+    }
+
     return (<>
         <CreateWorkBoardDialog
-            onConfirm={() => { }}
             open={openDialogCreate}
+            loading={loadingGetListSprint}
+            listSprint={GetListSprint?.items}
+            onOpenChange={handleCreateDialogOpenChange}
+            refreshListWork={refetch}
+
         />
         <DeleteWorkBoardDialog
-            onOpenChange={closeModal}
             open={openDialogDelete}
+            onOpenChange={handleDeleteDialogOpenChange}
+            refreshListWork={refetch}
         />
         <AssignWorkBoardDialog
-            onConfirm={() => { }}
-            onOpenChange={closeModal}
+            listUser={GetListUser?.items}
+            onOpenChange={handleAssignDialogOpenChange}
+            refreshListWork={refetch}
             open={openDialogAssign}
+            getBoardWorkDataById={getBoardWorkDataById?.item}
         />
-        <div className="flex justify-between items-center mb-13">
+        <div className="flex justify-between items-center mb-8 p-6">
             <div className="flex items-center  gap-15">
-                <h1 className="text-2xl font-bold mb-4">Bảng công việc</h1>
+                <H1 className="text-2xl font-bold mb-4">Bảng công việc</H1>
                 <div className="flex gap-4">
-                    <Select defaultValue="AllSprint">
+                    <Select defaultValue={sprintActive} onValueChange={(value) => {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set("sprint_id", value);
+                        router.push(`?${params.toString()}`, { scroll: false });
+                    }}>
                         <SelectTrigger >
-                            <SelectValue placeholder="Lọc theo Sprint" />
+                            <SelectValue placeholder="Hiện không có Sprint nào đang active" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="AllSprint">All Sprint</SelectItem>
-                                <SelectItem value="sprint1">Sprint 1</SelectItem>
-                                <SelectItem value="sprint2">Sprint 2</SelectItem>
-                                <SelectItem value="sprint3">Sprint 3</SelectItem>
+                                {GetListSprint?.items.map((sprint) => (
+                                    <SelectItem key={sprint.id} value={sprint.id}>
+                                        {sprint.name}
+                                    </SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Select defaultValue="AllAssign">
+                    <Select defaultValue="AllAssign" onValueChange={(value) => {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set("assignee_id", value);
+                        router.push(`?${params.toString()}`, { scroll: false });
+                    }}>
                         <SelectTrigger >
                             <SelectValue placeholder="Lọc theo người thực hiện" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="AllAssign">Tất cả người thực hiện</SelectItem>
-                                <SelectItem value="Assign1">Người thực hiện 1</SelectItem>
-                                <SelectItem value="Assign2">Người thực hiện 2</SelectItem>
-                                <SelectItem value="Assign3">Người thực hiện 3</SelectItem>
+                                {GetListUser?.items.map((user) => (
+                                    <SelectItem key={user.id} value={user.id}>
+                                        {user.email}
+                                    </SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
             <Button className="mb-4 bg-[#2A97EA] border-[#2A97EA] hover:bg-[#0c6ab2] text-white"
-                onClick={() => handlePageQueryToModal(ModelType.CREATE)}
+                onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}
             >
                 <AddIcon />
                 Thêm công việc
             </Button>
         </div>
-        <div>
-            <BoardWork />
-            <DrawerPage />
+        <div className="p-4">
+            <BoardWork ListWork={getListWork?.items || []} />
+
         </div>
+        <DrawerPage refetchListWork={refetch}
+            getBoardWorkDataById={getBoardWorkDataById?.item}
+            loadingBoardWork={loadingBoardWork}
+            refetchBoardWork={refetchBoardWork}
+        />
     </>);
 }
 

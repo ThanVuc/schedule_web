@@ -3,7 +3,7 @@ import { CommentResponse } from "./Comment";
 
 export interface UserResponse {
   id: string;
-  name: string;
+  email: string;
   avatar: string;
 }
 export interface WorkResponse {
@@ -16,6 +16,7 @@ export interface WorkResponse {
   due_date?: string;
   created_at?: string;
   updated_at?: string; 
+  version: number;
 }
 export interface WorkRequest {
   name: string; 
@@ -46,8 +47,37 @@ export interface WorkDetailResponse {
   due_date?: string;
   created_at?: string;
   updated_at?: string;
+  sprint?: sprintResponse;
+  check_list: itemsChecklistResponse;
+  comments: itemsCommentResponse;
+  version: number;
+}
+export interface sprintResponse {
+  id: string;
+  name: string;
+}
+export interface itemsChecklistResponse {
+  items: ChecklistItemResponse[];
+}
+export interface itemsCommentResponse {
+  items: CommentResponse[];
+}
+export interface ListSimpleSprintResponse {
+  id: string;
+  name: string;
+  status: number;
+}
+export interface ListSimpleUserResponse {
+  id: string;
+  email: string;
+  avatar_url: string;
+}
+export interface WorkCreateWorkRequest {
+  name: string;
+  description: string;
   sprint_id?: string;
-  check_lists: ChecklistItemResponse[];
-  comments: CommentResponse[];
+}
+export interface WorkUpdateWorkMovingRequest {
+  status?: number;
   version: number;
 }
