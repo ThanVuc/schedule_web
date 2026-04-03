@@ -53,12 +53,21 @@ export const AssignBacklogDialog = ({ open, onOpenChange, refreshListWork, listU
         }
     });
     const onSubmit = async (values: z.infer<typeof AssignWorkSchema>) => {
-        const sendRequestBody = {
-            assignee_id: values.id,
-            version: getBoardWorkDataById?.version || 0,
-        }
         if (mode === ModelType.ASSIGN) {
-            await sendUpdateRequest(sendRequestBody);
+            if (!values.id) {
+                await sendUpdateRequest({
+                    is_unassigned: true,
+                    version: getBoardWorkDataById?.version || 0,
+                });
+                refreshListWork?.();
+                onOpenChange(false);
+                return;
+            }
+
+            await sendUpdateRequest({
+                assignee_id: values.id,
+                version: getBoardWorkDataById?.version || 0,
+            });
             refreshListWork?.();
             onOpenChange(false);
         }

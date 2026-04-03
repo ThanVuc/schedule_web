@@ -23,6 +23,9 @@ export interface WorkRequest {
   description: string;
   status: number;
   sprint_id?: string;
+  is_unset_sprint?: boolean;
+  is_unassigned?: boolean;
+  priority?: number;
   assignee_id?: string;
   assignee: UserResponse;
   story_point: number;

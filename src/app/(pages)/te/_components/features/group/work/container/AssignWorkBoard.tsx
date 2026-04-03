@@ -24,8 +24,8 @@ export interface AssignWorkBoardDialogProps {
     getBoardWorkDataById?: WorkDetailResponse;
 }
 export const AssignWorkBoardDialog = ({ open, onOpenChange, refreshListWork, listUser, getBoardWorkDataById }: AssignWorkBoardDialogProps) => {
-  
-      const { mode, id } = useModalParams();
+
+    const { mode, id } = useModalParams();
 
     const { sendRequest: sendUpdateRequest } = useAxiosMutation({
         method: "PATCH",
@@ -53,12 +53,21 @@ export const AssignWorkBoardDialog = ({ open, onOpenChange, refreshListWork, lis
     }, [getBoardWorkDataById, mode]);
 
     const onSubmit = async (values: z.infer<typeof AssignWorkSchema>) => {
-        const sendRequestBody = {
-            assignee_id: values.id,
-            version: getBoardWorkDataById?.version || 0,
-        }
         if (mode === ModelType.ASSIGN) {
-            await sendUpdateRequest(sendRequestBody);
+            if (!values.id) {
+                await sendUpdateRequest({
+                    is_unassigned: true,
+                    version: getBoardWorkDataById?.version || 0,
+                });
+                refreshListWork?.();
+                onOpenChange(false);
+                return;
+            }
+
+            await sendUpdateRequest({
+                assignee_id: values.id,
+                version: getBoardWorkDataById?.version || 0,
+            });
             refreshListWork?.();
             onOpenChange(false);
         }

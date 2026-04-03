@@ -3,7 +3,7 @@
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useModalParams } from "@/app/(pages)/te/_hooks";
 import { useDebouncedUpdate } from "@/app/(pages)/te/_hooks/useDebounced";
-import { ListSimpleSprintResponse } from "@/app/(pages)/te/_models";
+import { ListSimpleSprintResponse, WorkRequest } from "@/app/(pages)/te/_models";
 import { UpdateWorkSchema } from "@/app/(pages)/te/_models/works/schema/UpdateWork";
 import {
     FormControl,
@@ -43,7 +43,7 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
             "Content-Type": "application/json"
         }
     });
-    const updateWork = (payload: Partial<DrawerForm>) => {
+    const updateWork = (payload: Partial<WorkRequest>) => {
         return sendUpdateRequest({ ...payload, version: currentVersion });
     };
 
@@ -256,6 +256,11 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                                 <FormControl>
                                     <Select value={field.value} onValueChange={
                                         (value) => {
+                                            if (value === "NoSprint") {
+                                                field.onChange(undefined);
+                                                updateWork({ is_unset_sprint: true });
+                                                return;
+                                            }
                                              if (!value) return;
                                             field.onChange(value);
                                             updateWork({ sprint_id: value });
@@ -266,6 +271,7 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
+                                                <SelectItem value="NoSprint">No Sprint</SelectItem>
                                                 {listSprint?.map((sprint) => (
                                                     <SelectItem key={sprint.id} value={sprint.id}>
                                                         {sprint.name}

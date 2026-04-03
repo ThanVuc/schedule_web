@@ -132,15 +132,22 @@ const BoardWorkPage = () => {
                 <H1 className="text-2xl font-bold mb-4">Bảng công việc</H1>
                 <div className="flex gap-4">
                     <Select defaultValue={sprintActive} onValueChange={(value) => {
-                        const params = new URLSearchParams(searchParams.toString());
-                        params.set("sprint_id", value);
-                        router.push(`?${params.toString()}`, { scroll: false });
+                        if (value === "AllWork") {
+                            const params = new URLSearchParams(searchParams.toString());
+                            params.delete("sprint_id");
+                            router.push(`?${params.toString()}`, { scroll: false });
+                        } else {
+                            const params = new URLSearchParams(searchParams.toString());
+                            params.set("sprint_id", value);
+                            router.push(`?${params.toString()}`, { scroll: false });
+                        }
                     }}>
                         <SelectTrigger >
                             <SelectValue placeholder="Hiện không có Sprint nào đang active" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
+                                <SelectItem value="AllWork">Công việc không ở trong Sprint</SelectItem>
                                 {GetListSprint?.items.map((sprint) => (
                                     <SelectItem key={sprint.id} value={sprint.id}>
                                         {sprint.name}
@@ -150,9 +157,15 @@ const BoardWorkPage = () => {
                         </SelectContent>
                     </Select>
                     <Select defaultValue="AllAssign" onValueChange={(value) => {
+
                         const params = new URLSearchParams(searchParams.toString());
-                        params.set("assignee_id", value);
-                        router.push(`?${params.toString()}`, { scroll: false });
+                        if (value === "AllAssign") {
+                            params.delete("assignee_id");
+                            router.push(`?${params.toString()}`, { scroll: false });
+                        } else {
+                            params.set("assignee_id", value);
+                            router.push(`?${params.toString()}`, { scroll: false });
+                        }
                     }}>
                         <SelectTrigger >
                             <SelectValue placeholder="Lọc theo người thực hiện" />
