@@ -4,7 +4,8 @@ import { globalConfig } from '../global/global'
 const createAPI = (url: string) => `${globalConfig.ApiUrlBase}${url}`;
 
 export const ChecklistApiUrl = {
-    CreateCheckList: createAPI('Works/'),
-    UpdateCheckList: createAPI('ts/checklists'),
+    CreateCheckList: createAPI('ts/groups/'),
+    UpdateCheckList: createAPI('ts/groups/'),
+    DeleteCheckList: createAPI('ts/groups/'),
 }
 export default ChecklistApiUrl

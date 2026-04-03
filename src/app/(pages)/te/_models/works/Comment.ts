@@ -3,7 +3,8 @@ export interface CreateCommentRequest {
 }
 export interface Creator{
     id: string;
-    name: string;
+    avatar?: string;
+    email: string;
 }
 export interface CommentResponse {
     id: string;

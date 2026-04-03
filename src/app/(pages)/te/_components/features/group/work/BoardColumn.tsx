@@ -16,19 +16,20 @@ const BoardColumn = ({ id, title, count, children }: BoardColumnProps) => {
         accept: ['item', 'column'],
     });
     const style = isDropTarget ? { background: '#00000030' } : undefined;
+    const shouldScroll = count > 3;
     return (
         <div
             style={style}
             ref={ref}
-            className={`border-1 rounded-2xl min-h-[100px] min-w-[350px] transition-colors ${isDropTarget ? 'border-blue-500 bg-[#1A2332]/50' : 'border-[#2A3A4F]'
+            className={`border-1 rounded-2xl min-h-[480px] min-w-[360px] transition-colors ${isDropTarget ? 'border-blue-500 bg-[#1A2332]/50' : 'border-[#2A3A4F]'
                 }`}
         >
             <div className="flex items-center justify-between m-3">
                 <p className="font-medium">{title}</p>
                 <p className="p-2 bg-[#1A2332] rounded-md text-[#8899AA]">{count}</p>
             </div>
-            <div className="min-h-[150px]">
-                    {children}
+            <div className={`min-h-[150px] p-3 ${shouldScroll ? 'max-h-[420px] overflow-y-auto ' : ''}`}>
+                {children}
             </div>
         </div>
     );

@@ -1,29 +1,77 @@
 'use client';
 
-import { Form} from "@/components/ui";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton} from "../../../../common/teamDialog";
+import { Form } from "@/components/ui";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AssignWorkSchema } from "@/app/(pages)/te/_models/works/schema/AssginWork.schema";
 import AssignWorkForm from "../AssignWorkForm";
+import { ListSimpleUserResponse, WorkDetailResponse } from "@/app/(pages)/te/_models";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { boardWorksApiUrl } from "@/api/boardWork";
+import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
+import z from "zod";
+import { ModelType } from "@/app/(pages)/schedule/_constant";
+import { useEffect } from "react";
 
 
 export interface AssignWorkBoardDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onConfirm: (name: string) => void;
+    refreshListWork?: () => void;
+    listUser?: ListSimpleUserResponse[];
+    getBoardWorkDataById?: WorkDetailResponse;
 }
-export const AssignWorkBoardDialog = ({ open, onOpenChange, onConfirm }: AssignWorkBoardDialogProps) => {
+export const AssignWorkBoardDialog = ({ open, onOpenChange, refreshListWork, listUser, getBoardWorkDataById }: AssignWorkBoardDialogProps) => {
 
+    const { mode, id } = useModalParams();
+
+    const { sendRequest: sendUpdateRequest } = useAxiosMutation({
+        method: "PATCH",
+        url: `${boardWorksApiUrl.UpdateBoardWork}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
     const form = useForm({
         resolver: zodResolver(AssignWorkSchema),
         defaultValues: {
-            name: "",
-            avatar_url: undefined,
+            id: getBoardWorkDataById?.assignee.id,
+            email: getBoardWorkDataById?.assignee.email,
+            avatar_url: getBoardWorkDataById?.assignee.avatar,
         }
     });
+    useEffect(() => {
+        if (getBoardWorkDataById) {
+            form.reset({
+                id: getBoardWorkDataById.assignee?.id,
+                email: getBoardWorkDataById.assignee?.email,
+                avatar_url: getBoardWorkDataById.assignee?.avatar,
+            });
+        }
+    }, [getBoardWorkDataById, mode]);
 
+    const onSubmit = async (values: z.infer<typeof AssignWorkSchema>) => {
+        if (mode === ModelType.ASSIGN) {
+            if (!values.id) {
+                await sendUpdateRequest({
+                    is_unassigned: true,
+                    version: getBoardWorkDataById?.version || 0,
+                });
+                refreshListWork?.();
+                onOpenChange(false);
+                return;
+            }
+
+            await sendUpdateRequest({
+                assignee_id: values.id,
+                version: getBoardWorkDataById?.version || 0,
+            });
+            refreshListWork?.();
+            onOpenChange(false);
+        }
+    }
     return (
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
@@ -37,7 +85,9 @@ export const AssignWorkBoardDialog = ({ open, onOpenChange, onConfirm }: AssignW
                     <DialogBody>
                         <div>
                             <Form {...form}>
-                                <AssignWorkForm form={form} />
+                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                    <AssignWorkForm form={form} listUser={listUser} />
+                                </form>
                             </Form>
                         </div>
                     </DialogBody>
@@ -50,9 +100,7 @@ export const AssignWorkBoardDialog = ({ open, onOpenChange, onConfirm }: AssignW
                         <DialogPrimaryButton
                             disabled={!form.formState.isValid}
                             confirmSubmit
-                            onClick={form.handleSubmit((data) => {
-                                onConfirm(data.name);
-                            })}
+                            onClick={() => form.handleSubmit(onSubmit)()}
                         >
                             Phân công
                         </DialogPrimaryButton>

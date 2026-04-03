@@ -1,4 +1,5 @@
 import { CreateWorkSchema } from "@/app/(pages)/te/_models/works/schema";
+import { ListSimpleSprintResponse } from "@/app/(pages)/te/_models/works/WorkResponse";
 import { FormField, FormMessage, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, Textarea } from "@/components/ui";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
@@ -6,9 +7,10 @@ import z from "zod";
 type CreateWorkForm = z.infer<typeof CreateWorkSchema>;
 interface CreateWorkFormProps {
     form: UseFormReturn<CreateWorkForm>;
+    sprints: ListSimpleSprintResponse[];
 }
 
-const CreateWorkForm = ({ form }: CreateWorkFormProps) => {
+const CreateWorkForm = ({ form, sprints }: CreateWorkFormProps) => {
     return (<>
         <div className="mb-3">
             <label className="text-xs font-medium pb-2 block">Tên công việc</label>
@@ -54,7 +56,7 @@ const CreateWorkForm = ({ form }: CreateWorkFormProps) => {
         <div>
             <Label className="text-xs font-medium pb-2 block">Sprint</Label>
             <FormField
-                name="Sprint_id"
+                name="sprint_id"
                 control={form.control}
                 render={({ field }) => (
                     <div>
@@ -64,9 +66,11 @@ const CreateWorkForm = ({ form }: CreateWorkFormProps) => {
                         </SelectTrigger>
                         <SelectContent className="w-full z-200">
                             <SelectGroup className="z-200 w-full">
-                                <SelectItem value="sprint1">Sprint 1</SelectItem>
-                                <SelectItem value="sprint2">Sprint 2</SelectItem>
-                                <SelectItem value="sprint3">Sprint 3</SelectItem>
+                                {sprints.map((sprint) => (
+                                    <SelectItem key={sprint.id} value={sprint.id}>
+                                        {sprint.name}
+                                    </SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                         </Select>

@@ -1,1 +1,1 @@
-export * from "./TabGroup"
+export * from "./tabGroup"

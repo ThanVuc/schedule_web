@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../../../common/TeamDialog";
+} from "../../../../common/teamDialog";
 
 export default function CancelSprintDialog({
   target,

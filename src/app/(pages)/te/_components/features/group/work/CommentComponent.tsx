@@ -1,6 +1,6 @@
 'use client';
-import { useState } from "react";
-import { Button, Textarea } from "@/components/ui";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, Button, Textarea } from "@/components/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,60 +8,119 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVerticalIcon } from "lucide-react";
-import { CommentResponse } from "@/app/(pages)/te/_models/works/Comment";
+import {
+    CommentResponse,
+    CreateCommentRequest,
+    DeleteChecklistItemResponse,
+    UpdateCommentRequest,
+    UpdateCommentResponse,
+} from "@/app/(pages)/te/_models/works/Comment";
 import { SendIcon } from "@/components/icon/send";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { useAxiosMutation, useToastState } from "@/hooks";
+import { CommentListApiUrl } from "@/api/commentList";
+import { useModalParams } from "@/app/(pages)/te/_hooks";
 
-
-const mockComments: CommentResponse[] = [
-    {
-        id: "1",
-        creator: { id: "user-1", name: "John Doe"},
-        content: "Looking good! .",
-        created_at: "2024-12-02",
-        updated_at: "2024-12-02",
-    },
-    {
-        id: "2",
-        creator: { id: "user-2", name: "Jane Smith"},
-        content: "Thanks for the feedback!",
-        created_at: "2024-12-02",
-        updated_at: "2024-12-02",
-    },
-];
 interface CommentComponentProps {
-    comments?: CommentResponse[];
+    listComments?: CommentResponse[];
+    onRefreshComments?: () => void | Promise<void>;
 }
 
-const formatDate = (dateStr: string) => {
+const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "Just now";
+
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "Just now";
+
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 };
 
-const CommentComponent = ({ comments: initialComments }: CommentComponentProps) => {
-    const [comments, setComments] = useState<CommentResponse[]>(initialComments || mockComments);
+const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentProps) => {
+    const { id } = useModalParams();
+    const { setToast } = useToastState();
+    
+    const [comments, setComments] = useState<CommentResponse[]>(listComments || []);
     const [newComment, setNewComment] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
     const [editingContent, setEditingContent] = useState("");
 
-    const handleAddComment = () => {
+    const { sendRequest: createComment } = useAxiosMutation<CommentResponse, CreateCommentRequest>({
+        method: "POST",
+        url: `${CommentListApiUrl.CreateComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        headers: { "Content-Type": "application/json" }
+    });
+
+    const { sendRequest: updateComment } = useAxiosMutation<UpdateCommentResponse, UpdateCommentRequest>({
+        method: "PATCH",
+        url: `${CommentListApiUrl.UpdateComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        headers: { "Content-Type": "application/json" }
+    });
+
+    const { sendRequest: deleteComment } = useAxiosMutation<DeleteChecklistItemResponse, unknown>({
+        method: "DELETE",
+        url: `${CommentListApiUrl.DeleteComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        headers: { "Content-Type": "application/json" }
+    });
+
+    useEffect(() => {
+        setComments(listComments || []);
+    }, [listComments]);
+
+    const handleAddComment = async () => {
         const trimmed = newComment.trim();
-        if (!trimmed) return;
+        if (!trimmed || isSubmitting) return;
 
-        const now = new Date().toISOString();
-        const comment: CommentResponse = {
-            id: crypto.randomUUID(),
-            creator: { id: "me", name: "Me"},
-            content: trimmed,
-            created_at: now,
-            updated_at: now,
-        };
+        setIsSubmitting(true);
+        const { data, error } = await createComment({ content: trimmed } as CreateCommentRequest);
+        setIsSubmitting(false);
 
-        setComments((prev) => [...prev, comment]);
+        if (error) {
+            setToast({
+                title: "Lỗi",
+                message: "Không thể tạo comment.",
+                variant: "error",
+            });
+            return;
+        }
+
+        setToast({
+            title: "Thành công",
+            message: "Đã thêm comment.",
+            variant: "success",
+        });
+
         setNewComment("");
+
+        if (onRefreshComments) {
+            await onRefreshComments();
+            return;
+        }
+
+        if (data) {
+            setComments((prev) => [...prev, data]);
+        }
     };
 
-    const handleDeleteComment = (id: string) => {
-        setComments((prev) => prev.filter((c) => c.id !== id));
+    const handleDeleteComment = async (commentId: string) => {
+        const { error } = await deleteComment(undefined, commentId);
+
+        if (error) {
+            setToast({
+                title: "Lỗi",
+                message: "Không thể xóa comment.",
+                variant: "error",
+            });
+            return;
+        }
+
+        setToast({
+            title: "Thành công",
+            message: "Đã xóa comment.",
+            variant: "success",
+        });
+        
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
     };
 
     const handleStartEdit = (comment: CommentResponse) => {
@@ -74,20 +133,43 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
         setEditingContent("");
     };
 
-    const handleSaveEdit = (id: string) => {
+    const handleSaveEdit = async (commentId: string) => {
         const trimmed = editingContent.trim();
-        if (!trimmed) return;
+        const currentComment = comments.find((comment) => comment.id === commentId);
+        
+        if (!trimmed || !currentComment) return;
+        
+        if (trimmed === currentComment.content) {
+            handleCancelEdit();
+            return;
+        }
 
+        const { error } = await updateComment({ content: trimmed } as UpdateCommentRequest, commentId);
+
+        if (error) {
+            setToast({
+                title: "Lỗi",
+                message: "Không thể cập nhật comment.",
+                variant: "error",
+            });
+            return;
+        }
+
+        setToast({
+            title: "Thành công",
+            message: "Đã cập nhật comment.",
+            variant: "success",
+        });
         setComments((prev) =>
             prev.map((comment) =>
-                comment.id === id
+                comment.id === commentId
                     ? {
                           ...comment,
                           content: trimmed,
                           updated_at: new Date().toISOString(),
                       }
-                    : comment,
-            ),
+                    : comment
+            )
         );
 
         handleCancelEdit();
@@ -102,15 +184,23 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                         key={comment.id}
                         className="flex gap-3 rounded-xl bg-[#1a2535] p-4"
                     >
-
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2">
-                                <span className="text-sm font-semibold">
-                                    {comment.creator.name}
-                                    <span className="ml-1 text-xs font-normal text-muted-foreground">
-                                        {formatDate(comment.created_at)}
+                                <div className="flex items-center gap-2">
+                                    <Avatar>
+                                        <AvatarImage alt="ảnh đại diện" src={comment.creator?.avatar} />
+                                        <AvatarFallback>
+                                            {comment.creator?.email?.charAt(0).toUpperCase() || "U"}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    <span className="text-sm font-semibold">
+                                        {comment.creator?.email || "Unknown"}
+                                        <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                            {formatDate(comment.created_at)}
+                                        </span>
                                     </span>
-                                </span>
+                                </div>
 
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -123,9 +213,7 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem
-                                            onClick={() => handleStartEdit(comment)}
-                                        >
+                                        <DropdownMenuItem onClick={() => handleStartEdit(comment)}>
                                             Chỉnh sửa
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
@@ -137,6 +225,7 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
+                            
                             {editingCommentId === comment.id ? (
                                 <div className="mt-2 space-y-2">
                                     <Textarea
@@ -160,7 +249,7 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                                     </div>
                                 </div>
                             ) : (
-                                <p className="mt-1 text-sm text-muted-foreground">
+                                <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
                                     {comment.content}
                                 </p>
                             )}
@@ -176,6 +265,7 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                     placeholder="Thêm bình luận..."
                     className="min-h-[42px] max-h-32 resize-none"
                     rows={1}
+                    disabled={isSubmitting}
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
@@ -185,10 +275,11 @@ const CommentComponent = ({ comments: initialComments }: CommentComponentProps) 
                 />
                 <Button
                     size="icon"
-                    className="shrink-0  bg-sky-500 hover:bg-sky-600"
+                    className="shrink-0 bg-sky-500 hover:bg-sky-600"
                     onClick={handleAddComment}
+                    disabled={isSubmitting}
                 >
-                    <SendIcon/>
+                    <SendIcon />
                 </Button>
             </div>
         </div>

@@ -4,7 +4,7 @@ import React from "react";
 import type { Sprint } from "../sprintTypes";
 import {
   Dialog, DialogBody, DialogCancelButton, DialogClose, DialogContent, DialogDescription, DialogDangerButton, DialogFooter, DialogHeader, DialogTitle,
-} from "../../../../common/TeamDialog";
+} from "../../../../common/teamDialog";
 
 export default function DeleteSprintDialog({
   target,
