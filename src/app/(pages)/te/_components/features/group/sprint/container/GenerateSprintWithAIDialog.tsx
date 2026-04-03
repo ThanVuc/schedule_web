@@ -13,7 +13,7 @@ import {
   DialogPrimaryButton,
   DialogTitle,
   DialogClose,
-} from "../../../../common/TeamDialog";
+} from "../../../../common/teamDialog";
 import { Button, Form, FormField, FormMessage, Textarea } from "@/components/ui";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

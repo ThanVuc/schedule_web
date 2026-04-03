@@ -5,5 +5,6 @@ export function useModalParams() {
   const mode = searchParams.get('mode');
   const id = searchParams.get('id');
   const workId = searchParams.get("workId");
-  return { mode, id, workId };
+  const sprint = searchParams.get("sprint_id");
+  return { mode, id, workId, sprint };
 }

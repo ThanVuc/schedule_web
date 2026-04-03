@@ -6,7 +6,7 @@ import { Button, Input } from "@/components/ui";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
     DialogBody, DialogFooter, DialogPrimaryButton, DialogClose,
-} from "../../../common/TeamDialog";
+} from "../../../common/teamDialog";
 import { MemberRole, RoleDropdown } from "./ChangeRole";
 
 function CopyButton({ text }: { text: string }) {

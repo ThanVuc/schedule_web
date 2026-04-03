@@ -21,13 +21,13 @@ function resolveTab(raw: string | undefined): TabKey {
 }
 
 export default async function GroupDetailRoute({
-  params,
+  // params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ tab?: string }>;
 }) {
-  const { id } = await params;
+  // const { id } = await params;
   const { tab } = await searchParams;
 
   const activeTab = resolveTab(tab);

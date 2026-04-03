@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogPrimaryButton,
   DialogTitle,
-} from "../../../../common/TeamDialog";
+} from "../../../../common/teamDialog";
 
 export default function CompleteSprintDialog({
   target,

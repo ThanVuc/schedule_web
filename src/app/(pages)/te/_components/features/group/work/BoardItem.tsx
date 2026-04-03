@@ -5,6 +5,8 @@ import { Button, Card, CardContent } from "@/components/ui";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSortable } from '@dnd-kit/react/sortable';
 import { useRouter, useSearchParams } from "next/navigation";
+import { FormatDateShort } from "@/utils/timeFormat";
+import { useEnumMap } from "@/hooks/useEnumMap";
 
 interface BoardItemProps {
     id: string;
@@ -36,14 +38,14 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
       params.delete("id");
     }
 
-    router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+    router.push(`?${params.toString()}`, { scroll: false });
   }
     return (
         <Card
             ref={ref}
-            className={`gap-3 bg-[#1A2332] rounded-2xl border-1 p-3 text-sm m-3 w-80 border-[#2A3A4F] transition-opacity ${isDragging ? 'opacity-50' : 'opacity-100'} cursor-default hover:cursor-pointer`}
+            className={`gap-3 bg-[#1A2332] rounded-2xl border-1 p-3 mb-3 text-sm w-80 border-[#2A3A4F] transition-opacity ${isDragging ? 'opacity-50' : 'opacity-100'} cursor-default hover:cursor-pointer`}
         >
-            <CardContent className="  p-0 ">
+            <CardContent className=" p-0 ">
                 <div className="flex justify-between items-center gap-2">
                     <p className=" hover:text-blue-500 "
                     onClick={()=>{handlePageQueryToModal(ModelType.UPDATE, id)}}
@@ -69,7 +71,7 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
                     </DropdownMenu>
                 </div>
                 <div className={`p-1 w-max text-xs rounded-lg ${state === 1 ? "" : state === 2 ? "bg-[#2A97EA] text-black" : state === 3 ? "bg-[#F8AF18] text-black" : ""}`}>
-                    {state}
+                    {useEnumMap(state, "WORK_STATUS")}
                 </div>
                 <div className="flex justify-between items-center mt-2">
                     <div>
@@ -77,7 +79,7 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
                     </div>
                     <div className="flex gap-2 items-center">
                         <div className="border-[#2A3A4F] border-2 p-1 px-2 rounded-lg">{number}</div>
-                        {date}
+                        <div className="text-xs text-gray-400">{FormatDateShort(date)}</div>
                     </div>
                 </div>
             </CardContent>

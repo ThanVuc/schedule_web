@@ -12,25 +12,34 @@ import {
 import { Form } from "@/components/ui";
 import z from "zod";
 
-import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
+import { useAxiosMutation, useToastState } from "@/hooks";
 import { ChecklistApiUrl } from "@/api/checklist";
 import { ChecklistItemResponse } from "@/app/(pages)/te/_models/works/CheckList";
-import { WorkDetailResponse, WorkRequest } from "../../../../../_models";
-import { boardWorksApiUrl } from "@/api/boardWork";
-import { useEffect } from "react";
+import { ListSimpleSprintResponse, WorkDetailResponse} from "../../../../../_models";
+import { useEffect} from "react";
 import { UpdateWorkSchema } from "@/app/(pages)/te/_models/works/schema/UpdateWork";
 import { DrawerComponent } from "../../work/Drawer";
 import DrawerForm from "../../work/DrawerForm";
 import CheckListComponent from "../../work/CheckListComponent";
 import CommentComponent from "../../work/CommentComponent";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
-export const UpdateBacklogDrawerPage = () => {
+
+interface UpdateBacklogDrawerPageProps {
+    getBoardWorkDataById?: WorkDetailResponse;
+    loadingBoardWork?: boolean;
+    refetchBoardWork?: () => void;
+    GetListSprint?: ListSimpleSprintResponse[];
+    loadingGetListSprint?: boolean;
+}
+
+export const UpdateBacklogDrawerPage = ({ getBoardWorkDataById, loadingBoardWork, refetchBoardWork, GetListSprint, loadingGetListSprint }: UpdateBacklogDrawerPageProps) => {
     const { mode, id, workId } = useModalParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const openDrawer = mode === ModelType.UPDATE
     const { setToast } = useToastState();
-    
+
     const { sendRequest: createChecklistItem } = useAxiosMutation<ChecklistItemResponse, CreateChecklistItemRequest>({
         method: "POST",
         url: `${ChecklistApiUrl.CreateCheckList}/${workId}/checklists`,
@@ -45,38 +54,38 @@ export const UpdateBacklogDrawerPage = () => {
             "Content-Type": "application/json"
         }
     });
-    const {data: getBoardWorkDataById} = useAxios<WorkDetailResponse>({
-        method: "GET",
-        url: `${boardWorksApiUrl.GetBoardWorks}/${id}`
-    })
-    const { sendRequest:  sendUpdateRequest} = useAxiosMutation<WorkRequest>({
-        method: "PATCH",
-        url: `${boardWorksApiUrl.UpdateBoardWork}/${id}`,
+    const { sendRequest: deleteChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
+        method: "DELETE",
+        url: `${ChecklistApiUrl.DeleteCheckList}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     });
 
-    const form = useForm({
+
+    const isFormLoading =
+        mode !== ModelType.CREATE &&
+        mode !== ModelType.DELETE &&
+        (loadingBoardWork || !getBoardWorkDataById || loadingGetListSprint);
+
+    type UpsertWorkValues = z.infer<typeof UpdateWorkSchema>;
+    const form = useForm<UpsertWorkValues>({
         resolver: zodResolver(UpdateWorkSchema),
         defaultValues: {
-            name: "Name",
-            description: "Create a modern and user-friendly login page with email and password fields, forgot password link, and sign-up option.",
+            name: "",
+            description: "",
             status: 1,
             priority: 1,
             due_date: undefined,
             story_point: undefined,
             sprint_id: undefined,
             assignee_id: undefined,
-            assignee_name: "Jane Smith",
             version: undefined,
         }
     });
 
-    type UpsertWorkValues = z.infer<typeof UpdateWorkSchema>;
-    
     useEffect(() => {
-         if (mode !== ModelType.CREATE && mode !== ModelType.DELETE && getBoardWorkDataById) {
+        if (mode !== ModelType.CREATE && mode !== ModelType.DELETE && getBoardWorkDataById) {
             form.reset({
                 name: getBoardWorkDataById.name,
                 description: getBoardWorkDataById.description,
@@ -84,75 +93,24 @@ export const UpdateBacklogDrawerPage = () => {
                 priority: getBoardWorkDataById.priority,
                 due_date: getBoardWorkDataById.due_date,
                 story_point: getBoardWorkDataById.story_point,
-                sprint_id: getBoardWorkDataById.sprint_id,
-                assignee_id: getBoardWorkDataById.assignee.id,
-                assignee_name: getBoardWorkDataById.assignee.name,
+                sprint_id: getBoardWorkDataById.sprint?.id,
                 version: getBoardWorkDataById.version,
             })
-         }
+        }
     }, [getBoardWorkDataById])
 
-    const handleEdit = async (values: UpsertWorkValues) => {
-        const changedValues: Partial<UpsertWorkValues> = {};
-
-        Object.entries(form.formState.dirtyFields).forEach(([key, isDirty]) => {
-            if (isDirty === true) {
-                (changedValues as Record<string, string | number | undefined>)[key] = values[key as keyof UpsertWorkValues];
-            }
-        });
-
-        if (Object.keys(changedValues).length === 0) {
-            setToast({
-                title: "Thông báo",
-                message: "Không có thay đổi để cập nhật.",
-                variant: "success",
-            });
-            return;
-        }
-
-        if (values.version !== undefined) {
-            changedValues.version = values.version;
-        }
-
-        const { error } = await sendUpdateRequest(changedValues, id ?? undefined);
-
-        if (error) {
-            setToast({
-                title: "Lỗi",
-                message: "Không thể cập nhật công việc.",
-                variant: "error",
-            });
-            return;
-        }
-
-        setToast({
-            title: "Thành công",
-            message: "Đã cập nhật công việc.",
-            variant: "success",
-        });
-
-        closeModal();
-    }
 
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("mode");
         params.delete("id");
-        router.push(`/te/group/work?${params.toString()}`, { scroll: false });
+        router.push(`?${params.toString()}`, { scroll: false });
         form.reset();
         form.clearErrors();
-    }
-    const onSubmit = async (values: UpsertWorkValues) => {
-        const isConfirmed = await confirm();
-        if (!isConfirmed) return;
-        if (mode === ModelType.UPDATE) {
-            await handleEdit(values);
-        }
     }
 
     const handleCreateChecklistItem = async (payload: CreateChecklistItemRequest) => {
         const { data, error } = await createChecklistItem(payload);
-
         if (error) {
             setToast({
                 title: "Lỗi",
@@ -167,6 +125,7 @@ export const UpdateBacklogDrawerPage = () => {
             message: "Đã thêm checklist item.",
             variant: "success",
         });
+        await refetchBoardWork?.();
 
         return data ?? null;
     };
@@ -188,30 +147,52 @@ export const UpdateBacklogDrawerPage = () => {
 
         return data ?? null;
     };
+    const handleDeleteChecklistItem = async (checklistId: string) => {
+        const { data, error } = await deleteChecklistItem(undefined, checklistId);
 
+        if (error) {
+            setToast({
+                title: "Lỗi",
+                message: "Không thể xóa checklist item.",
+                variant: "error",
+            });
+            return null;
+        }
+
+        return data ?? null;
+    };
     return (<>
         <DrawerComponent
             open={openDrawer}
             onClose={closeModal}
-            onSubmit={() => { }}
+
         >
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <DrawerForm form={form} />
-                </form>
-            </Form>
-            <div>
-                <CheckListComponent
-                    items={getBoardWorkDataById?.check_lists}
-                    onCreateItem={handleCreateChecklistItem}
-                    onUpdateItem={handleUpdateChecklistItem}
-                />
-            </div>
-            <div>
-                <CommentComponent
-                comments={getBoardWorkDataById?.comments}
-                />
-            </div>
+            {isFormLoading ? (
+                <div className="flex items-center justify-center min-h-[300px]">
+                    <Spinner />
+                </div>
+            ) : (
+                <div>
+                    <Form {...form}>
+                        <form>
+                            <DrawerForm version={Number(getBoardWorkDataById?.version)} form={form} listSprint={GetListSprint} />
+                        </form>
+                    </Form>
+                    <div>
+                        <CheckListComponent
+                            checklistItems={getBoardWorkDataById?.check_list?.items}
+                            onCreateItem={handleCreateChecklistItem}
+                            onUpdateItem={handleUpdateChecklistItem}
+                            onDeleteItem={handleDeleteChecklistItem}
+                        />
+                    </div>
+                    <div>
+                        <CommentComponent
+                            listComments={getBoardWorkDataById?.comments.items}
+                            onRefreshComments={refetchBoardWork}
+                        />
+                    </div>
+                </div>)}
         </DrawerComponent>
     </>);
 }
