@@ -15,7 +15,7 @@ export const InvitePage = () => {
     const { sendRequest } = useAxiosMutation(
         {
             method: 'POST',
-            url: InviteApiUrl.acceptance,
+            url: InviteApiUrl.Acceptance,
         }
     );
 
