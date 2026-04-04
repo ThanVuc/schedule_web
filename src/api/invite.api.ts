@@ -4,6 +4,6 @@ import { globalConfig } from '../global/global'
 const createAPI = (url: string) => `${globalConfig.ApiUrlBase}${url}`;
 
 export const InviteApiUrl = {
-    acceptance: createAPI('invitation/acceptance'),
+    Acceptance: createAPI('ts/groups/invitation/acceptance'),
 }
 export default InviteApiUrl
