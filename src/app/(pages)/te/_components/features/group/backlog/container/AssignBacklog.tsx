@@ -1,7 +1,7 @@
 'use client';
 
 import { Form, } from "@/components/ui";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/TeamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,11 +22,11 @@ export interface AssignBacklogDialogProps {
     onOpenChange: (open: boolean) => void;
     refreshListWork?: () => void;
     listUser?: ListSimpleUserResponse[];
-    getBoardWorkDataById?: WorkDetailResponse ;
+    getBoardWorkDataById?: WorkDetailResponse;
 }
 export const AssignBacklogDialog = ({ open, onOpenChange, refreshListWork, listUser, getBoardWorkDataById }: AssignBacklogDialogProps) => {
 
- const { id, mode } = useModalParams();
+    const { id, mode } = useModalParams();
 
     const form = useForm({
         resolver: zodResolver(AssignWorkSchema),

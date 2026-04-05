@@ -1,7 +1,7 @@
 'use client';
 
 import { Form } from "@/components/ui";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/TeamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
