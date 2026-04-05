@@ -32,9 +32,15 @@ const dialogSizeClasses: Record<DialogSize, string> = {
 
 export interface DialogProps extends React.ComponentProps<typeof DialogPrimitive.Root> {
     warnOnClose?: boolean
+    onClose?: () => void
 }
 
-export function Dialog({ warnOnClose = false, onOpenChange, ...props }: DialogProps) {
+export function Dialog({
+    warnOnClose = false,
+    onOpenChange,
+    onClose,
+    ...props
+}: DialogProps) {
     const [showExitAlert, setShowExitAlert] = React.useState(false)
     const resolveClose = React.useRef<((confirmed: boolean) => void) | null>(null)
 
@@ -48,8 +54,9 @@ export function Dialog({ warnOnClose = false, onOpenChange, ...props }: DialogPr
                 if (!confirmed) return
             }
             onOpenChange?.(open)
+            if (!open) onClose?.()
         },
-        [warnOnClose, onOpenChange],
+        [warnOnClose, onOpenChange, onClose],
     )
 
     return (
@@ -57,8 +64,16 @@ export function Dialog({ warnOnClose = false, onOpenChange, ...props }: DialogPr
             <DialogPrimitive.Root data-slot="dialog" onOpenChange={handleOpenChange} {...props} />
             {showExitAlert && (
                 <ExitConfirmAlert
-                    onConfirm={() => { setShowExitAlert(false); resolveClose.current?.(true); resolveClose.current = null }}
-                    onCancel={() => { setShowExitAlert(false); resolveClose.current?.(false); resolveClose.current = null }}
+                    onConfirm={() => {
+                        setShowExitAlert(false)
+                        resolveClose.current?.(true)
+                        resolveClose.current = null
+                    }}
+                    onCancel={() => {
+                        setShowExitAlert(false)
+                        resolveClose.current?.(false)
+                        resolveClose.current = null
+                    }}
                 />
             )}
         </>
@@ -94,7 +109,6 @@ export function DialogContent({
         </BaseDialogContent>
     )
 }
-
 
 export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     icon?: React.ReactNode
@@ -194,7 +208,6 @@ export function DialogPrimaryButton({
                     onCancel={() => setShowConfirm(false)}
                 />
             )}
-
             <Button
                 type="button"
                 disabled={disabled}
@@ -211,9 +224,6 @@ export function DialogPrimaryButton({
         </>
     )
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-
 
 export function DialogDangerButton({
     className,
@@ -232,6 +242,126 @@ export function DialogDangerButton({
     )
 }
 
+export interface TeamDialogFormProps {
+    trigger?: React.ReactNode
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    onClose?: () => void
+    size?: DialogSize
+    warnOnClose?: boolean
+    title?: string
+    description?: string
+    icon?: React.ReactNode
+    submitButtonText?: string | null
+    cancelButtonText?: string
+    BottomComponent?: React.ReactNode
+    submitDisabled?: boolean
+    submitConfirm?: boolean
+    submitConfirmTitle?: string
+    submitConfirmDescription?: string
+    submitConfirmLabel?: string
+    submitConfirmCancelLabel?: string
+
+    onSubmit?: () => void | Promise<void>
+
+    children?: React.ReactNode
+}
+
+export function TeamDialogForm({
+    trigger,
+    open,
+    onOpenChange,
+    onClose,
+    size = "md",
+    warnOnClose = false,
+    title = "",
+    description,
+    icon,
+    submitButtonText = "Lưu",
+    cancelButtonText = "Hủy",
+    BottomComponent,
+    submitDisabled = false,
+    submitConfirm = false,
+    submitConfirmTitle = "Xác nhận",
+    submitConfirmDescription = "Bạn có chắc chắn muốn thực hiện hành động này không?",
+    submitConfirmLabel = "Xác nhận",
+    submitConfirmCancelLabel = "Hủy",
+
+    onSubmit,
+    children,
+}: TeamDialogFormProps) {
+    const [submitting, setSubmitting] = React.useState(false)
+
+    const handleOpenChange = (nextOpen: boolean) => {
+        onOpenChange?.(nextOpen)
+        if (!nextOpen) onClose?.()
+    }
+
+    const handleSubmit = async () => {
+        if (submitting || !onSubmit) return
+        setSubmitting(true)
+        try {
+            await onSubmit()
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    return (
+        <Dialog
+            open={open}
+            onOpenChange={handleOpenChange}
+            warnOnClose={warnOnClose}
+        >
+            {trigger && (
+                <DialogPrimitive.Trigger asChild>
+                    {trigger}
+                </DialogPrimitive.Trigger>
+            )}
+
+            <DialogContent size={size}>
+                <DialogHeader icon={icon}>
+                    <DialogPrimitive.Title className="text-white text-base">
+                        {title}
+                    </DialogPrimitive.Title>
+                    {description && (
+                        <DialogPrimitive.Description className="text-gray-500 text-xs">
+                            {description}
+                        </DialogPrimitive.Description>
+                    )}
+                </DialogHeader>
+
+                <DialogBody>
+                    {children}
+                </DialogBody>
+
+                <DialogFooter className="sm:justify-between">
+                    <DialogPrimitive.Close asChild>
+                        <DialogCancelButton>{cancelButtonText}</DialogCancelButton>
+                    </DialogPrimitive.Close>
+
+                    <div className="flex items-center gap-2">
+                        {BottomComponent}
+
+                        {submitButtonText !== null && (
+                            <DialogPrimaryButton
+                                disabled={submitDisabled || submitting}
+                                confirmSubmit={submitConfirm}
+                                confirmTitle={submitConfirmTitle}
+                                confirmDescription={submitConfirmDescription}
+                                confirmLabel={submitConfirmLabel}
+                                cancelLabel={submitConfirmCancelLabel}
+                                onClick={() => { void handleSubmit() }}
+                            >
+                                {submitButtonText}
+                            </DialogPrimaryButton>
+                        )}
+                    </div>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 function AlertCard({ children }: { children: React.ReactNode }) {
     return (
@@ -253,7 +383,6 @@ function AlertCard({ children }: { children: React.ReactNode }) {
     )
 }
 
-
 export function ExitConfirmAlert({
     onConfirm,
     onCancel,
@@ -274,10 +403,16 @@ export function ExitConfirmAlert({
                     </div>
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <Button
+                        onClick={onCancel}
+                        className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                    >
                         Tiếp tục chỉnh sửa
                     </Button>
-                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <Button
+                        onClick={onConfirm}
+                        className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
+                    >
                         Hủy các thay đổi
                     </Button>
                 </div>
@@ -312,55 +447,20 @@ export function SubmitConfirmModal({
                     </div>
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                    <Button onClick={onCancel} className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <Button
+                        onClick={onCancel}
+                        className="inline-flex h-9 items-center rounded-md border px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                    >
                         {cancelLabel}
                     </Button>
-                    <Button onClick={onConfirm} className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <Button
+                        onClick={onConfirm}
+                        className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
                         {confirmLabel}
                     </Button>
                 </div>
             </AlertCard>
         </DialogPrimitive.Root>
     )
-}
-
-export interface UseDialogSubmitOptions {
-    onSubmit: () => void | Promise<void>
-    confirmSubmit?: boolean
-    confirmTitle?: string
-    confirmDescription?: string
-    confirmLabel?: string
-    cancelLabel?: string
-}
-
-export function useDialogSubmit({
-    onSubmit,
-    confirmSubmit = false,
-    confirmTitle,
-    confirmDescription,
-    confirmLabel,
-    cancelLabel,
-}: UseDialogSubmitOptions) {
-    const [showConfirm, setShowConfirm] = React.useState(false)
-
-    const handleSubmit = React.useCallback(() => {
-        if (confirmSubmit) {
-            setShowConfirm(true)
-        } else {
-            onSubmit()
-        }
-    }, [confirmSubmit, onSubmit])
-
-    const confirmModal = showConfirm ? (
-        <SubmitConfirmModal
-            title={confirmTitle}
-            description={confirmDescription}
-            confirmLabel={confirmLabel}
-            cancelLabel={cancelLabel}
-            onConfirm={() => { setShowConfirm(false); onSubmit() }}
-            onCancel={() => setShowConfirm(false)}
-        />
-    ) : null
-
-    return { handleSubmit, confirmModal }
 }

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import { Users, MoreVertical, Pencil, Trash2, LogOut, Clock } from "lucide-react";
 import {
     DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
@@ -46,13 +46,13 @@ interface CardDropdownProps {
 const CardDropdown = ({ groupId, role, onEdit, onDelete, onLeave }: CardDropdownProps) => (
     <DropdownMenu>
         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <button
+            <Button
                 className="flex items-center justify-center w-7 h-7 rounded-md text-gray-500
-                   hover:bg-[#1E2A3A] hover:text-gray-300 transition-colors"
+                   hover:bg-[#1E2A3A] bg-transparent hover:text-gray-300 transition-colors"
                 aria-label="More options"
             >
                 <MoreVertical size={15} />
-            </button>
+            </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
@@ -142,13 +142,13 @@ export const GroupCard = ({
             {group.name}
         </h3>
         <p className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
-            <Clock size={11} className="shrink-0" /> Updated {group.updatedAt}
+            <Clock size={11} className="shrink-0" /> Cập nhật lần cuối: {group.updatedAt}
         </p>
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#1E2A3A]">
             <span className="flex items-center gap-1.5 text-xs text-gray-400">
                 <Users size={13} className="shrink-0 text-gray-500" />
-                {group.memberCount} members
+                {group.memberCount} thành viên
             </span>
             <RoleBadge role={group.role} />
         </div>

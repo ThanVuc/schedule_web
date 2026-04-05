@@ -1,5 +1,4 @@
-import { FormField, FormMessage, Input, Label } from "@/components/ui";
-import type { UseFormReturn } from "react-hook-form";
+import { Input, Label } from "@/components/ui";
 import type { SprintFormData } from "../sprintTypes";
 
 const labelClassName = "text-xs font-medium text-[#C9D4E4]";
@@ -7,70 +6,56 @@ const controlClassName =
   "h-9 rounded-lg border border-[#1D2C43] bg-[#0F1A2F] px-3 text-sm text-white placeholder:text-[#60708A] focus-visible:ring-1 focus-visible:ring-[#2B79C2] focus-visible:border-[#2B79C2]";
 
 export default function CreateEditSprintForm({
-  form,
+  data,
+  setData,
 }: {
-  form: UseFormReturn<SprintFormData>;
+  data: SprintFormData;
+  setData: React.Dispatch<React.SetStateAction<SprintFormData>>;
 }) {
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
         <Label className={labelClassName}>Tên Sprint</Label>
-        <FormField
-          name="name"
-          control={form.control}
-          render={({ field }) => (
-            <div className="space-y-1">
-              <Input
-                {...field}
-                type="text"
-                placeholder="Nhập tên sprint"
-                maxLength={200}
-                className={controlClassName}
-              />
-              <FormMessage className="text-xs" />
-            </div>
-          )}
+        <Input
+          type="text"
+          placeholder="Nhập tên sprint"
+          maxLength={200}
+          className={controlClassName}
+          value={data.name}
+          onChange={(e) => setData((prev) => ({ ...prev, name: e.target.value }))}
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className={labelClassName}>Mục tiêu Sprint</Label>
+        <Input
+          type="text"
+          placeholder="Nhập mục tiêu sprint"
+          maxLength={5000}
+          className={controlClassName}
+          value={data.goal}
+          onChange={(e) => setData((prev) => ({ ...prev, goal: e.target.value }))}
         />
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="space-y-1.5">
           <Label className={labelClassName}>Ngày bắt đầu</Label>
-          <FormField
-            name="startDate"
-            control={form.control}
-            render={({ field }) => (
-              <div className="space-y-1">
-                <Input
-                  {...field}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="dd/mm/yyyy"
-                  className={controlClassName + " [color-scheme:dark]"}
-                />
-                <FormMessage className="text-xs" />
-              </div>
-            )}
+          <Input
+            type="date"
+            className={controlClassName + " [color-scheme:dark]"}
+            value={data.startDate}
+            onChange={(e) => setData((prev) => ({ ...prev, startDate: e.target.value }))}
           />
         </div>
 
         <div className="space-y-1.5">
           <Label className={labelClassName}>Ngày kết thúc</Label>
-          <FormField
-            name="endDate"
-            control={form.control}
-            render={({ field }) => (
-              <div className="space-y-1">
-                <Input
-                  {...field}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="dd/mm/yyyy"
-                  className={controlClassName + " [color-scheme:dark]"}
-                />
-                <FormMessage className="text-xs" />
-              </div>
-            )}
+          <Input
+            type="date"
+            className={controlClassName + " [color-scheme:dark]"}
+            value={data.endDate}
+            onChange={(e) => setData((prev) => ({ ...prev, endDate: e.target.value }))}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogBody,
@@ -12,25 +12,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../../common/teamDialog";
-import type { MemberRole } from "./ChangeRole";
+} from "../../../common/TeamDialog";
+import type { DeleteMemberDialogProps, MemberToDelete } from "./memberTypes";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamMemberApiUrl } from "@/api/teamGroup";
+import { memberApiToastMessage } from "./memberToastErrors";
 
-export interface MemberToDelete {
-  id: string;
-  name: string;
-  email: string;
-  role: MemberRole;
-}
+export type { MemberToDelete };
 
 export function DeleteMemberDialog({
   target,
   onOpenChange,
-  onConfirm,
-}: {
-  target: MemberToDelete | null;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: (id: string) => void;
-}) {
+  groupId,
+  onSuccess,
+}: DeleteMemberDialogProps) {
+  const { setToast } = useToastState();
+  const { sendRequest: deleteMemberRequest } = useAxiosMutation({
+    method: "DELETE",
+    url: teamMemberApiUrl.list(groupId),
+  });
+  const [submitting, setSubmitting] = useState(false);
+
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
       <DialogContent size="sm">
@@ -51,12 +54,29 @@ export function DeleteMemberDialog({
         <DialogBody />
         <DialogFooter>
           <DialogClose asChild>
-            <DialogCancelButton>Hủy</DialogCancelButton>
+            <DialogCancelButton disabled={submitting}>Hủy</DialogCancelButton>
           </DialogClose>
           <DialogDangerButton
-            onClick={() => {
-              if (!target) return;
-              onConfirm(target.id);
+            disabled={submitting}
+            onClick={async () => {
+              if (!target || !groupId) return;
+              setSubmitting(true);
+              const { error } = await deleteMemberRequest(undefined, target.id);
+              setSubmitting(false);
+              if (error) {
+                setToast({
+                  title: "Xóa thành viên thất bại",
+                  message: memberApiToastMessage(
+                    error,
+                    "removeMember",
+                    "Không thể xóa thành viên khỏi nhóm.",
+                  ),
+                  variant: "error",
+                });
+                return;
+              }
+              onSuccess?.();
+              onOpenChange(false);
             }}
           >
             Xóa thành viên

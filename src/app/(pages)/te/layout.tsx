@@ -2,7 +2,7 @@ import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes';
 import { Geist } from 'next/font/google'
-import { Sidebar } from './_components/common';
+import TeamSidebar from './_components/common/TeamSidebar';
 
 const _geist = Geist({ subsets: ["latin"] });
 
@@ -42,11 +42,11 @@ export default function TeamLayout({
             disableTransitionOnChange
         >
             <Toaster richColors position="top-right" expand={false} theme="dark" className="app-toaster" />
-            <Sidebar currentPage='/te/group'>
+            <TeamSidebar currentPage='/te/group'>
                 <div className={`${_geist.className} ${_geist.className}`}>
                     {children}
                 </div>
-            </Sidebar>
+            </TeamSidebar>
         </ThemeProvider>
     )
 }

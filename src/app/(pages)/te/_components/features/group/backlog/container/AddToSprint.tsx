@@ -2,7 +2,7 @@
 
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/TeamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
 import { useAxiosMutation } from "@/hooks/useAxios";

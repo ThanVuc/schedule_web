@@ -14,12 +14,14 @@ import { Button } from "@/components/ui";
 export default function SprintActionsMenu({
   sprint,
   onEdit,
+  onActivate,
   onComplete,
   onCancel,
   onDelete,
 }: {
   sprint: Sprint;
   onEdit: () => void;
+  onActivate: () => void;
   onComplete: () => void;
   onCancel: () => void;
   onDelete: () => void;
@@ -45,6 +47,15 @@ export default function SprintActionsMenu({
         >
           Chỉnh sửa Sprint
         </DropdownMenuItem>
+
+        {sprint.status === "Draft" && (
+          <DropdownMenuItem
+            onSelect={() => onActivate()}
+            className="z-[200] cursor-pointer hover:bg-[#F8AF18] hover:text-black data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-black"
+          >
+            Kích hoạt Sprint
+          </DropdownMenuItem>
+        )}
 
         {sprint.status !== "Completed" && sprint.status !== "Cancelled" && (
           <>
