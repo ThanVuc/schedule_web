@@ -1,78 +1,115 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Plus, Zap } from "lucide-react";
-import type { Sprint, SprintFormData } from "./sprintTypes";
-import { INITIAL_SPRINTS } from "./mockSprints";
+import type { Sprint, SprintApiItem, SprintFormData, SprintListMetadata } from "./sprintTypes";
 import SprintCard from "./components/SprintCard";
 import { Button } from "@/components/ui";
+import { useAxios } from "@/hooks/useAxios";
+import { teamSprintApiUrl } from "@/api/teamGroup";
 import CreateEditSprintDialog from "./container/CreateEditSprintDialog";
 import GenerateSprintWithAIDialog from "./container/GenerateSprintWithAIDialog";
+import ActivateSprintDialog from "./container/ActivateSprintDialog";
 import CompleteSprintDialog from "./container/CompleteSprintDialog";
 import CancelSprintDialog from "./container/CancelSprintDialog";
 import DeleteSprintDialog from "./container/DeleteSprintDialog";
 
 export default function BoardSprintPage() {
-  const [sprints, setSprints] = useState<Sprint[]>(INITIAL_SPRINTS);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = useParams<{ id: string }>();
+  const groupId = params?.id ?? "";
+  const altGroupId = (searchParams.get("altGroupId") ?? "").trim();
+  const [activeGroupId, setActiveGroupId] = useState(groupId);
+
+  useEffect(() => {
+    setActiveGroupId(groupId);
+  }, [groupId]);
+
+  const { data: sprintData, loading, refetch, error: sprintListError } = useAxios<SprintListMetadata>(
+    {
+      method: "GET",
+      url: teamSprintApiUrl.list(activeGroupId),
+    },
+    [activeGroupId],
+    !activeGroupId,
+  );
+
+  const normalizeStatus = (status?: SprintApiItem["status"]): Sprint["status"] => {
+    const statusText = (() => {
+      if (typeof status === "string" || typeof status === "number") return String(status);
+      if (status && typeof status === "object") {
+        if ("name" in status && typeof status.name === "string") return status.name;
+        if ("value" in status && typeof status.value === "string") return status.value;
+        if ("id" in status && (typeof status.id === "string" || typeof status.id === "number")) return String(status.id);
+      }
+      return "";
+    })();
+
+    const normalized = statusText.trim().toLowerCase();
+    if (normalized === "active") return "Active";
+    if (normalized === "completed") return "Completed";
+    if (normalized === "cancelled") return "Cancelled";
+    if (normalized === "1") return "Draft";
+    if (normalized === "2") return "Active";
+    if (normalized === "3") return "Completed";
+    if (normalized === "4") return "Cancelled";
+    return "Draft";
+  };
+
+  const sprintsFromApi = (() => {
+    const raw = sprintData;
+    if (!raw) return [] as SprintApiItem[];
+    if (Array.isArray(raw)) return raw;
+    if (Array.isArray(raw.items)) return raw.items;
+    if (Array.isArray(raw.sprints)) return raw.sprints;
+    if (Array.isArray(raw.data)) return raw.data;
+    if (raw.data && !Array.isArray(raw.data) && Array.isArray(raw.data.items)) return raw.data.items;
+    if (raw.result && Array.isArray(raw.result.items)) return raw.result.items;
+    return [] as SprintApiItem[];
+  })();
+  const sprints: Sprint[] = sprintsFromApi.map((item) => {
+    const primaryId = (item.id ?? "").trim() || (item.sprint_id ?? "").trim();
+    const secondaryId = (item.sprint_id ?? "").trim();
+    const altSprintId = primaryId && secondaryId && primaryId !== secondaryId ? secondaryId : undefined;
+    return {
+      id: primaryId,
+      altSprintId,
+      name: item.name ?? item.title ?? "Untitled sprint",
+      goal: item.goal ?? "",
+      startDate: item.start_date ?? item.startDate ?? "",
+      endDate: item.end_date ?? item.endDate ?? "",
+      status: normalizeStatus(item.status),
+      progress: item.progress ?? 0,
+    };
+  }).filter((item) => item.id);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Sprint | null>(null);
 
+  const [activateTarget, setActivateTarget] = useState<Sprint | null>(null);
   const [completeTarget, setCompleteTarget] = useState<Sprint | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Sprint | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Sprint | null>(null);
 
   const [aiOpen, setAiOpen] = useState(false);
+  const isForbidden = sprintListError?.response?.status === 422;
 
-  const handleCreate = (data: SprintFormData) => {
-    const newSprint: Sprint = {
-      id: Date.now().toString(),
-      ...data,
-      status: "Draft",
-      progress: 0,
-    };
-
-    setSprints((prev) => [...prev, newSprint]);
-    setCreateOpen(false);
-  };
+  useEffect(() => {
+    if (!isForbidden || !altGroupId || activeGroupId === altGroupId) return;
+    setActiveGroupId(altGroupId);
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("altGroupId");
+    router.replace(`/te/group/${altGroupId}?${next.toString()}`, { scroll: false });
+  }, [activeGroupId, altGroupId, isForbidden, router, searchParams]);
 
   const toFormData = (s: Sprint): SprintFormData => ({
     name: s.name,
+    goal: s.goal,
     startDate: s.startDate,
     endDate: s.endDate,
   });
-
-  const handleEdit = (data: SprintFormData) => {
-    if (!editTarget) return;
-
-    setSprints((prev) =>
-      prev.map((s) => (s.id === editTarget.id ? { ...s, ...data } : s)),
-    );
-    setEditTarget(null);
-  };
-
-  const handleComplete = (sprintId: string) => {
-    setSprints((prev) =>
-      prev.map((s) =>
-        s.id === sprintId ? { ...s, status: "Completed", progress: 100 } : s,
-      ),
-    );
-    setCompleteTarget(null);
-  };
-
-  const handleCancel = (sprintId: string) => {
-    setSprints((prev) =>
-      prev.map((s) =>
-        s.id === sprintId ? { ...s, status: "Cancelled", progress: 0 } : s,
-      ),
-    );
-    setCancelTarget(null);
-  };
-
-  const handleDelete = (sprintId: string) => {
-    setSprints((prev) => prev.filter((s) => s.id !== sprintId));
-    setDeleteTarget(null);
-  };
 
   return (
     <div className="px-6 py-6">
@@ -110,11 +147,22 @@ export default function BoardSprintPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {loading && (
+          <div className="py-3 text-sm text-gray-500 lg:col-span-2">
+            Đang tải danh sách sprint...
+          </div>
+        )}
+        {isForbidden && (
+          <div className="px-4 py-3 text-sm text-amber-300 border border-[#1E2A3A] rounded-md bg-amber-500/10 lg:col-span-2">
+            Bạn không phải thành viên của group này nên không thể xem danh sách sprint.
+          </div>
+        )}
         {sprints.map((sprint) => (
           <SprintCard
             key={sprint.id}
             sprint={sprint}
             onEdit={() => setEditTarget(sprint)}
+            onActivate={() => setActivateTarget(sprint)}
             onComplete={() => setCompleteTarget(sprint)}
             onCancel={() => setCancelTarget(sprint)}
             onDelete={() => setDeleteTarget(sprint)}
@@ -132,7 +180,8 @@ export default function BoardSprintPage() {
         open={createOpen}
         onOpenChange={setCreateOpen}
         mode="create"
-        onConfirm={handleCreate}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
       />
 
       {editTarget && (
@@ -142,19 +191,36 @@ export default function BoardSprintPage() {
             if (!open) setEditTarget(null);
           }}
           mode="edit"
+          groupId={activeGroupId}
+          editTarget={editTarget}
           initialData={toFormData(editTarget)}
-          onConfirm={handleEdit}
+          onSuccess={() => refetch?.()}
         />
       )}
 
-      <GenerateSprintWithAIDialog open={aiOpen} onOpenChange={setAiOpen} />
+      <GenerateSprintWithAIDialog
+        open={aiOpen}
+        onOpenChange={setAiOpen}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
+      />
+
+      <ActivateSprintDialog
+        target={activateTarget}
+        onOpenChange={(open) => {
+          if (!open) setActivateTarget(null);
+        }}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
+      />
 
       <CompleteSprintDialog
         target={completeTarget}
         onOpenChange={(open) => {
           if (!open) setCompleteTarget(null);
         }}
-        onConfirm={handleComplete}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
       />
 
       <CancelSprintDialog
@@ -162,7 +228,8 @@ export default function BoardSprintPage() {
         onOpenChange={(open) => {
           if (!open) setCancelTarget(null);
         }}
-        onConfirm={handleCancel}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
       />
 
       <DeleteSprintDialog
@@ -170,9 +237,9 @@ export default function BoardSprintPage() {
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-        onConfirm={handleDelete}
+        groupId={activeGroupId}
+        onSuccess={() => refetch?.()}
       />
     </div>
   );
 }
-

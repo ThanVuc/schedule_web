@@ -9,9 +9,9 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogDangerButton,
   DialogFooter,
   DialogHeader,
+  DialogPrimaryButton,
   DialogTitle,
 } from "../../../../common/TeamDialog";
 import { useAxiosMutation } from "@/hooks/useAxios";
@@ -19,9 +19,9 @@ import { useToastState } from "@/hooks/useToasts";
 import { teamSprintApiUrl } from "@/api/teamGroup";
 import { sprintApiToastMessage } from "./sprintToastErrors";
 
-const CANCEL_STATUS = 4;
+const ACTIVE_STATUS = 2;
 
-export default function CancelSprintDialog({
+export default function ActivateSprintDialog({
   target,
   onOpenChange,
   groupId,
@@ -34,22 +34,23 @@ export default function CancelSprintDialog({
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const handleCancel = async () => {
+  const handleActivate = async () => {
     if (!target) return;
     setSubmitting(true);
     const { error } = await updateSprintStatusInGroupRequest(
-      { status: CANCEL_STATUS },
+      { status: ACTIVE_STATUS },
       `${target.id}/status`,
     );
     setSubmitting(false);
     if (error) {
       setToast({
-        title: "Hủy sprint thất bại",
-        message: sprintApiToastMessage(error, "cancelSprint", "Không thể hủy sprint."),
+        title: "Kích hoạt sprint thất bại",
+        message: sprintApiToastMessage(error, "activateSprint", "Không thể kích hoạt sprint."),
         variant: "error",
       });
       return;
     }
+    setToast({ title: "Thành công", message: "Sprint đã được kích hoạt.", variant: "success" });
     onSuccess?.();
     onOpenChange(false);
   };
@@ -59,20 +60,21 @@ export default function CancelSprintDialog({
       <DialogContent size="sm">
         <DialogHeader>
           <DialogTitle className="text-white text-base">
-            Hủy Sprint
+            Kích hoạt Sprint
           </DialogTitle>
           <DialogDescription className="text-gray-500 text-sm">
-            Bạn có chắc muốn hủy sprint này? Sprint sẽ được đánh dấu đã hủy và dữ liệu sẽ trở thành chỉ đọc.
+            Sprint sẽ chuyển sang trạng thái Active và nhóm có thể bắt đầu làm việc
+            trong khoảng thời gian đã đặt.
           </DialogDescription>
         </DialogHeader>
         <DialogBody />
         <DialogFooter>
           <DialogClose asChild>
-            <DialogCancelButton disabled={submitting}>Thoát</DialogCancelButton>
+            <DialogCancelButton disabled={submitting}>Hủy</DialogCancelButton>
           </DialogClose>
-          <DialogDangerButton disabled={submitting} onClick={handleCancel}>
-            Hủy
-          </DialogDangerButton>
+          <DialogPrimaryButton disabled={submitting} onClick={handleActivate}>
+            Kích hoạt
+          </DialogPrimaryButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

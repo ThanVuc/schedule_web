@@ -10,9 +10,10 @@ import { AppBellNotification } from "@/components/common";
 import img from "@/../public/assets/e145d5f684c1d0a465722a583e09904e.jpg";
 import { Users, Bell, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { Schedulr } from "@/components/icon";
 
 
-const SIDEBAR_ABBR = "Nhóm";
+const SIDEBAR_ABBR = "Schedulr";
 
 const SIDEBAR_ITEMS = [
     { title: "Nhóm", url: "/te/group", icon: Users },
@@ -43,8 +44,8 @@ const TeamSidebar = ({
             >
                 <div className="flex h-17 items-center justify-between px-4 border-b-1">
                     {open && (
-                        <Link href="/" className="text-lg font-bold text-blue-500 select-none">
-                            {SIDEBAR_ABBR}
+                        <Link href="/" className="text-lg font-bold text-blue-500 select-none flex gap-2">
+                            <Schedulr className="h-auto w-auto" />{SIDEBAR_ABBR}
                         </Link>
                     )}
                     <Button

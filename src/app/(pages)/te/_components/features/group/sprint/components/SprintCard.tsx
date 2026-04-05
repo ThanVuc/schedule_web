@@ -9,12 +9,14 @@ import SprintStatusBadge from "./SprintStatusBadge";
 export default function SprintCard({
   sprint,
   onEdit,
+  onActivate,
   onComplete,
   onCancel,
   onDelete,
 }: {
   sprint: Sprint;
   onEdit: () => void;
+  onActivate: () => void;
   onComplete: () => void;
   onCancel: () => void;
   onDelete: () => void;
@@ -37,6 +39,7 @@ export default function SprintCard({
         <SprintActionsMenu
           sprint={sprint}
           onEdit={onEdit}
+          onActivate={onActivate}
           onComplete={onComplete}
           onCancel={onCancel}
           onDelete={onDelete}

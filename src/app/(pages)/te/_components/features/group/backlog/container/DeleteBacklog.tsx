@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react";
 
 import { TrashIcon } from "@/components/icon";
 import { Dialog, DialogClose, DialogDescription, DialogTitle } from "@/components/ui";
-import { DialogBody, DialogCancelButton, DialogContent, DialogDangerButton, DialogFooter, DialogHeader } from "../../../../common/teamDialog";
+import { DialogBody, DialogCancelButton, DialogContent, DialogDangerButton, DialogFooter, DialogHeader } from "../../../../common/TeamDialog";
 import { useModalParams } from "@/app/(pages)/te/_hooks";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { boardWorksApiUrl } from "@/api/boardWork";
@@ -21,7 +21,7 @@ export interface DeleteBacklogDialogProps {
 
 export const DeleteBacklogDialog = ({ open, onOpenChange, refreshListWork }: DeleteBacklogDialogProps) => {
 
- const { mode, id } = useModalParams();
+    const { mode, id } = useModalParams();
     const { sendRequest: DeleteWork } = useAxiosMutation({
         method: "DELETE",
         url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
@@ -29,7 +29,7 @@ export const DeleteBacklogDialog = ({ open, onOpenChange, refreshListWork }: Del
 
     const onSubmit = async (id: string) => {
         if (mode === ModelType.DELETE) {
-            await DeleteWork(undefined,id.toString());
+            await DeleteWork(undefined, id.toString());
             refreshListWork?.();
             onOpenChange(false);
         }

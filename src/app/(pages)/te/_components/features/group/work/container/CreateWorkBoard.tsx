@@ -2,7 +2,7 @@
 
 import { Form } from "@/components/ui";
 import { Plus } from "lucide-react";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/teamDialog";
+import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/TeamDialog";
 import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import CreateWorkForm from "../CreateWorkForm";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,7 @@ interface CreateWorkBoardDialogProps {
     onOpenChange?: (open: boolean) => void;
     refreshListWork?: () => void;
 }
-export const CreateWorkBoardDialog = ({ open,refreshListWork , loading, listSprint, onOpenChange }: CreateWorkBoardDialogProps) => {
+export const CreateWorkBoardDialog = ({ open, refreshListWork, loading, listSprint, onOpenChange }: CreateWorkBoardDialogProps) => {
     const [formReady, setFormReady] = useState(false);
     const { mode } = useModalParams();
 

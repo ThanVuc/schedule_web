@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-    Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-    DialogBody, DialogFooter, DialogCancelButton, DialogPrimaryButton, DialogClose,
-} from "../../../common/teamDialog";
+import { TeamDialogForm } from "../../../common/TeamDialog";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamMemberApiUrl } from "@/api/teamGroup";
+import { memberApiToastMessage } from "./memberToastErrors";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -13,27 +14,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui";
 import { Check, ChevronDown } from "lucide-react";
+import type { MemberRole, RoleDefinition, RoleDropdownProps, ChangeRoleDialogProps } from "./memberTypes";
 
-export type MemberRole = "Owner" | "Manager" | "Member" | "Viewer";
+export type { MemberRole, ChangeRoleDialogProps };
 
-export const ROLES: { value: MemberRole; label: string; desc: string }[] = [
+function toApiRole(role: MemberRole) {
+    return role.toLowerCase();
+}
+
+export const ROLES: RoleDefinition[] = [
     { value: "Owner", label: "Owner", desc: "Quyền quản trị viên đầy đủ để quản lý thành viên và xem toàn bộ nội dung." },
     { value: "Manager", label: "Manager", desc: "Quản lý thành viên và sprints" },
     { value: "Member", label: "Member", desc: "Tham gia và đóng góp vào công việc" },
     { value: "Viewer", label: "Viewer", desc: "Chỉ xem, không được chỉnh sửa" },
 ];
 
-
 export function RoleDropdown({
     value,
     onChange,
     triggerClassName,
-}: {
-    value: MemberRole;
-    onChange: (r: MemberRole) => void;
-    triggerClassName?: string;
-}) {
+}: RoleDropdownProps) {
     const selected = ROLES.find((r) => r.value === value) ?? ROLES[0];
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -60,14 +62,13 @@ export function RoleDropdown({
                         <DropdownMenuItem
                             key={role.value}
                             onSelect={() => onChange(role.value)}
-                            className={`justify-between cursor-pointer
-                                ${isActive
-                                    ? "bg-[#F8AF18] text-black font-semibold hover:bg-[#F8AF18]"
-                                    : "text-gray-300 hover:bg-[#1A2535] hover:text-white"}`
-                            }
+                            className={`justify-between cursor-pointer ${isActive
+                                ? "bg-[#F8AF18] text-black font-semibold hover:bg-[#F8AF18]"
+                                : "text-gray-300 hover:bg-[#1A2535] hover:text-white"
+                                }`}
                         >
                             <span className="flex-1 truncate pr-2">{role.label}</span>
-                            {isActive ? <Check size={16} className="text-black" /> : null}
+                            {isActive && <Check size={16} className="text-black" />}
                         </DropdownMenuItem>
                     );
                 })}
@@ -76,60 +77,64 @@ export function RoleDropdown({
     );
 }
 
-interface ChangeRoleDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    memberName: string;
-    currentRole: MemberRole;
-    onConfirm: (newRole: MemberRole) => void;
-}
-
 export function ChangeRoleDialog({
-    open, onOpenChange, memberName, currentRole, onConfirm,
+    open,
+    onOpenChange,
+    memberName,
+    currentRole,
+    memberId,
+    groupId,
+    onSuccess,
 }: ChangeRoleDialogProps) {
-    const [selected, setSelected] = useState<MemberRole>(currentRole);
-
-    const isDirty = selected !== currentRole;
-    const roleObj = ROLES.find((r) => r.value === selected)!;
+    const { setToast } = useToastState();
+    const { sendRequest: changeRoleRequest } = useAxiosMutation({
+        method: "PATCH",
+        url: teamMemberApiUrl.list(groupId),
+    });
+    const [role, setRole] = useState<MemberRole>(currentRole);
 
     useEffect(() => {
-        if (open) setSelected(currentRole);
+        if (open) setRole(currentRole);
     }, [open, currentRole]);
 
+    const roleObj = ROLES.find((r) => r.value === role)!;
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent size="md">
-                <DialogHeader >
-                    <DialogTitle className="text-white text-base">Thay đổi vai trò thành viên</DialogTitle>
-                    <DialogDescription className="text-gray-500 text-xs">
-                        Cập nhật vai trò cho{" "}
-                        <span className="text-gray-300 font-medium">{memberName}</span>
-                    </DialogDescription>
-                </DialogHeader>
-
-                <DialogBody className="flex flex-col gap-3">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vai trò</p>
-
-                    <RoleDropdown value={selected} onChange={setSelected} />
-
-                    <div className={`flex items-start gap-3 rounded-lg px-4 py-3
-                                     border border-[#1E2A3A] transition-all duration-200`}>
-                        <p className="text-xs text-gray-400 leading-relaxed">{roleObj.desc}</p>
-                    </div>
-                </DialogBody>
-
-                <DialogFooter className="sm:justify-between">
-                    <DialogClose asChild>
-                        <DialogCancelButton>Thoát</DialogCancelButton>
-                    </DialogClose>
-                    <DialogPrimaryButton
-                        disabled={!isDirty}
-                        onClick={() => onConfirm(selected)}
-                    >
-                        Cập nhật vai trò
-                    </DialogPrimaryButton>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <TeamDialogForm
+            open={open}
+            onOpenChange={onOpenChange}
+            size="md"
+            title="Change Member Role"
+            description={`Update the role for ${memberName}`}
+            warnOnClose={role !== currentRole}
+            submitDisabled={role === currentRole || !groupId || !memberId}
+            submitButtonText="Update Role"
+            cancelButtonText="Cancel"
+            onSubmit={async () => {
+                const { error } = await changeRoleRequest({ role: toApiRole(role) }, memberId);
+                if (error) {
+                    setToast({
+                        title: "Đổi vai trò thất bại",
+                        message: memberApiToastMessage(
+                            error,
+                            "changeMemberRole",
+                            "Không thể cập nhật vai trò thành viên.",
+                        ),
+                        variant: "error",
+                    });
+                    return;
+                }
+                onSuccess?.();
+                onOpenChange(false);
+            }}
+        >
+            <div className="flex flex-col gap-3">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Role</p>
+                <RoleDropdown value={role} onChange={setRole} />
+                <div className="flex items-start rounded-lg px-4 py-3 border border-[#1E2A3A] transition-all duration-200">
+                    <p className="text-xs text-gray-400 leading-relaxed">{roleObj.desc}</p>
+                </div>
+            </div>
+        </TeamDialogForm>
     );
 }
