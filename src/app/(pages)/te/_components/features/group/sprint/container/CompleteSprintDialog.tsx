@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import type { Sprint } from "../sprintTypes";
+import React, { useState } from "react";
+import type { SprintStatusMutationDialogProps } from "../sprintTypes";
 import {
   Dialog,
   DialogBody,
@@ -13,17 +13,47 @@ import {
   DialogHeader,
   DialogPrimaryButton,
   DialogTitle,
-} from "../../../../common/teamDialog";
+} from "../../../../common/TeamDialog";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamSprintApiUrl } from "@/api/teamGroup";
+import { sprintApiToastMessage } from "./sprintToastErrors";
+
+const COMPLETE_STATUS = 3;
 
 export default function CompleteSprintDialog({
   target,
   onOpenChange,
-  onConfirm,
-}: {
-  target: Sprint | null;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: (id: string) => void;
-}) {
+  groupId,
+  onSuccess,
+}: SprintStatusMutationDialogProps) {
+  const { setToast } = useToastState();
+  const { sendRequest: updateSprintStatusInGroupRequest } = useAxiosMutation({
+    method: "PATCH",
+    url: teamSprintApiUrl.list(groupId),
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleComplete = async () => {
+    if (!target) return;
+    setSubmitting(true);
+    const { error } = await updateSprintStatusInGroupRequest(
+      { status: COMPLETE_STATUS },
+      `${target.id}/status`,
+    );
+    setSubmitting(false);
+    if (error) {
+      setToast({
+        title: "Hoàn thành sprint thất bại",
+        message: sprintApiToastMessage(error, "completeSprint", "Không thể hoàn thành sprint."),
+        variant: "error",
+      });
+      return;
+    }
+    onSuccess?.();
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
       <DialogContent size="sm">
@@ -39,14 +69,9 @@ export default function CompleteSprintDialog({
         <DialogBody />
         <DialogFooter>
           <DialogClose asChild>
-            <DialogCancelButton>Hủy</DialogCancelButton>
+            <DialogCancelButton disabled={submitting}>Hủy</DialogCancelButton>
           </DialogClose>
-          <DialogPrimaryButton
-            onClick={() => {
-              if (!target) return;
-              onConfirm(target.id);
-            }}
-          >
+          <DialogPrimaryButton disabled={submitting} onClick={handleComplete}>
             Hoàn thành
           </DialogPrimaryButton>
         </DialogFooter>
@@ -54,4 +79,3 @@ export default function CompleteSprintDialog({
     </Dialog>
   );
 }
-

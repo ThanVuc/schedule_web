@@ -1,20 +1,54 @@
 "use client";
 
-import React from "react";
-import type { Sprint } from "../sprintTypes";
+import React, { useState } from "react";
+import type { SprintStatusMutationDialogProps } from "../sprintTypes";
 import {
-  Dialog, DialogBody, DialogCancelButton, DialogClose, DialogContent, DialogDescription, DialogDangerButton, DialogFooter, DialogHeader, DialogTitle,
-} from "../../../../common/teamDialog";
+  Dialog,
+  DialogBody,
+  DialogCancelButton,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogDangerButton,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../../../common/TeamDialog";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamSprintApiUrl } from "@/api/teamGroup";
+import { sprintApiToastMessage } from "./sprintToastErrors";
 
 export default function DeleteSprintDialog({
   target,
   onOpenChange,
-  onConfirm,
-}: {
-  target: Sprint | null;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: (id: string) => void;
-}) {
+  groupId,
+  onSuccess,
+}: SprintStatusMutationDialogProps) {
+  const { setToast } = useToastState();
+  const { sendRequest: deleteSprintInGroupRequest } = useAxiosMutation({
+    method: "DELETE",
+    url: teamSprintApiUrl.list(groupId),
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!target) return;
+    setSubmitting(true);
+    const { error } = await deleteSprintInGroupRequest(undefined, target.id);
+    setSubmitting(false);
+    if (error) {
+      setToast({
+        title: "Xóa sprint thất bại",
+        message: sprintApiToastMessage(error, "deleteSprint", "Không thể xóa sprint."),
+        variant: "error",
+      });
+      return;
+    }
+    onSuccess?.();
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
       <DialogContent size="sm">
@@ -29,14 +63,9 @@ export default function DeleteSprintDialog({
         <DialogBody />
         <DialogFooter>
           <DialogClose asChild>
-            <DialogCancelButton>Hủy</DialogCancelButton>
+            <DialogCancelButton disabled={submitting}>Hủy</DialogCancelButton>
           </DialogClose>
-          <DialogDangerButton
-            onClick={() => {
-              if (!target) return;
-              onConfirm(target.id);
-            }}
-          >
+          <DialogDangerButton disabled={submitting} onClick={handleDelete}>
             Xóa
           </DialogDangerButton>
         </DialogFooter>
@@ -44,4 +73,3 @@ export default function DeleteSprintDialog({
     </Dialog>
   );
 }
-

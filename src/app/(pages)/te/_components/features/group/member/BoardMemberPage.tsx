@@ -1,34 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { UserPlus, MoreVertical } from "lucide-react";
+import { useAxios } from "@/hooks/useAxios";
+import { teamMemberApiUrl } from "@/api/teamGroup";
+import profileApiUrl from "@/api/profile";
+import { format } from "date-fns";
+import Image from 'next/image'
 import {
     DropdownMenu,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { ChangeRoleDialog, MemberRole } from "./ChangeRole";
-import { DeleteMemberDialog, MemberToDelete } from "./DeleteMember";
+import type { ActionsMenuProps, Member, MemberApiModel, MemberRole, MemberToDelete } from "./memberTypes";
+import { ChangeRoleDialog } from "./ChangeRole";
+import { DeleteMemberDialog } from "./DeleteMember";
 import { InviteMemberDialog } from "./InviteMember";
 import { Button } from "@/components/ui";
-
-interface Member {
-    id: string;
-    name: string;
-    email: string;
-    role: MemberRole;
-    joined: string;
-    avatar: string;
-}
-
-const INITIAL_MEMBERS: Member[] = [
-    { id: "1", name: "John Doe", email: "john@example.com", role: "Owner", joined: "15/1/2024", avatar: "🧑‍💻" },
-    { id: "2", name: "Jane Smith", email: "jane@example.com", role: "Manager", joined: "20/1/2024", avatar: "👩‍💼" },
-    { id: "3", name: "Bob Johnson", email: "bob@example.com", role: "Member", joined: "1/2/2024", avatar: "🧔" },
-    { id: "4", name: "Alice Williams", email: "alice@example.com", role: "Member", joined: "5/2/2024", avatar: "👩‍🎨" },
-    { id: "5", name: "Charlie Brown", email: "charlie@example.com", role: "Viewer", joined: "10/2/2024", avatar: "🧑" },
-];
 
 const ROLE_STYLE: Record<MemberRole, string> = {
     Owner: "bg-[#F8AF18] text-black border-transparent",
@@ -44,12 +34,6 @@ function RoleBadge({ role }: { role: MemberRole }) {
             {role}
         </span>
     );
-}
-
-interface ActionsMenuProps {
-    member: Member;
-    onChangeRole: () => void;
-    onRemove: () => void;
 }
 
 function ActionsMenu({ member, onChangeRole, onRemove }: ActionsMenuProps) {
@@ -89,20 +73,132 @@ function ActionsMenu({ member, onChangeRole, onRemove }: ActionsMenuProps) {
 }
 
 const BoardMemberPage = () => {
-    const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
+    const altGroupId = (searchParams.get("altGroupId") ?? "").trim();
+    const [activeGroupId, setActiveGroupId] = useState(groupId);
+
+    useEffect(() => {
+        setActiveGroupId(groupId);
+    }, [groupId]);
+
+    const { data: memberDataRaw, loading, refetch, error: memberListError } = useAxios<unknown>(
+        {
+            method: "GET",
+            url: teamMemberApiUrl.list(activeGroupId),
+        },
+        [activeGroupId],
+        !activeGroupId,
+    );
+    const { data: myProfileRaw } = useAxios<unknown>({
+        method: "GET",
+        url: profileApiUrl.getUserProfile,
+    });
+    const myProfile = (() => {
+        const raw = myProfileRaw as any;
+        if (!raw) return null;
+        if (raw.email || raw.fullname || raw.id) return raw as { id?: string; fullname?: string; email?: string };
+        if (raw.data && (raw.data.email || raw.data.fullname || raw.data.id)) return raw.data as { id?: string; fullname?: string; email?: string };
+        if (raw.item && (raw.item.email || raw.item.fullname || raw.item.id)) return raw.item as { id?: string; fullname?: string; email?: string };
+        if (raw.user && (raw.user.email || raw.user.fullname || raw.user.id)) return raw.user as { id?: string; fullname?: string; email?: string };
+        return null;
+    })();
     const [inviteOpen, setInviteOpen] = useState(false);
     const [changeTarget, setChangeTarget] = useState<Member | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<MemberToDelete | null>(null);
 
-    const handleChangeRole = (memberId: string, newRole: MemberRole) => {
-        setMembers((prev) => prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m)));
-        setChangeTarget(null);
+    const toRole = (role?: MemberApiModel["role"]): MemberRole => {
+        const roleText = (() => {
+            if (typeof role === "string" || typeof role === "number") return String(role);
+            if (role && typeof role === "object" && "name" in role && typeof role.name === "string") return role.name;
+            return "";
+        })();
+
+        const normalized = String(roleText ?? "").trim().toLowerCase();
+
+        if (normalized === "owner") return "Owner";
+        if (normalized === "manager") return "Manager";
+        if (normalized === "member") return "Member";
+        if (normalized === "viewer") return "Viewer";
+        if (normalized === "1") return "Owner";
+        if (normalized === "2") return "Manager";
+        if (normalized === "3") return "Member";
+        if (normalized === "4") return "Viewer";
+
+        if (roleText === "Owner" || roleText === "Manager" || roleText === "Member" || roleText === "Viewer") return roleText;
+        return "Member";
+    };
+    const toAvatarFallback = (name: string) => name.trim().charAt(0).toUpperCase() || "?";
+
+    const formatJoinedAt = (value?: string) => {
+        if (!value) return "-";
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return value;
+        return format(d, "dd/MM/yyyy HH:mm");
     };
 
-    const handleRemove = (memberId: string) => {
-        setMembers((prev) => prev.filter((m) => m.id !== memberId));
-        setDeleteTarget(null);
-    };
+    const membersFromApi = (() => {
+        const raw = memberDataRaw as any;
+        if (!raw) return [];
+        if (Array.isArray(raw)) return raw as MemberApiModel[];
+
+        if (Array.isArray(raw.items)) return raw.items as MemberApiModel[];
+
+        if (Array.isArray(raw.members)) return raw.members as MemberApiModel[];
+        if (Array.isArray(raw.data)) return raw.data as MemberApiModel[];
+        if (raw.data && Array.isArray(raw.data.items)) return raw.data.items as MemberApiModel[];
+        if (raw.result && Array.isArray(raw.result.items)) return raw.result.items as MemberApiModel[];
+
+        return [];
+    })();
+    const members: Member[] = membersFromApi.map((item) => {
+        const memberId = item.id ?? item.user_id ?? item.user?.id ?? "";
+        const name =
+            item.name ??
+            item.full_name ??
+            item.user?.name ??
+            item.user?.full_name ??
+            myProfile?.fullname ??
+            "Unknown";
+        const isCurrentUser = memberId === myProfile?.id;
+
+        const email =
+            item.email ||
+            item.user_email ||
+            item.invited_email ||
+            item.user?.email ||
+            item.member?.email ||
+            (isCurrentUser ? myProfile?.email : "") ||
+            "";
+        const avatarUrl =
+            item.avatar_url ??
+            item.avatar ??
+            item.user?.avatar_url ??
+            item.user?.avatar;
+        return {
+            id: memberId,
+            name,
+            email,
+            role: toRole(item.role),
+            joined: formatJoinedAt(item.joined_at ?? item.created_at),
+            avatarUrl,
+            avatarFallback: toAvatarFallback(name),
+        };
+    }).filter((item) => item.id);
+    const errorStatus = memberListError?.response?.status;
+    const isForbidden = errorStatus === 403 || errorStatus === 422 || errorStatus === 404;
+
+    const isRetryPending = isForbidden && !!altGroupId && activeGroupId !== altGroupId;
+
+    useEffect(() => {
+        if (!isForbidden || !altGroupId || activeGroupId === altGroupId) return;
+        setActiveGroupId(altGroupId);
+        const next = new URLSearchParams(searchParams.toString());
+        next.delete("altGroupId");
+        router.replace(`/te/group/${altGroupId}?${next.toString()}`, { scroll: false });
+    }, [activeGroupId, altGroupId, isForbidden, router, searchParams]);
 
     return (
         <div className="px-6 py-6">
@@ -115,6 +211,7 @@ const BoardMemberPage = () => {
                 </div>
                 <Button
                     onClick={() => setInviteOpen(true)}
+                    disabled={isForbidden && !isRetryPending}
                     className="inline-flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-bold
                                bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-95
                                shadow-md shadow-[#1565C0]/30 transition-all duration-150"
@@ -125,6 +222,16 @@ const BoardMemberPage = () => {
             </div>
 
             <div className="rounded-xl border border-[#1E2A3A] overflow-hidden">
+                {loading && (
+                    <div className="px-4 py-3 text-sm text-gray-500 border-b border-[#1E2A3A]">
+                        Đang tải danh sách thành viên...
+                    </div>
+                )}
+                {isForbidden && !isRetryPending && (
+                    <div className="px-4 py-3 text-sm text-amber-300 border-b border-[#1E2A3A] bg-amber-500/10">
+                        Bạn không phải thành viên của group này nên không thể xem danh sách thành viên.
+                    </div>
+                )}
                 <div className="grid grid-cols-[2fr_2fr_1fr_1fr_48px] px-4 py-3
                                 border-b border-[#1E2A3A] bg-[#0D1726]">
                     {["Thành viên", "Email", "Vai trò", "Ngày vào", ""].map((h) => (
@@ -142,9 +249,17 @@ const BoardMemberPage = () => {
                                     ${idx !== members.length - 1 ? "border-b border-[#1E2A3A]" : ""}`}
                     >
                         <div className="flex items-center gap-3">
-                            <div className="size-8 rounded-full bg-[#1E2A3A] flex items-center justify-center
-                                            text-base shrink-0">
-                                {member.avatar}
+                            <div className="size-8 rounded-full bg-[#1E2A3A] flex items-center justify-center text-base shrink-0 overflow-hidden">
+                                {member.avatarUrl ? (
+
+                                    <Image
+                                        src={member.avatarUrl}
+                                        alt={member.name}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    member.avatarFallback
+                                )}
                             </div>
                             <span className="text-sm font-medium text-white">{member.name}</span>
                         </div>
@@ -168,7 +283,7 @@ const BoardMemberPage = () => {
                     </div>
                 ))}
 
-                {members.length === 0 && (
+                {members.length === 0 && !isForbidden && (
                     <div className="py-16 text-center text-gray-600 text-sm">
                         Chưa có thành viên nào trong group.
                     </div>
@@ -178,19 +293,29 @@ const BoardMemberPage = () => {
             <InviteMemberDialog
                 open={inviteOpen}
                 onOpenChange={setInviteOpen}
-                onSendInvite={async (email, role) => { console.log("Send invite:", email, role); }}
-                onGenerateLink={async () =>
-                    `https://groups.example.com/invite/${Math.random().toString(36).slice(2, 9)}`
-                }
+                groupId={activeGroupId}
+                altGroupId={altGroupId || undefined}
+                inviteLinkGroupId={activeGroupId}
+                onInviteSuccess={() => refetch?.()}
+                onActiveGroupResolved={(newId) => {
+                    setActiveGroupId(newId);
+                    const next = new URLSearchParams(searchParams.toString());
+                    next.delete("altGroupId");
+                    router.replace(`/te/group/${newId}?${next.toString()}`, { scroll: false });
+                }}
             />
 
             {changeTarget && (
                 <ChangeRoleDialog
                     open={!!changeTarget}
-                    onOpenChange={(open) => { if (!open) setChangeTarget(null); }}
+                    onOpenChange={(open) => {
+                        if (!open) setChangeTarget(null);
+                    }}
                     memberName={changeTarget.name}
                     currentRole={changeTarget.role}
-                    onConfirm={(newRole) => handleChangeRole(changeTarget.id, newRole)}
+                    memberId={changeTarget.id}
+                    groupId={activeGroupId}
+                    onSuccess={() => refetch?.()}
                 />
             )}
 
@@ -200,7 +325,8 @@ const BoardMemberPage = () => {
                     onOpenChange={(open) => {
                         if (!open) setDeleteTarget(null);
                     }}
-                    onConfirm={handleRemove}
+                    groupId={activeGroupId}
+                    onSuccess={() => refetch?.()}
                 />
             )}
         </div>

@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 import { Button } from "@/components/ui";
+import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
 import { Users, Plus } from "lucide-react";
+import { teamGroupApiUrl } from "@/api/teamGroup";
 import {
     CreateGroupDialog,
     DeleteGroupDialog,
@@ -13,18 +16,27 @@ import {
 } from "../features/group";
 import { type Group } from "../features/group/types";
 
-
-const MOCK_GROUPS: Group[] = [
-    { id: "1", name: "Product Team", updatedAt: "2 hours ago", memberCount: 8, role: "Owner" },
-    { id: "2", name: "Engineering", updatedAt: "1 day ago", memberCount: 12, role: "Manager" },
-    { id: "3", name: "Design System", updatedAt: "3 days ago", memberCount: 5, role: "Member" },
-    { id: "4", name: "Marketing", updatedAt: "Yesterday", memberCount: 6, role: "Viewer" },
-];
-
+type GroupApiModel = {
+    id?: string;
+    group_id?: string;
+    name?: string;
+    group_name?: string;
+    description?: string | null;
+    member_count?: number;
+    members_count?: number;
+    role?: Group["role"] | string | { name?: string } | null;
+    my_role?: string | { name?: string } | null;
+    created_at?: string;
+    updated_at?: string;
+    updatedAt?: string;
+    member_total?: number;
+    avatar_url?: string;
+    active_sprint?: string | null;
+};
 
 export default function BoardGroupPage() {
     const router = useRouter();
-    const [groups, setGroups] = useState<Group[]>(MOCK_GROUPS);
+    const { setToast } = useToastState();
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [search] = useState("");
 
@@ -32,6 +44,24 @@ export default function BoardGroupPage() {
     const [editTarget, setEditTarget] = useState<Group | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Group | null>(null);
     const [leaveTarget, setLeaveTarget] = useState<Group | null>(null);
+
+    const { data: groupData, loading, refetch } = useAxios<GroupApiModel[] | { items?: GroupApiModel[] }>({
+        method: "GET",
+        url: teamGroupApiUrl.list,
+    });
+
+    const { sendRequest: createGroupRequest } = useAxiosMutation({
+        method: "POST",
+        url: teamGroupApiUrl.create,
+    });
+    const { sendRequest: updateGroupRequest } = useAxiosMutation({
+        method: "PATCH",
+        url: teamGroupApiUrl.list,
+    });
+    const { sendRequest: deleteGroupRequest } = useAxiosMutation({
+        method: "DELETE",
+        url: teamGroupApiUrl.list,
+    });
 
     useEffect(() => {
         const id = "group-board-keyframes";
@@ -48,32 +78,126 @@ export default function BoardGroupPage() {
         return () => { document.getElementById(id)?.remove(); };
     }, []);
 
+    const normalizeRole = (role?: GroupApiModel["role"]): Group["role"] => {
+        const roleText = (() => {
+            if (typeof role === "string" || typeof role === "number") return String(role);
+            if (role && typeof role === "object") {
+                if ("name" in role && typeof role.name === "string") return role.name;
+                if ("value" in role && typeof (role as { value?: unknown }).value === "string") return (role as { value: string }).value;
+                if ("id" in role && (typeof (role as { id?: unknown }).id === "string" || typeof (role as { id?: unknown }).id === "number")) {
+                    return String((role as { id: string | number }).id);
+                }
+            }
+            return "";
+        })();
 
-    const handleCreate = (name: string) => {
-        setGroups((prev) => [{
-            id: String(Date.now()),
-            name,
-            updatedAt: "Just now",
-            memberCount: 1,
-            role: "Owner",
-        }, ...prev]);
+        const normalized = String(roleText ?? "").trim().toLowerCase();
+
+        if (normalized === "owner") return "Owner";
+        if (normalized === "manager") return "Manager";
+        if (normalized === "member") return "Member";
+        if (normalized === "viewer") return "Viewer";
+        if (normalized === "1") return "Owner";
+        if (normalized === "2") return "Manager";
+        if (normalized === "3") return "Member";
+        if (normalized === "4") return "Viewer";
+
+        if (roleText === "Owner" || roleText === "Manager" || roleText === "Member" || roleText === "Viewer") {
+            return roleText;
+        }
+
+        return "Member";
+    };
+
+    const groupsFromApi = Array.isArray(groupData)
+        ? groupData
+        : (groupData?.items ?? []);
+
+    const groups: Group[] = groupsFromApi.map((item) => {
+        // Prefer group_id (actual Group UUID required by members/sprints APIs) over id
+        // which may be a GroupMember record ID depending on backend implementation.
+        const primaryId = (item.group_id ?? "").trim() || (item.id ?? "").trim();
+        const secondaryId = (item.id ?? "").trim();
+        const altGroupId = primaryId && secondaryId && primaryId !== secondaryId ? secondaryId : undefined;
+        return {
+            id: primaryId,
+            altGroupId,
+            name: item.name ?? item.group_name ?? "Untitled group",
+            description: item.description,
+            createdAt: item.created_at ? format(new Date(item.created_at), "dd/MM/yyyy HH:mm") : "N/A",
+            updatedAt: item.updated_at ? format(new Date(item.updated_at), "dd/MM/yyyy HH:mm") : item.updatedAt ? format(new Date(item.updatedAt), "dd/MM/yyyy HH:mm") : "N/A",
+            memberCount: item.member_total ?? item.member_count ?? item.members_count ?? 0,
+            role: normalizeRole(item.my_role ?? item.role),
+            avatarUrl: item.avatar_url,
+            activeSprint: item.active_sprint,
+        }
+    }).filter((item) => item.id);
+
+    const handleCreate = async (payload: { name: string; description?: string }) => {
+        const result = await createGroupRequest(payload);
+
+        if (result.error) {
+            const detail = (result.error.response?.data as { detail?: string } | undefined)?.detail;
+            setToast({
+                title: "Tạo nhóm thất bại",
+                message: detail || "Không thể tạo nhóm, vui lòng thử lại.",
+                variant: "error",
+            });
+            return;
+        }
+        refetch?.();
         setCreateOpen(false);
     };
 
-    const handleEdit = (id: string, name: string) => {
-        setGroups((prev) =>
-            prev.map((g) => g.id === id ? { ...g, name, updatedAt: "Just now" } : g),
-        );
+    const handleEdit = async (id: string, payload: { name?: string; description?: string }) => {
+        const updatePayload: { name?: string; description?: string } = {};
+        if (payload.name && payload.name.trim()) {
+            updatePayload.name = payload.name.trim();
+        }
+        if (payload.description !== undefined) {
+            updatePayload.description = payload.description;
+        }
+        if (!updatePayload.name && updatePayload.description === undefined) {
+            setToast({ title: "Cập nhật thất bại", message: "Vui lòng nhập ít nhất 1 trường cần cập nhật.", variant: "warning" });
+            return;
+        }
+
+        let result = await updateGroupRequest(updatePayload, id);
+        const fallbackId = editTarget?.altGroupId;
+        const status = result.error?.response?.status;
+        if (result.error && fallbackId && fallbackId !== id && (status === 404 || status === 422)) {
+            result = await updateGroupRequest(updatePayload, fallbackId);
+        }
+        if (result.error) {
+            setToast({ title: "Cập nhật thất bại", message: "Không thể cập nhật nhóm.", variant: "error" });
+            return;
+        }
+        refetch?.();
         setEditTarget(null);
     };
 
-    const handleDelete = (id: string) => {
-        setGroups((prev) => prev.filter((g) => g.id !== id));
+    const handleDelete = async (id: string) => {
+        let result = await deleteGroupRequest(undefined, id);
+        const fallbackId = deleteTarget?.altGroupId;
+        const status = result.error?.response?.status;
+        if (result.error && fallbackId && fallbackId !== id && (status === 404 || status === 422)) {
+            result = await deleteGroupRequest(undefined, fallbackId);
+        }
+        if (result.error) {
+            setToast({ title: "Xóa nhóm thất bại", message: "Không thể xóa nhóm.", variant: "error" });
+            return;
+        }
+        refetch?.();
         setDeleteTarget(null);
     };
 
-    const handleLeave = (id: string) => {
-        setGroups((prev) => prev.filter((g) => g.id !== id));
+    const handleLeave = async (id: string) => {
+        void id;
+        setToast({
+            title: "error",
+            message: "",
+            variant: "warning",
+        });
         setLeaveTarget(null);
     };
 
@@ -82,8 +206,17 @@ export default function BoardGroupPage() {
     const openLeave = (id: string) => { const g = groups.find((g) => g.id === id); if (g) setLeaveTarget(g); };
 
     const handleCardClick = (id: string) => {
+        const group = groups.find((g) => g.id === id);
         setSelectedId(id);
-        router.push(`/te/group/${id}?tab=members`);
+        const params = new URLSearchParams({
+            tab: "members",
+            groupName: group?.name ?? "",
+            memberCount: String(group?.memberCount ?? 0),
+        });
+        if (group?.altGroupId) {
+            params.set("altGroupId", group.altGroupId);
+        }
+        router.push(`/te/group/${id}?${params.toString()}`);
     };
 
     const filtered = groups.filter((g) =>
@@ -130,6 +263,10 @@ export default function BoardGroupPage() {
                     <Plus size={15} /> Tạo nhóm mới
                 </Button>
             </div>
+
+            {loading && (
+                <div className="px-8 text-sm text-gray-500">Đang tải danh sách nhóm...</div>
+            )}
 
             {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">

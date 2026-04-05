@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../../common/teamDialog";
+} from "../../../common/TeamDialog";
 import { Trash2 } from "lucide-react";
 
 const BoardSettingPage = () => {

@@ -1,11 +1,14 @@
 'use client';
 
-import React from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GROUP_TABS, TabKey, TabConfig } from "../../../../_constants";
 import { Button } from "@/components/ui";
+import { useAxios } from "@/hooks";
+import { teamGroupApiUrl } from "@/api/teamGroup";
+import Image from 'next/image'
 
 export type { TabKey, TabConfig };
 export { GROUP_TABS };
@@ -27,7 +30,7 @@ function GroupAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) 
 
     if (avatarUrl) {
         return (
-            <img
+            <Image
                 src={avatarUrl}
                 alt={name}
                 className="w-35 h-35 rounded-full object-cover ring-2 ring-[#1E2A3A] shrink-0"
@@ -58,15 +61,64 @@ export const TabGroup = ({ className }: TabGroupProps) => {
     const searchParams = useSearchParams();
     const activeTab = useActiveTab();
 
-    const groupName = searchParams.get("name") ?? "Group";
-    const memberCount = Number(searchParams.get("memberCount") ?? 0);
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
+    const altGroupId = (searchParams.get("altGroupId") ?? "").trim();
+    const [activeGroupId, setActiveGroupId] = useState(groupId);
+
+    useEffect(() => {
+        setActiveGroupId(groupId);
+    }, [groupId]);
+    type GroupDetailApiModel = {
+        id?: string;
+        group_id?: string;
+        name?: string;
+        group_name?: string;
+        member_total?: number;
+        member_count?: number;
+        members_count?: number;
+        avatar_url?: string;
+    };
+
+    const { data: groupDetailRaw, error: groupDetailError } = useAxios<unknown>({
+        method: "GET",
+        url: teamGroupApiUrl.detail(activeGroupId),
+    }, [activeGroupId], !activeGroupId);
+
+    const groupDetail = ((): GroupDetailApiModel | null => {
+        const raw = groupDetailRaw as any;
+        if (!raw) return null;
+        if (raw.name || raw.group_name || raw.member_total !== undefined) return raw as GroupDetailApiModel;
+        if (raw.group) return raw.group as GroupDetailApiModel;
+        if (raw.item) return raw.item as GroupDetailApiModel;
+        if (raw.data && (raw.data.name || raw.data.group_name)) return raw.data as GroupDetailApiModel;
+        return raw as GroupDetailApiModel;
+    })();
+
+    const queryGroupName = (searchParams.get("groupName") ?? "").trim();
+    const queryMemberCount = searchParams.get("memberCount");
+    const groupName = queryGroupName || groupDetail?.name || groupDetail?.group_name || "Group";
+    const memberCount = Number(
+        queryMemberCount ??
+        groupDetail?.member_total ??
+        groupDetail?.member_count ??
+        groupDetail?.members_count ??
+        0,
+    );
+    const avatarUrl = groupDetail?.avatar_url;
+    const hasForbiddenError = groupDetailError?.response?.status === 422;
+
+    useEffect(() => {
+        if (!hasForbiddenError || !altGroupId || activeGroupId === altGroupId) return;
+        setActiveGroupId(altGroupId);
+        const next = new URLSearchParams(searchParams.toString());
+        next.delete("altGroupId");
+        router.replace(`/te/group/${altGroupId}?${next.toString()}`, { scroll: false });
+    }, [activeGroupId, altGroupId, hasForbiddenError, router, searchParams]);
 
     const navigate = (key: TabKey) => {
-        const params = new URLSearchParams({
-            tab: key,
-            name: groupName,
-            memberCount: String(memberCount),
-        });
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("tab", key);
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
@@ -86,14 +138,14 @@ export const TabGroup = ({ className }: TabGroupProps) => {
                     <ArrowLeft size={25} />
                 </Button>
 
-                <GroupAvatar name={groupName} />
+                <GroupAvatar name={groupName} avatarUrl={avatarUrl} />
 
                 <div className="flex flex-col min-w-0">
                     <span className="text-3xl font-bold text-white leading-tight truncate">
                         {groupName}
                     </span>
                     <p className="text-sm text-gray-400 mt-0.5">
-                        {memberCount} thành viên
+                        {hasForbiddenError ? "Bạn không có quyền truy cập group này" : `${memberCount} thành viên`}
                     </p>
                 </div>
             </div>
