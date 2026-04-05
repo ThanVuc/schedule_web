@@ -13,7 +13,6 @@ import { useAxios } from "@/hooks/useAxios";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { ListSimpleSprintResponse, ListSimpleUserResponse, WorkDetailResponse, WorkResponse } from "../../_models";
 import { useEffect, useMemo, useState } from "react";
-import { H1 } from "@/components/common";
 
 
 const BoardWorkPage = () => {
@@ -127,9 +126,9 @@ const BoardWorkPage = () => {
             open={openDialogAssign}
             getBoardWorkDataById={getBoardWorkDataById?.item}
         />
-        <div className="flex justify-between items-center mb-8 p-6">
-            <div className="flex items-center  gap-15">
-                <H1 className="text-2xl font-bold mb-4">Bảng công việc</H1>
+        <div className="flex justify-between items-center mb-2 p-6">
+            <div className="flex items-center gap-5">
+                <p className="text-2xl font-bold">Bảng công việc</p>
                 <div className="flex gap-4">
                     <Select defaultValue={sprintActive} onValueChange={(value) => {
                         if (value === "AllWork") {
@@ -183,12 +182,14 @@ const BoardWorkPage = () => {
                     </Select>
                 </div>
             </div>
-            <Button className="mb-4 bg-[#2A97EA] border-[#2A97EA] hover:bg-[#0c6ab2] text-white"
-                onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}
-            >
-                <AddIcon />
-                Thêm công việc
-            </Button>
+            <div>
+                <Button className="bg-[#2A97EA] border-[#2A97EA] hover:bg-[#0c6ab2] text-white"
+                    onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}
+                >
+                    <AddIcon />
+                    Thêm công việc
+                </Button>
+            </div>
         </div>
         <div className="p-4">
             <BoardWork ListWork={getListWork?.items || []} />
