@@ -4,7 +4,7 @@ import { H1} from "@/components/common";
 import { AddIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
 import CardBacklog from "../features/group/backlog/CardBacklog";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../../_hooks";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { UpdateBacklogDrawerPage } from "../features/group/backlog/container/UpdateBacklogDrawerPage";
@@ -21,6 +21,8 @@ import { CreateWorkBoardDialog } from "../features/group/work/container/CreateWo
 const BacklogPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const params = useParams<{ id: string }>();
+        const groupId = params?.id ?? "";
     const { mode, id } = useModalParams();
     const openDialogCreate = mode === ModelType.CREATE;
     const openDialogDelete = mode === ModelType.DELETE;
@@ -35,20 +37,20 @@ const BacklogPage = () => {
 
     const { data: getListWork, refetch: refetchListWork } = useAxios<{ items: WorkResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListWork}2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.GetListWork}/${groupId}/works`,
     }, [])
     const { data: GetListUser } = useAxios<{ items: ListSimpleUserResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListUser}2c9179a9-a279-4b26-851a-44e16b814d54/users/simple`,
+        url: `${boardWorksApiUrl.GetListUser}/${groupId}/users/simple`,
         params: { ...listParams },
     }, [])
     const { data: getBoardWorkDataById, loading: loadingBoardWork, refetch: refetchBoardWork } = useAxios<{ item: WorkDetailResponse }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetBoardWorks}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`
+        url: `${boardWorksApiUrl.GetBoardWorks}/${groupId}/works/${id}`
     })
     const { loading: loadingGetListSprint, data: GetListSprint } = useAxios<{ items: ListSimpleSprintResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListSprint}2c9179a9-a279-4b26-851a-44e16b814d54/sprints/simple`,
+        url: `${boardWorksApiUrl.GetListSprint}/${groupId}/sprints/simple`,
         params: { ...listParams },
     }, [])
 
@@ -134,11 +136,11 @@ const BacklogPage = () => {
 
             <div className="flex justify-between p-4">
                 <H1 className="font-bold">BackLog</H1>
-                <Button className="bg-[#2A97EA] hover:bg-[#2A97EA]/80"
+                <Button className="bg-[#2A97EA] border-[#2A97EA] hover:bg-[#0c6ab2] text-white"
                     onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}
                 >
                     <AddIcon />
-                    CreateWork
+                        Thêm công việc
                 </Button>
             </div>
             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 p-3">

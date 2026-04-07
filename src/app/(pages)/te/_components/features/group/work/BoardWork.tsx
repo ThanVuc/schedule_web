@@ -1,16 +1,19 @@
 'use client'
 import { DragDropProvider } from '@dnd-kit/react';
 import { useState, useEffect, useRef } from "react";
+import type { AxiosError } from "axios";
 
 import { BoardColumn, BoardItem } from "./index";
 import { WorkColumn, WorkResponse, WorkUpdateWorkMovingRequest } from '@/app/(pages)/te/_models';
-import { useAxiosMutation } from '@/hooks';
+import { useAxiosMutation, useToastState } from '@/hooks';
 import { boardWorksApiUrl } from '@/api/boardWork';
+import { useParams } from 'next/navigation';
 
 
 interface BoardWorkProps {
     ListWork: WorkResponse[];
     refreshListWork?: () => void;
+    disable?: boolean;
 }
 
 type WorkMoveResponse = {
@@ -20,11 +23,39 @@ type WorkMoveResponse = {
     };
 };
 
-const BoardWork = ({ ListWork}: BoardWorkProps) => {
+type WorkMoveApiErrorBody = {
+    detail?: string;
+    errorCode?: string;
+    title?: string;
+    statusCode?: number;
+};
+
+const getMoveWorkErrorMessage = (error: unknown): string => {
+    const axiosError = error as AxiosError<WorkMoveApiErrorBody>;
+    const status = axiosError.response?.status;
+    const data = axiosError.response?.data;
+    const detail = (typeof data?.detail === "string" ? data.detail : "").trim().toLowerCase();
+    const errorCode = (typeof data?.errorCode === "string" ? data.errorCode : "").trim();
+
+    const isCompletedOrCancelledSprintError =
+        status === 422 &&
+        errorCode === "ts.validation.unprocessable" &&
+        detail.includes("cannot update work in completed or cancelled sprint");
+
+    if (isCompletedOrCancelledSprintError) {
+        return "Không thể cập nhật công việc vì sprint đã hoàn thành hoặc đã hủy.";
+    }
+
+    return "Lỗi xảy ra khi di chuyển công việc, vui lòng thử lại";
+};
+
+const BoardWork = ({ ListWork,disable }: BoardWorkProps) => {
     const pendingMoveRef = useRef<Set<string>>(new Set());
     const latestVersionRef = useRef<Map<string, number>>(new Map());
     const originalStatusRef = useRef<Map<string, number>>(new Map());
-
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
+    const { setToast } = useToastState();
 
     const applyLocalVersion = (work: WorkResponse): WorkResponse => {
         const localVersion = latestVersionRef.current.get(work.id);
@@ -57,7 +88,7 @@ const BoardWork = ({ ListWork}: BoardWorkProps) => {
 
     const { sendRequest: updateWorkStatus } = useAxiosMutation<WorkMoveResponse, WorkUpdateWorkMovingRequest>({
         method: "PATCH",
-        url: `${boardWorksApiUrl.CRUDWORD}2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.CRUDWORD}${groupId}/works`,
     })
     const [initialBoardData, setInitialBoardData] = useState<WorkColumn[]>(buildBoardData(ListWork));
     useEffect(() => {
@@ -134,13 +165,22 @@ const BoardWork = ({ ListWork}: BoardWorkProps) => {
         pendingMoveRef.current.add(moveKey);
 
         try {
-            const { data } = await updateWorkStatus(
+            const { data, error } = await updateWorkStatus(
                 {
                     status: nextStatus,
                     version: currentVersion
                 },
                 movedTaskId,
             );
+            if (error) {
+                setToast({
+                    message: getMoveWorkErrorMessage(error),
+                    variant: "error",
+                    title: "Di chuyển công việc thất bại"
+                });
+                return;
+
+            }
 
             const nextVersion = data?.version ?? data?.item?.version;
 
@@ -224,6 +264,7 @@ const BoardWork = ({ ListWork}: BoardWorkProps) => {
                                     number={task.story_point}
                                     state={task.status}
                                     date={task.created_at}
+                                    disable={disable}
                                 />
                             ))}
                         </BoardColumn>

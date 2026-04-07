@@ -10,19 +10,23 @@ import { useAxiosMutation } from "@/hooks";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
+import { useParams } from "next/navigation";
 
 export interface DeleteWorkBoardDialogProps {
     open: boolean;
     onOpenChange?: (open: boolean) => void;
     refreshListWork?: () => void;
+    disable?: boolean;
 }
 
 
-export const DeleteWorkBoardDialog = ({ open, onOpenChange, refreshListWork }: DeleteWorkBoardDialogProps) => {
+export const DeleteWorkBoardDialog = ({ open, onOpenChange, refreshListWork}: DeleteWorkBoardDialogProps) => {
     const { mode, id } = useModalParams();
+    const params = useParams<{ id: string }>();
+        const groupId = params?.id ?? "";
     const { sendRequest: DeleteWork } = useAxiosMutation({
         method: "DELETE",
-        url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.CRUDWORD}/${groupId}/works`,
     })
 
     const onSubmit = async (id: string) => {
