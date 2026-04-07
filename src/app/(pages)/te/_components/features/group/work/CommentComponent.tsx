@@ -20,10 +20,12 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import { CommentListApiUrl } from "@/api/commentList";
 import { useModalParams } from "@/app/(pages)/te/_hooks";
+import { useParams } from "next/navigation";
 
 interface CommentComponentProps {
     listComments?: CommentResponse[];
     onRefreshComments?: () => void | Promise<void>;
+    disable?: boolean;
 }
 
 const formatDate = (dateStr?: string) => {
@@ -35,10 +37,11 @@ const formatDate = (dateStr?: string) => {
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 };
 
-const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentProps) => {
+const CommentComponent = ({ listComments, onRefreshComments, disable}: CommentComponentProps) => {
     const { id } = useModalParams();
     const { setToast } = useToastState();
-    
+    const params = useParams<{ id: string }>();
+        const groupId = params?.id ?? "";
     const [comments, setComments] = useState<CommentResponse[]>(listComments || []);
     const [newComment, setNewComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,19 +50,19 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
 
     const { sendRequest: createComment } = useAxiosMutation<CommentResponse, CreateCommentRequest>({
         method: "POST",
-        url: `${CommentListApiUrl.CreateComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        url: `${CommentListApiUrl.CreateComment}${groupId}/works/${id}/comments`,
         headers: { "Content-Type": "application/json" }
     });
 
     const { sendRequest: updateComment } = useAxiosMutation<UpdateCommentResponse, UpdateCommentRequest>({
         method: "PATCH",
-        url: `${CommentListApiUrl.UpdateComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        url: `${CommentListApiUrl.UpdateComment}${groupId}/works/${id}/comments`,
         headers: { "Content-Type": "application/json" }
     });
 
     const { sendRequest: deleteComment } = useAxiosMutation<DeleteChecklistItemResponse, unknown>({
         method: "DELETE",
-        url: `${CommentListApiUrl.DeleteComment}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/comments`,
+        url: `${CommentListApiUrl.DeleteComment}${groupId}/works/${id}/comments`,
         headers: { "Content-Type": "application/json" }
     });
 
@@ -202,9 +205,10 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
                                     </span>
                                 </div>
 
-                                <DropdownMenu>
+                                <DropdownMenu >
                                     <DropdownMenuTrigger asChild>
                                         <Button
+                                        disabled={disable}
                                             variant="ghost"
                                             size="icon"
                                             className="size-6 shrink-0"
@@ -213,11 +217,12 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => handleStartEdit(comment)}>
+                                        <DropdownMenuItem disabled={disable} onClick={() => handleStartEdit(comment)}>
                                             Chỉnh sửa
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             className="text-destructive focus:text-destructive"
+                                            disabled={disable}
                                             onClick={() => handleDeleteComment(comment.id)}
                                         >
                                             Xóa
@@ -240,10 +245,10 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
                                         }}
                                     />
                                     <div className="flex items-center justify-end gap-2">
-                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                        <Button variant="outline" size="sm" onClick={handleCancelEdit} disabled={disable}>
                                             Hủy
                                         </Button>
-                                        <Button size="sm" onClick={() => handleSaveEdit(comment.id)}>
+                                        <Button size="sm" onClick={() => handleSaveEdit(comment.id)} disabled={disable}>
                                             Lưu
                                         </Button>
                                     </div>
@@ -265,7 +270,7 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
                     placeholder="Thêm bình luận..."
                     className="min-h-[42px] max-h-32 resize-none"
                     rows={1}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || disable}
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
@@ -277,7 +282,7 @@ const CommentComponent = ({ listComments, onRefreshComments }: CommentComponentP
                     size="icon"
                     className="shrink-0 bg-sky-500 hover:bg-sky-600"
                     onClick={handleAddComment}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || disable}
                 >
                     <SendIcon />
                 </Button>

@@ -1,19 +1,41 @@
-import { ENUM_GROUP_ROLE, ENUM_SPRINT_STATUS, ENUM_USER_STATUS, ENUM_WORK_PRIORITY, ENUM_WORK_STATUS } from "@/constant/enumMap";
+import {
+  EnumMapType,
+  GroupRole,
+  SprintStatus,
+  UserStatus,
+  WorkPriority,
+  WorkStatus,
+  enumDisplayMap,
+} from "@/app/(pages)/te/_constants";
 
-export const useEnumMap = (key?: number, type?: "USER_STATUS" | "GROUP_ROLE" | "SPRINT_STATUS" | "WORK_STATUS" | "WORK_PRIORITY") => {
-  if (!key || !type) return null;
+const formatEnumLabel = (value?: string | number | null) => {
+  if (value === undefined || value === null) return null;
+
+  const text = String(value).toLowerCase();
+  return text
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+export const useEnumMap = (key?: number, type?: EnumMapType) => {
+  if (key === undefined || key === null || !type) return null;
+
+  const mappedLabel = enumDisplayMap[type]?.[key];
+  if (mappedLabel) return mappedLabel;
 
   switch (type) {
     case "USER_STATUS":
-      return ENUM_USER_STATUS[key];
+      return formatEnumLabel(UserStatus[key]);
     case "GROUP_ROLE":
-      return ENUM_GROUP_ROLE[key];
+      return formatEnumLabel(GroupRole[key]);
     case "SPRINT_STATUS":
-      return ENUM_SPRINT_STATUS[key];
+      return formatEnumLabel(SprintStatus[key]);
     case "WORK_STATUS":
-      return ENUM_WORK_STATUS[key];
+      return formatEnumLabel(WorkStatus[key]);
     case "WORK_PRIORITY":
-      return ENUM_WORK_PRIORITY[key];
+      return formatEnumLabel(WorkPriority[key]);
     default:
       return null;
   }

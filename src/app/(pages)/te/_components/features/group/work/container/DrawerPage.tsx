@@ -2,7 +2,7 @@
 import { DrawerComponent } from "../Drawer";
 import { ModelType } from "@/app/(pages)/schedule/_constant/common";
 import { useModalParams } from "../../../../../_hooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -29,39 +29,41 @@ interface DrawerPageProps {
     getBoardWorkDataById?: WorkDetailResponse;
     loadingBoardWork?: boolean;
     refetchBoardWork?: () => void;
+    disable?: boolean;
 }
 
-export const DrawerPage = ({ refetchListWork, getBoardWorkDataById, loadingBoardWork, refetchBoardWork }: DrawerPageProps) => {
+export const DrawerPage = ({ refetchListWork, getBoardWorkDataById, loadingBoardWork, refetchBoardWork, disable }: DrawerPageProps) => {
     const { mode, id } = useModalParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const openDrawer = mode === ModelType.UPDATE
     const { setToast } = useToastState();
-
+    const params = useParams<{ id: string }>();
+        const groupId = params?.id ?? "";
     const { sendRequest: createChecklistItem } = useAxiosMutation<ChecklistItemResponse, CreateChecklistItemRequest>({
         method: "POST",
-        url: `${ChecklistApiUrl.CreateCheckList}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/checklists`,
+        url: `${ChecklistApiUrl.CreateCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     })
     const { sendRequest: updateChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "PATCH",
-        url: `${ChecklistApiUrl.UpdateCheckList}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/checklists`,
+        url: `${ChecklistApiUrl.UpdateCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     });
     const { sendRequest: deleteChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "DELETE",
-        url: `${ChecklistApiUrl.DeleteCheckList}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/checklists`,
+        url: `${ChecklistApiUrl.DeleteCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     });
         const { data: GetListSprint, loading: loadingGetListSprint } = useAxios<{ items: ListSimpleSprintResponse[] }>({
             method: "GET",
-            url: `${boardWorksApiUrl.GetListSprint}2c9179a9-a279-4b26-851a-44e16b814d54/sprints/simple`,
+            url: `${boardWorksApiUrl.GetListSprint}/${groupId}/sprints/simple`,
         }, [])
 
     const isFormLoading =
@@ -181,7 +183,7 @@ export const DrawerPage = ({ refetchListWork, getBoardWorkDataById, loadingBoard
                 <div>
                     <Form {...form}>
                         <form>
-                            <DrawerForm version={Number(getBoardWorkDataById?.version)} form={form} listSprint={GetListSprint?.items} />
+                            <DrawerForm disable={disable} version={Number(getBoardWorkDataById?.version)} form={form} listSprint={GetListSprint?.items} />
                         </form>
                     </Form>
                     <div>
@@ -190,12 +192,14 @@ export const DrawerPage = ({ refetchListWork, getBoardWorkDataById, loadingBoard
                             onCreateItem={handleCreateChecklistItem}
                             onUpdateItem={handleUpdateChecklistItem}
                             onDeleteItem={handleDeleteChecklistItem}
+                            disable={disable}
                         />
                     </div>
                     <div>
                         <CommentComponent
                             listComments={getBoardWorkDataById?.comments.items}
                             onRefreshComments={refetchBoardWork}
+                            disable={disable}
                         />
                     </div>
                 </div>)}

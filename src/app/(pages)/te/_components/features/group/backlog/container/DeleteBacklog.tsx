@@ -10,6 +10,7 @@ import { useModalParams } from "@/app/(pages)/te/_hooks";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { ModelType } from "@/app/(pages)/schedule/_constant/common";
+import { useParams } from "next/navigation";
 
 export interface DeleteBacklogDialogProps {
     open: boolean;
@@ -20,11 +21,13 @@ export interface DeleteBacklogDialogProps {
 
 
 export const DeleteBacklogDialog = ({ open, onOpenChange, refreshListWork }: DeleteBacklogDialogProps) => {
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
 
     const { mode, id } = useModalParams();
     const { sendRequest: DeleteWork } = useAxiosMutation({
         method: "DELETE",
-        url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.CRUDWORD}${groupId}/works`,
     })
 
     const onSubmit = async (id: string) => {

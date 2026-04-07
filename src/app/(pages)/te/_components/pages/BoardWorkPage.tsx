@@ -4,7 +4,7 @@ import { BoardWork } from "../features/group/work/index";
 import { AddIcon } from "@/components/icon";
 import { DrawerPage } from ".";
 import { CreateWorkBoardDialog } from "../features/group/work/container/CreateWorkBoard";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../../_hooks";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { DeleteWorkBoardDialog } from "../features/group/work/container/DeleteWorkBoard";
@@ -18,10 +18,15 @@ import { useEffect, useMemo, useState } from "react";
 const BoardWorkPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const { mode, id } = useModalParams();
+    const [disable, setDisable] = useState(false);
     const openDialogCreate = mode === ModelType.CREATE;
     const openDialogDelete = mode === ModelType.DELETE;
     const openDialogAssign = mode === ModelType.ASSIGN;
+    const sprintIdFromUrl = searchParams.get("sprint_id");
+    const assigneeIdFromUrl = searchParams.get("assignee_id") || "AllAssign";
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
         return Object.fromEntries(entries);
@@ -39,35 +44,40 @@ const BoardWorkPage = () => {
     }
     const { data: GetListSprint, loading: loadingGetListSprint } = useAxios<{ items: ListSimpleSprintResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListSprint}2c9179a9-a279-4b26-851a-44e16b814d54/sprints/simple`,
+        url: `${boardWorksApiUrl.GetListSprint}${groupId}/sprints/simple`,
         params: { ...listParams },
     }, [])
     const { data: GetListUser } = useAxios<{ items: ListSimpleUserResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListUser}2c9179a9-a279-4b26-851a-44e16b814d54/users/simple`,
+        url: `${boardWorksApiUrl.GetListUser}${groupId}/users/simple`,
         params: { ...listParams },
     }, [])
     const { data: getListWork, refetch } = useAxios<{ items: WorkResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListWork}2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.GetListWork}${groupId}/works`,
         params: { ...listParams },
 
     }, [])
     const { data: getBoardWorkDataById, loading: loadingBoardWork, refetch: refetchBoardWork } = useAxios<{ item: WorkDetailResponse }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetBoardWorks}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`
+        url: `${boardWorksApiUrl.GetBoardWorks}${groupId}/works/${id}`
     })
+    
     useEffect(() => {
-        const activeSprintId = GetListSprint?.items?.find((sprint) => sprint.status === 2)?.id;
-        if (!activeSprintId) return;
+        if (!GetListSprint?.items) return;
 
-        const currentSprint = searchParams.get("sprint_id");
-        if (currentSprint === activeSprintId) return;
+        const activeSprintId = GetListSprint.items.find(
+            (sprint) => sprint.status === 2
+        )?.id;
+        setDisable(!!activeSprintId);
+
+        if (!activeSprintId || sprintIdFromUrl !== null) return;
 
         const params = new URLSearchParams(searchParams.toString());
         params.set("sprint_id", activeSprintId);
+
         router.replace(`?${params.toString()}`, { scroll: false });
-    }, [GetListSprint?.items, searchParams, router]);
+    }, [GetListSprint?.items, sprintIdFromUrl]);
 
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -100,11 +110,6 @@ const BoardWorkPage = () => {
 
         closeModal();
     };
-    const [sprintActive, setSprintActive] = useState("");
-    if (GetListSprint?.items?.find((sprint) => sprint.status === 2)) {
-        setSprintActive(GetListSprint?.items?.find((sprint) => sprint.status === 2)?.id || "");
-    }
-
     return (<>
         <CreateWorkBoardDialog
             open={openDialogCreate}
@@ -130,23 +135,25 @@ const BoardWorkPage = () => {
             <div className="flex items-center gap-5">
                 <p className="text-2xl font-bold">Bảng công việc</p>
                 <div className="flex gap-4">
-                    <Select defaultValue={sprintActive} onValueChange={(value) => {
-                        if (value === "AllWork") {
+                    <Select
+                        value={sprintIdFromUrl || ""}
+                        onValueChange={(value) => {
                             const params = new URLSearchParams(searchParams.toString());
-                            params.delete("sprint_id");
+
+                            if (value === "AllWork") {
+                                params.delete("sprint_id");
+                            } else {
+                                params.set("sprint_id", value);
+                            }
+
                             router.push(`?${params.toString()}`, { scroll: false });
-                        } else {
-                            const params = new URLSearchParams(searchParams.toString());
-                            params.set("sprint_id", value);
-                            router.push(`?${params.toString()}`, { scroll: false });
-                        }
-                    }}>
+                        }}
+                    >
                         <SelectTrigger >
                             <SelectValue placeholder="Hiện không có Sprint nào đang active" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="AllWork">Công việc không ở trong Sprint</SelectItem>
                                 {GetListSprint?.items.map((sprint) => (
                                     <SelectItem key={sprint.id} value={sprint.id}>
                                         {sprint.name}
@@ -155,17 +162,20 @@ const BoardWorkPage = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Select defaultValue="AllAssign" onValueChange={(value) => {
+                    <Select
+                        value={assigneeIdFromUrl}
+                        onValueChange={(value) => {
+                            const params = new URLSearchParams(searchParams.toString());
 
-                        const params = new URLSearchParams(searchParams.toString());
-                        if (value === "AllAssign") {
-                            params.delete("assignee_id");
+                            if (value === "AllAssign") {
+                                params.delete("assignee_id");
+                            } else {
+                                params.set("assignee_id", value);
+                            }
+
                             router.push(`?${params.toString()}`, { scroll: false });
-                        } else {
-                            params.set("assignee_id", value);
-                            router.push(`?${params.toString()}`, { scroll: false });
-                        }
-                    }}>
+                        }}
+                    >
                         <SelectTrigger >
                             <SelectValue placeholder="Lọc theo người thực hiện" />
                         </SelectTrigger>
@@ -192,13 +202,14 @@ const BoardWorkPage = () => {
             </div>
         </div>
         <div className="p-4">
-            <BoardWork ListWork={getListWork?.items || []} />
+            <BoardWork ListWork={getListWork?.items || []}  disable={disable}/>
 
         </div>
         <DrawerPage refetchListWork={refetch}
             getBoardWorkDataById={getBoardWorkDataById?.item}
             loadingBoardWork={loadingBoardWork}
             refetchBoardWork={refetchBoardWork}
+            disable={disable}
         />
     </>);
 }

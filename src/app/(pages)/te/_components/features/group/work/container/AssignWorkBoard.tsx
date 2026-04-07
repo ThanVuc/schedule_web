@@ -14,6 +14,7 @@ import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/us
 import z from "zod";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
 
 export interface AssignWorkBoardDialogProps {
@@ -26,10 +27,11 @@ export interface AssignWorkBoardDialogProps {
 export const AssignWorkBoardDialog = ({ open, onOpenChange, refreshListWork, listUser, getBoardWorkDataById }: AssignWorkBoardDialogProps) => {
 
     const { mode, id } = useModalParams();
-
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const { sendRequest: sendUpdateRequest } = useAxiosMutation({
         method: "PATCH",
-        url: `${boardWorksApiUrl.UpdateBoardWork}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`,
+        url: `${boardWorksApiUrl.UpdateBoardWork}${groupId}/works/${id}`,
         headers: {
             "Content-Type": "application/json"
         }

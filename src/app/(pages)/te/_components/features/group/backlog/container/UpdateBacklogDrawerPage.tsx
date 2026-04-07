@@ -34,7 +34,7 @@ interface UpdateBacklogDrawerPageProps {
 }
 
 export const UpdateBacklogDrawerPage = ({ getBoardWorkDataById, loadingBoardWork, refetchBoardWork, GetListSprint, loadingGetListSprint }: UpdateBacklogDrawerPageProps) => {
-    const { mode, id, workId } = useModalParams();
+    const { mode, workId } = useModalParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const openDrawer = mode === ModelType.UPDATE
@@ -42,21 +42,21 @@ export const UpdateBacklogDrawerPage = ({ getBoardWorkDataById, loadingBoardWork
 
     const { sendRequest: createChecklistItem } = useAxiosMutation<ChecklistItemResponse, CreateChecklistItemRequest>({
         method: "POST",
-        url: `${ChecklistApiUrl.CreateCheckList}/${workId}/checklists`,
+        url: `${ChecklistApiUrl.CreateCheckList}${workId}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     })
     const { sendRequest: updateChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "PATCH",
-        url: `${ChecklistApiUrl.UpdateCheckList}`,
+        url: `${ChecklistApiUrl.UpdateCheckList}${workId}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     });
     const { sendRequest: deleteChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "DELETE",
-        url: `${ChecklistApiUrl.DeleteCheckList}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}/checklists`,
+        url: `${ChecklistApiUrl.DeleteCheckList}${workId}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }

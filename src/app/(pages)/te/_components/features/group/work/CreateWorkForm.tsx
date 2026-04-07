@@ -66,6 +66,7 @@ const CreateWorkForm = ({ form, sprints }: CreateWorkFormProps) => {
                         </SelectTrigger>
                         <SelectContent className="w-full z-200">
                             <SelectGroup className="z-200 w-full">
+                                <SelectItem value="null">Không có Sprint</SelectItem>
                                 {sprints.map((sprint) => (
                                     <SelectItem key={sprint.id} value={sprint.id}>
                                         {sprint.name}

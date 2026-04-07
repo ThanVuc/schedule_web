@@ -4,3 +4,4 @@ export * from "./userStatus";
 export * from "./workPriority";
 export * from "./workStatus";
 export * from "./tabGroup"
+export * from "./enumDisplayMap";
