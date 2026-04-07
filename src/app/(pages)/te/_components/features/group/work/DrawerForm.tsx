@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui";
 import { useAxiosMutation } from "@/hooks";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
@@ -29,16 +30,19 @@ interface DrawerFormProps {
     form: UseFormReturn<DrawerForm>;
     version: number;
     listSprint?: ListSimpleSprintResponse[];
+    disable?: boolean;
 }
 
-const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
+const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [currentVersion, setCurrentVersion] = useState<number>(Number(version) || 0);
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const { id } = useModalParams();
     const { sendRequest: sendUpdateRequest } = useAxiosMutation({
         method: "PATCH",
-        url: `${boardWorksApiUrl.UpdateBoardWork}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`,
+        url: `${boardWorksApiUrl.UpdateBoardWork}${groupId}/works/${id}`,
         headers: {
             "Content-Type": "application/json"
         }
@@ -58,6 +62,7 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
 
 
     const { debouncedUpdate, cleanup } = useDebouncedUpdate(updateWork, 2000, handleResponse);
+    const { debouncedUpdate: immediateUpdate, cleanup: immediateCleanup } = useDebouncedUpdate(updateWork, 0, handleResponse);
 
     useEffect(() => {
         setCurrentVersion(Number(version) || 0);
@@ -66,6 +71,9 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
     useEffect(() => {
         return () => cleanup();
     }, [cleanup]);
+    useEffect(() => {
+        return () => immediateCleanup();
+    }, [immediateCleanup]);
     return (<>
         <div className="m-5 border-b-1 pb-3 border-[#2A3A4F]">
             <FormField
@@ -73,14 +81,17 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                 name="name"
                 render={({ field }) => (
                     <FormItem className="w-full break-words whitespace-normal text-left">
-                        {isEditingTitle ? (
+                        {isEditingTitle && !disable ? (
                             <Input
+                            disabled={disable}
                                 autoFocus
                                 {...field}
                                 value={field.value || ""}
                                 onBlur={() => {
                                     field.onBlur();
                                     setIsEditingTitle(false);
+                                    cleanup();
+                                    debouncedUpdate({ name: field.value });
                                 }}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -106,14 +117,16 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                 name="description"
                 render={({ field }) => (
                     <FormItem className="w-full break-words whitespace-normal text-left">
-                        {isEditingDescription ? (
+                        {isEditingDescription && !disable ? (
                             <Input
+                            disabled={disable}
                                 autoFocus
                                 {...field}
                                 value={field.value || ""}
                                 onBlur={() => {
                                     field.onBlur();
                                     setIsEditingDescription(false);
+                                    debouncedUpdate({ description: field.value });
                                 }}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -144,13 +157,12 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                         <FormItem className="space-y-2">
                             <Label className="block text-sm font-semibold text-slate-300">Status</Label>
                             <FormControl>
-                                <Select value={field.value.toString()} onValueChange={(value) => {
+                                <Select disabled={disable} value={field.value.toString()} onValueChange={(value) => {
                                     const statusValue = Number(value);
                                     const isValidStatus = Number.isInteger(statusValue) && statusValue >= 1 && statusValue <= 4;
                                     if (!isValidStatus) return;
-
                                     field.onChange(statusValue);
-                                    updateWork({ status: statusValue });
+                                    immediateUpdate({ status: statusValue });
                                 }}>
                                     <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">
                                         <SelectValue placeholder="Select status" />
@@ -177,13 +189,13 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                             <FormItem className="space-y-2">
                                 <Label className="block text-sm font-semibold text-slate-300">Priority</Label>
                                 <FormControl>
-                                    <Select value={field.value?.toString()} onValueChange={
+                                    <Select disabled={disable} value={field.value?.toString()} onValueChange={
                                         (value) => {
                                             const priorityValue = Number(value);
-                                            const isValidPriority = Number.isInteger(priorityValue) && priorityValue >= 1 && priorityValue <= 4;
+                                            const isValidPriority = Number.isInteger(priorityValue) && priorityValue >= 1 && priorityValue <= 3;
                                             if (!isValidPriority) return;
                                             field.onChange(priorityValue);
-                                            updateWork({ priority: priorityValue });
+                                            immediateUpdate({ priority: priorityValue });
                                         }
                                     }>
                                         <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">
@@ -210,11 +222,12 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                                 <FormControl>
                                     <Input
                                         type="date"
+                                        disabled={disable}
                                         value={field.value ?? ""}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             field.onChange(value === "" ? undefined : value);
-                                            debouncedUpdate({ due_date: value === "" ? undefined : value });
+                                            immediateUpdate({ due_date: value === "" ? undefined : value });
                                         }}
                                         className="h-9 border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0"
                                     />
@@ -231,6 +244,7 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                                 <Label className="block text-sm font-semibold text-slate-300">Story Points</Label>
                                 <FormControl>
                                     <Input
+                                        disabled={disable}
                                         type="number"
                                         min={1}
                                         placeholder="0"
@@ -238,7 +252,7 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             field.onChange(value === "" ? undefined : Number(value));
-                                            debouncedUpdate({ story_point: value === "" ? undefined : Number(value) });
+                                            immediateUpdate({ story_point: value === "" ? undefined : Number(value) });
                                         }}
                                         className="h-9 border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0"
                                     />
@@ -254,16 +268,16 @@ const DrawerForm = ({ form, version, listSprint }: DrawerFormProps) => {
                             <FormItem className="space-y-2">
                                 <Label className="block text-sm font-semibold text-slate-300">Sprint</Label>
                                 <FormControl>
-                                    <Select value={field.value} onValueChange={
+                                    <Select disabled={disable} value={field.value} onValueChange={
                                         (value) => {
                                             if (value === "NoSprint") {
                                                 field.onChange(undefined);
-                                                updateWork({ is_unset_sprint: true });
+                                                immediateUpdate({ is_unset_sprint: true });
                                                 return;
                                             }
-                                             if (!value) return;
+                                            if (!value) return;
                                             field.onChange(value);
-                                            updateWork({ sprint_id: value });
+                                            immediateUpdate({ sprint_id: value });
                                         }
                                     }>
                                         <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">

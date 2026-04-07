@@ -17,9 +17,10 @@ interface BoardItemProps {
     number: number;
     date?: string;
     column: string;
+    disable?: boolean;
 }
 
-const BoardItem = ({ id, index, title, state, name, number, date, column }: BoardItemProps) => {
+const BoardItem = ({ id, index, title, state, name, number, date, column, disable }: BoardItemProps) => {
     const { ref, isDragging } = useSortable({
         id,
         index,
@@ -56,13 +57,13 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
                                 <ThreeDotVertical />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent >
-                            <DropdownMenuItem className="cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
+                        <DropdownMenuContent  >
+                            <DropdownMenuItem disabled={disable} className="cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
                             onClick={()=>{handlePageQueryToModal(ModelType.ASSIGN, id)}}
                             >
-                                Cấp quyền
+                                Phân công
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-[#EF4444] cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
+                            <DropdownMenuItem disabled={disable} className="text-[#EF4444] cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
                             onClick={()=>{handlePageQueryToModal(ModelType.DELETE, id)}}
                             >
                                 Xoá công việc
@@ -70,7 +71,7 @@ const BoardItem = ({ id, index, title, state, name, number, date, column }: Boar
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className={`p-1 w-max text-xs rounded-lg ${state === 1 ? "" : state === 2 ? "bg-[#2A97EA] text-black" : state === 3 ? "bg-[#F8AF18] text-black" : ""}`}>
+                <div className={`p-1 w-max text-xs rounded-lg ${state === 1 ? "bg-[#FFFFFF]/90 text-black px-3" : state === 2 ? "bg-[#2A97EA] text-black px-3" : state === 3 ? "bg-[#F8AF18] text-black px-3" : "bg-[#00FF4C] text-black px-3"}`}>
                     {useEnumMap(state, "WORK_STATUS")}
                 </div>
                 <div className="flex justify-between items-center mt-2">

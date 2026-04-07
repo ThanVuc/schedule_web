@@ -15,11 +15,12 @@ interface CheckListComponentProps {
     onCreateItem?: (payload: CreateChecklistItemRequest) => Promise<ChecklistItemResponse | null>;
     onUpdateItem?: (checklistId: string, payload: UpdateChecklistItemRequest) => Promise<UpdateChecklistItemResponse | null>;
     onDeleteItem?: (checklistId: string) => Promise<DeleteChecklistItemResponse | null>;
+    disable?: boolean;
 }
 
 
 
-const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDeleteItem }: CheckListComponentProps) => {
+const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDeleteItem, disable }: CheckListComponentProps) => {
     const [items, setItems] = useState<ChecklistItemResponse[]>(checklistItems || []);
     const [newItemName, setNewItemName] = useState("");
     const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -177,6 +178,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
                         />
                         {editingItemId === item.id ? (
                             <Input
+                                disabled={disable}
                                 value={editingName}
                                 onChange={(event) => setEditingName(event.target.value)}
                                 onBlur={() => saveEditItem(item.id)}
@@ -207,6 +209,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
                             </span>
                         )}
                         <button
+                            disabled={disable}
                             type="button"
                             aria-label={`Delete ${item.name}`}
                             onClick={() => removeItem(item.id)}
@@ -219,6 +222,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
             </div>
             <div className="flex items-center gap-2">
                 <Input
+                    disabled={disable}
                     value={newItemName}
                     onChange={(event) => {
                         setNewItemName(event.target.value)
@@ -237,7 +241,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
                 <Button
                     type="button"
                     onClick={addItem}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || disable}
                     className="h-9 rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white hover:bg-sky-500"
                 >
                     {isSubmitting ? "Đang thêm..." : "Thêm"}

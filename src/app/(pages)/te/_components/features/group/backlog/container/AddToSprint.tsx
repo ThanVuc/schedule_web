@@ -7,10 +7,11 @@ import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dia
 import { Label } from "@radix-ui/react-label";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { ListSimpleSprintResponse, WorkDetailResponse } from "@/app/(pages)/te/_models/works/WorkResponse";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
+import { useSearchParams } from "next/navigation";
 
 
 
@@ -25,6 +26,11 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork
     const { id, mode } = useModalParams();
     const [selectedSprintId, setSelectedSprintId] = useState<string | undefined>();
 
+    const searchParams = useSearchParams();
+        const listParams = useMemo(() => {
+            const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
+            return Object.fromEntries(entries);
+        }, [searchParams]);
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
             setSelectedSprintId(undefined);
@@ -34,10 +40,12 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork
 
     const { sendRequest: sendUpdateRequest } = useAxiosMutation({
         method: "PATCH",
-        url: `${boardWorksApiUrl.UpdateBoardWork}2c9179a9-a279-4b26-851a-44e16b814d54/works/${id}`,
+        url: `${boardWorksApiUrl.UpdateBoardWork}/works/${id}`,
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        params: { ...listParams },
+
     });
 
     const onSubmit = async () => {

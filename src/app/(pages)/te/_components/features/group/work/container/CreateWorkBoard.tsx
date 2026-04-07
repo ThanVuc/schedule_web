@@ -1,9 +1,6 @@
 'use client';
 
 import { Form } from "@/components/ui";
-import { Plus } from "lucide-react";
-import { Dialog, DialogBody, DialogCancelButton, DialogContent, DialogFooter, DialogHeader, DialogPrimaryButton } from "../../../../common/TeamDialog";
-import { DialogClose, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import CreateWorkForm from "../CreateWorkForm";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +13,8 @@ import { useEffect, useState } from "react";
 import z from "zod";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { useModalParams } from "@/app/(pages)/te/_hooks";
+import { useParams } from "next/navigation";
+import { TeamDialogForm } from "../../../../common";
 
 
 interface CreateWorkBoardDialogProps {
@@ -28,10 +27,11 @@ interface CreateWorkBoardDialogProps {
 export const CreateWorkBoardDialog = ({ open, refreshListWork, loading, listSprint, onOpenChange }: CreateWorkBoardDialogProps) => {
     const [formReady, setFormReady] = useState(false);
     const { mode } = useModalParams();
-
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const { sendRequest: createWork } = useAxiosMutation<WorkCreateWorkRequest>({
         method: "POST",
-        url: `${boardWorksApiUrl.CRUDWORD}/2c9179a9-a279-4b26-851a-44e16b814d54/works`,
+        url: `${boardWorksApiUrl.CRUDWORD}/${groupId}/works`,
     })
 
     useEffect(() => {
@@ -64,6 +64,9 @@ export const CreateWorkBoardDialog = ({ open, refreshListWork, loading, listSpri
     }, [open, form]);
 
     const onSubmit = async (values: z.infer<typeof CreateWorkSchema>) => {
+        if (values.sprint_id === "null") {
+            values.sprint_id = undefined;
+        }
         if (mode === ModelType.CREATE) {
             await createWork(values);
             onOpenChange?.(false);
@@ -72,43 +75,30 @@ export const CreateWorkBoardDialog = ({ open, refreshListWork, loading, listSpri
     }
     return (
         <>
-            <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent size="md">
-                    <DialogHeader>
-                        <DialogTitle className="text-white text-xl">Tạo công việc</DialogTitle>
-                        <DialogDescription className="text-gray-500 text-sm">
-                            Tạo một công việc mới để quản lý và theo dõi tiến độ.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogBody>
-                        <div>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)}>
-                                    {formReady ? (<CreateWorkForm form={form} sprints={listSprint || []} />
-                                    ) : (
-                                        <div className="flex items-center justify-center">
-                                            <Spinner />
-                                        </div>)}
-                                </form>
-                            </Form>
-                        </div>
-                    </DialogBody>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <DialogCancelButton>
-                                Thoát
-                            </DialogCancelButton>
-                        </DialogClose>
-                        <DialogPrimaryButton
-                            disabled={!form.formState.isValid}
-                            confirmSubmit
-                            onClick={() => form.handleSubmit(onSubmit)()}
-                        >
-                            <Plus size={14} /> Tạo công việc
-                        </DialogPrimaryButton>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <TeamDialogForm
+                open={open}
+                onOpenChange={onOpenChange}
+                size="md"
+                title="Tạo công việc"
+                warnOnClose={form.formState.isDirty}
+                description="Tạo một công việc mới để quản lý và theo dõi tiến độ."
+                submitDisabled={!form.formState.isValid}
+                submitButtonText="Tạo công việc"
+                cancelButtonText="Hủy"
+                onSubmit={form.handleSubmit(onSubmit)}
+            >
+                <div>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            {formReady ? (<CreateWorkForm form={form} sprints={listSprint || []} />
+                            ) : (
+                                <div className="flex items-center justify-center">
+                                    <Spinner />
+                                </div>)}
+                        </form>
+                    </Form>
+                </div>
+            </TeamDialogForm>
         </>
     );
 };
