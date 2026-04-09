@@ -3,7 +3,7 @@ import type { SprintFormData } from "../sprintTypes";
 
 const labelClassName = "text-xs font-medium text-[#C9D4E4]";
 const controlClassName =
-  "h-9 rounded-lg border border-[#1D2C43] bg-[#0F1A2F] px-3 text-sm text-white placeholder:text-[#60708A] focus-visible:ring-1 focus-visible:ring-[#2B79C2] focus-visible:border-[#2B79C2]";
+  "h-9 rounded-lg border border-[#1D2C43] bg-[#0F1A2F] px-4 text-sm text-white placeholder:text-[#60708A] focus-visible:ring-1 focus-visible:ring-[#2B79C2] focus-visible:border-[#2B79C2]";
 
 export default function CreateEditSprintForm({
   data,
@@ -38,8 +38,8 @@ export default function CreateEditSprintForm({
         />
       </div>
 
-      <div className="flex flex-col gap-3">
-        <div className="space-y-1.5">
+      <div className="flex gap-3 justify-between">
+        <div className="space-y-2">
           <Label className={labelClassName}>Ngày bắt đầu</Label>
           <Input
             type="date"
@@ -49,7 +49,7 @@ export default function CreateEditSprintForm({
           />
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <Label className={labelClassName}>Ngày kết thúc</Label>
           <Input
             type="date"

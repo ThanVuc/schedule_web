@@ -5,9 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { UserPlus, MoreVertical } from "lucide-react";
 import { useAxios } from "@/hooks/useAxios";
 import { teamMemberApiUrl } from "@/api/teamGroup";
-import profileApiUrl from "@/api/profile";
 import { format } from "date-fns";
-import Image from 'next/image'
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -19,12 +17,21 @@ import { ChangeRoleDialog } from "./ChangeRole";
 import { DeleteMemberDialog } from "./DeleteMember";
 import { InviteMemberDialog } from "./InviteMember";
 import { Button } from "@/components/ui";
+import { GroupRole } from "../../../../_constants/groupRole";
+import { enumDisplayMap } from "../../../../_constants/enumDisplayMap";
 
 const ROLE_STYLE: Record<MemberRole, string> = {
     Owner: "bg-[#F8AF18] text-black border-transparent",
     Manager: "bg-[#1565C0] text-white border-transparent",
     Member: "bg-[#1E2A3A] text-gray-300 border-[#2A3A50]",
     Viewer: "bg-[#1E2A3A] text-gray-500 border-[#2A3A50]",
+};
+
+const ROLE_NAME_TO_ENUM: Record<string, GroupRole> = {
+    owner: GroupRole.OWNER,
+    manager: GroupRole.MANAGER,
+    member: GroupRole.MEMBER,
+    viewer: GroupRole.VIEWER,
 };
 
 function RoleBadge({ role }: { role: MemberRole }) {
@@ -92,19 +99,6 @@ const BoardMemberPage = () => {
         [activeGroupId],
         !activeGroupId,
     );
-    const { data: myProfileRaw } = useAxios<unknown>({
-        method: "GET",
-        url: profileApiUrl.getUserProfile,
-    });
-    const myProfile = (() => {
-        const raw = myProfileRaw as any;
-        if (!raw) return null;
-        if (raw.email || raw.fullname || raw.id) return raw as { id?: string; fullname?: string; email?: string };
-        if (raw.data && (raw.data.email || raw.data.fullname || raw.data.id)) return raw.data as { id?: string; fullname?: string; email?: string };
-        if (raw.item && (raw.item.email || raw.item.fullname || raw.item.id)) return raw.item as { id?: string; fullname?: string; email?: string };
-        if (raw.user && (raw.user.email || raw.user.fullname || raw.user.id)) return raw.user as { id?: string; fullname?: string; email?: string };
-        return null;
-    })();
     const [inviteOpen, setInviteOpen] = useState(false);
     const [changeTarget, setChangeTarget] = useState<Member | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<MemberToDelete | null>(null);
@@ -115,20 +109,15 @@ const BoardMemberPage = () => {
             if (role && typeof role === "object" && "name" in role && typeof role.name === "string") return role.name;
             return "";
         })();
-
-        const normalized = String(roleText ?? "").trim().toLowerCase();
-
-        if (normalized === "owner") return "Owner";
-        if (normalized === "manager") return "Manager";
-        if (normalized === "member") return "Member";
-        if (normalized === "viewer") return "Viewer";
-        if (normalized === "1") return "Owner";
-        if (normalized === "2") return "Manager";
-        if (normalized === "3") return "Member";
-        if (normalized === "4") return "Viewer";
-
-        if (roleText === "Owner" || roleText === "Manager" || roleText === "Member" || roleText === "Viewer") return roleText;
-        return "Member";
+        const normalized = roleText.trim().toLowerCase();
+        const maybeNumeric = Number(normalized);
+        const roleEnum = Number.isNaN(maybeNumeric)
+            ? ROLE_NAME_TO_ENUM[normalized] ?? GroupRole.MEMBER
+            : (maybeNumeric as GroupRole);
+        const display = enumDisplayMap.GROUP_ROLE[roleEnum] ?? enumDisplayMap.GROUP_ROLE[GroupRole.MEMBER];
+        return (display === "Owner" || display === "Manager" || display === "Member" || display === "Viewer")
+            ? display
+            : "Member";
     };
     const toAvatarFallback = (name: string) => name.trim().charAt(0).toUpperCase() || "?";
 
@@ -154,35 +143,16 @@ const BoardMemberPage = () => {
         return [];
     })();
     const members: Member[] = membersFromApi.map((item) => {
-        const memberId = item.id ?? item.user_id ?? item.user?.id ?? "";
-        const name =
-            item.name ??
-            item.full_name ??
-            item.user?.name ??
-            item.user?.full_name ??
-            myProfile?.fullname ??
-            "Unknown";
-        const isCurrentUser = memberId === myProfile?.id;
-
-        const email =
-            item.email ||
-            item.user_email ||
-            item.invited_email ||
-            item.user?.email ||
-            item.member?.email ||
-            (isCurrentUser ? myProfile?.email : "") ||
-            "";
-        const avatarUrl =
-            item.avatar_url ??
-            item.avatar ??
-            item.user?.avatar_url ??
-            item.user?.avatar;
+        const memberId = item.id ?? "";
+        const email = item.email ?? "";
+        const name = item.name ?? "Unknown";
+        const avatarUrl = item.avatar;
         return {
             id: memberId,
             name,
             email,
             role: toRole(item.role),
-            joined: formatJoinedAt(item.joined_at ?? item.created_at),
+            joined: formatJoinedAt(item.joined_at),
             avatarUrl,
             avatarFallback: toAvatarFallback(name),
         };
@@ -251,11 +221,12 @@ const BoardMemberPage = () => {
                         <div className="flex items-center gap-3">
                             <div className="size-8 rounded-full bg-[#1E2A3A] flex items-center justify-center text-base shrink-0 overflow-hidden">
                                 {member.avatarUrl ? (
-
-                                    <Image
+                                    <img
                                         src={member.avatarUrl}
                                         alt={member.name}
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-cover rounded-full"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer"
                                     />
                                 ) : (
                                     member.avatarFallback

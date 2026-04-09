@@ -11,7 +11,7 @@ export default function NotificationHeader({ unreadCount, onMarkAllAsRead }: Not
     return (
         <div className="flex items-center justify-between border-b py-4 px-6">
             <div className="pl-4 pb-6">
-                <h1 className="text-3xl font-bold">X Thông báo</h1>
+                <h1 className="text-3xl font-bold">Thông báo</h1>
                 <p className="text-md text-gray-500 mt-0.5">
                     Luôn cập nhật thông tin về các hoạt động của nhóm bạn.
                 </p>

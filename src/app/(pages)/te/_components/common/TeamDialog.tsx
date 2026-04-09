@@ -84,11 +84,13 @@ export function Dialog({
 export interface DialogContentProps extends React.ComponentProps<typeof BaseDialogContent> {
     size?: DialogSize
     accentColor?: string
+    scroll?: boolean
 }
 
 export function DialogContent({
     size = "md",
     accentColor,
+    scroll = false,
     className,
     children,
     ...props
@@ -98,6 +100,7 @@ export function DialogContent({
             className={cn(
                 dialogSizeClasses[size],
                 "bg-[#0B1120] border-[#1E2A3A] text-white p-0 overflow-hidden gap-0",
+                scroll && "max-h-[85vh] flex flex-col",
                 className,
             )}
             {...props}
@@ -261,6 +264,7 @@ export interface TeamDialogFormProps {
     submitConfirmDescription?: string
     submitConfirmLabel?: string
     submitConfirmCancelLabel?: string
+    scroll?: boolean
 
     onSubmit?: () => void | Promise<void>
 
@@ -286,6 +290,7 @@ export function TeamDialogForm({
     submitConfirmDescription = "Bạn có chắc chắn muốn thực hiện hành động này không?",
     submitConfirmLabel = "Xác nhận",
     submitConfirmCancelLabel = "Hủy",
+    scroll = false,
 
     onSubmit,
     children,
@@ -319,7 +324,7 @@ export function TeamDialogForm({
                 </DialogPrimitive.Trigger>
             )}
 
-            <DialogContent size={size}>
+            <DialogContent size={size} scroll={scroll}>
                 <DialogHeader icon={icon}>
                     <DialogPrimitive.Title className="text-white text-base">
                         {title}
@@ -331,7 +336,7 @@ export function TeamDialogForm({
                     )}
                 </DialogHeader>
 
-                <DialogBody>
+                <DialogBody className={cn(scroll && "min-h-0 flex-1 overflow-y-auto")}>
                     {children}
                 </DialogBody>
 

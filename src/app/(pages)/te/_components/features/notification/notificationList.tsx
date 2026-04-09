@@ -4,7 +4,7 @@ import NotificationItem, { Notification } from './notificationItem';
 
 type NotificationListProps = {
     notifications: Notification[];
-    onMarkAsRead: (id: number) => void;
+    onMarkAsRead: (id: string) => void;
 };
 
 export default function NotificationList({ notifications, onMarkAsRead }: NotificationListProps) {

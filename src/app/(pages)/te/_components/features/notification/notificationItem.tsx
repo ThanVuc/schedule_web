@@ -1,7 +1,7 @@
 'use client';
 
 export type Notification = {
-    id: number;
+    id: string;
     avatar: string;
     avatarBg: string;
     title: string;
@@ -12,7 +12,7 @@ export type Notification = {
 
 type NotificationItemProps = {
     notification: Notification;
-    onMarkAsRead: (id: number) => void;
+    onMarkAsRead: (id: string) => void;
 };
 
 export default function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
@@ -20,8 +20,11 @@ export default function NotificationItem({ notification, onMarkAsRead }: Notific
 
     return (
         <div
-            onClick={() => onMarkAsRead(id)}
-            className={`hover:bg-[#1a2332] flex items-start gap-4 p-5 px-6 border cursor-pointer
+            onClick={() => {
+                if (!read) onMarkAsRead(id);
+            }}
+            className={`hover:bg-[#1a2332] flex items-start gap-4 p-5 px-6 border
+                ${read ? 'cursor-default' : 'cursor-pointer'}
                 ${read ? 'bg-[#0b1120] opacity-70' : 'bg-[#2a97ea]/5'}`}
         >
             <div

@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Button } from "@/components/ui";
 import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
+import { useMe } from "@/context/me.context";
 import { Users, Plus } from "lucide-react";
-import { teamGroupApiUrl } from "@/api/teamGroup";
+import { teamGroupApiUrl, teamMemberApiUrl } from "@/api/teamGroup";
+import { GroupRole } from "../../_constants/groupRole";
+import { enumDisplayMap } from "../../_constants/enumDisplayMap";
 import {
     CreateGroupDialog,
     DeleteGroupDialog,
@@ -34,8 +37,16 @@ type GroupApiModel = {
     active_sprint?: string | null;
 };
 
+const ROLE_NAME_TO_ENUM: Record<string, GroupRole> = {
+    owner: GroupRole.OWNER,
+    manager: GroupRole.MANAGER,
+    member: GroupRole.MEMBER,
+    viewer: GroupRole.VIEWER,
+};
+
 export default function BoardGroupPage() {
     const router = useRouter();
+    const meContext = useMe();
     const { setToast } = useToastState();
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [search] = useState("");
@@ -61,6 +72,10 @@ export default function BoardGroupPage() {
     const { sendRequest: deleteGroupRequest } = useAxiosMutation({
         method: "DELETE",
         url: teamGroupApiUrl.list,
+    });
+    const { sendRequest: leaveGroupRequest } = useAxiosMutation({
+        method: "DELETE",
+        url: leaveTarget ? teamMemberApiUrl.remove(leaveTarget.id, meContext?.me?.user_id || "") : teamMemberApiUrl.list(""),
     });
 
     useEffect(() => {
@@ -91,32 +106,22 @@ export default function BoardGroupPage() {
             return "";
         })();
 
-        const normalized = String(roleText ?? "").trim().toLowerCase();
-
-        if (normalized === "owner") return "Owner";
-        if (normalized === "manager") return "Manager";
-        if (normalized === "member") return "Member";
-        if (normalized === "viewer") return "Viewer";
-        if (normalized === "1") return "Owner";
-        if (normalized === "2") return "Manager";
-        if (normalized === "3") return "Member";
-        if (normalized === "4") return "Viewer";
-
-        if (roleText === "Owner" || roleText === "Manager" || roleText === "Member" || roleText === "Viewer") {
-            return roleText;
-        }
-
-        return "Member";
+        const normalized = roleText.trim().toLowerCase();
+        const maybeNumeric = Number(normalized);
+        const roleEnum = Number.isNaN(maybeNumeric)
+            ? ROLE_NAME_TO_ENUM[normalized] ?? GroupRole.MEMBER
+            : (maybeNumeric as GroupRole);
+        const display = enumDisplayMap.GROUP_ROLE[roleEnum] ?? enumDisplayMap.GROUP_ROLE[GroupRole.MEMBER];
+        return (display === "Owner" || display === "Manager" || display === "Member" || display === "Viewer")
+            ? display
+            : "Member";
     };
 
     const groupsFromApi = Array.isArray(groupData)
         ? groupData
         : (groupData?.items ?? []);
 
-    const groups: Group[] = groupsFromApi.map((item) => {
-        // Prefer group_id (actual Group UUID required by members/sprints APIs) over id
-        // which may be a GroupMember record ID depending on backend implementation.
-        const primaryId = (item.group_id ?? "").trim() || (item.id ?? "").trim();
+    const groups: Group[] = groupsFromApi.map((item) => { const primaryId = (item.group_id ?? "").trim() || (item.id ?? "").trim();
         const secondaryId = (item.id ?? "").trim();
         const altGroupId = primaryId && secondaryId && primaryId !== secondaryId ? secondaryId : undefined;
         return {
@@ -192,12 +197,35 @@ export default function BoardGroupPage() {
     };
 
     const handleLeave = async (id: string) => {
-        void id;
-        setToast({
-            title: "error",
-            message: "",
-            variant: "warning",
+        const userId = meContext?.me?.user_id;
+        if (!userId) {
+            setToast({
+                title: "Rời nhóm thất bại",
+                message: "Không xác định được tài khoản hiện tại.",
+                variant: "error",
+            });
+            return;
+        }
+
+        const { error } = await leaveGroupRequest({
+            group_id: id,
+            user_id: userId,
         });
+        if (error) {
+            setToast({
+                title: "Rời nhóm thất bại",
+                message: "Không thể rời nhóm vào lúc này.",
+                variant: "error",
+            });
+            return;
+        }
+
+        setToast({
+            title: "Thành công",
+            message: "Bạn đã rời nhóm.",
+            variant: "success",
+        });
+        refetch?.();
         setLeaveTarget(null);
     };
 
@@ -278,7 +306,7 @@ export default function BoardGroupPage() {
                     </p>
                     {!search && (
                         <Button
-                            className="mt-1 text-sm text-blue-400 hover:text-blue-300 underline underline-offset-4"
+                            className="mt-1 bg-transparent text-sm text-blue-400 hover:text-blue-300 underline underline-offset-4"
                             onClick={() => setCreateOpen(true)}
                         >
                             Tạo nhóm đầu tiên của bạn

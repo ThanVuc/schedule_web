@@ -15,10 +15,10 @@ import type {
 import { MemberRole, RoleDropdown } from "./ChangeRole";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { useToastState } from "@/hooks/useToasts";
-import { teamMemberApiUrl } from "@/api/teamGroup";
 import { memberApiToastMessage } from "./memberToastErrors";
+import InviteApiUrl from "@/api/invite.api";
 
-function toApiRoleNumber(role: MemberRole) {
+function toApiRoleNumber(role: MemberRole): number {
     return role === "Owner" ? 1 : role === "Manager" ? 2 : role === "Member" ? 3 : 4;
 }
 
@@ -36,14 +36,15 @@ function getInviteCode(raw: unknown): string {
     );
 }
 
+
 function CopyButton({ text }: { text: string }) {
     const [copied, setCopied] = useState(false);
+
     const handleCopy = async () => {
         if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
         } catch {
-            // Fallback for environments where Clipboard API is blocked.
             const ta = document.createElement("textarea");
             ta.value = text;
             ta.style.position = "fixed";
@@ -57,6 +58,7 @@ function CopyButton({ text }: { text: string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
+
     return (
         <button
             type="button"
@@ -71,7 +73,28 @@ function CopyButton({ text }: { text: string }) {
     );
 }
 
+
 export type { InviteMemberDialogProps };
+
+const getPublicAppOrigin = () => {
+    const configuredOrigin = process.env.NEXT_PUBLIC_APP_ORIGIN?.trim();
+    if (configuredOrigin) return configuredOrigin.replace(/\/$/, "");
+    if (typeof window === "undefined") return "https://localhost:3000";
+
+    const currentOrigin = window.location.origin;
+    const isLocalhost =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+    if (!isLocalhost) return currentOrigin;
+
+    try {
+        const apiUrl = new URL(InviteApiUrl.acceptance);
+        if (apiUrl.hostname === "api.schedulr.site") return "https://localhost/3000";
+    } catch {
+    }
+
+    return currentOrigin;
+};
 
 export function InviteMemberDialog({
     open,
@@ -83,13 +106,14 @@ export function InviteMemberDialog({
     onActiveGroupResolved,
 }: InviteMemberDialogProps) {
     const { setToast } = useToastState();
+
     const { sendRequest: inviteRequest } = useAxiosMutation({
         method: "POST",
-        url: teamMemberApiUrl.invite(groupId),
+        url: InviteApiUrl.createInvite(groupId),
     });
     const { sendRequest: inviteRequestAlt } = useAxiosMutation({
         method: "POST",
-        url: teamMemberApiUrl.invite(altGroupId || groupId),
+        url: InviteApiUrl.createInvite(altGroupId || groupId),
     });
 
     const [mode, setMode] = useState<InviteMemberDialogMode>("form");
@@ -109,15 +133,28 @@ export function InviteMemberDialog({
 
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+    const buildInviteUrls = () => {
+        const appOrigin = getPublicAppOrigin();
+        const resolvedGroupId = inviteLinkGroupId || groupId;
+        const groupUrl = `${appOrigin}/te/group/${resolvedGroupId}`;
+        const frontendInviteLink =
+            `${appOrigin}/te/invite?code={code}&url=${encodeURIComponent(groupUrl)}`;
+        return { groupUrl, frontendInviteLink };
+    };
+
     const requestInvite = async (args: { role: MemberRole; email?: string }) => {
         const roleNumber = toApiRoleNumber(args.role);
-        const payload = { role: roleNumber, ...(args.email ? { email: args.email } : {}) };
-        let result = await inviteRequest(payload);
-        if (result.error?.response?.status === 400 || result.error?.response?.status === 422) {
-            result = await inviteRequest({ group_role: roleNumber, ...(args.email ? { email: args.email } : {}) });
-        }
-        const status = result.error?.response?.status;
+        const { groupUrl, frontendInviteLink } = buildInviteUrls();
 
+        const payload = {
+            role: roleNumber,
+            ...(args.email ? { email: args.email } : {}),
+            url: groupUrl,
+            invite_url: frontendInviteLink,
+        };
+
+        let result = await inviteRequest(payload);
+        const status = result.error?.response?.status;
         if (
             result.error &&
             altGroupId &&
@@ -125,12 +162,6 @@ export function InviteMemberDialog({
             (status === 404 || status === 422)
         ) {
             result = await inviteRequestAlt(payload);
-            if (result.error?.response?.status === 400 || result.error?.response?.status === 422) {
-                result = await inviteRequestAlt({
-                    group_role: roleNumber,
-                    ...(args.email ? { email: args.email } : {}),
-                });
-            }
             if (!result.error) {
                 onActiveGroupResolved?.(altGroupId);
             }
@@ -139,8 +170,10 @@ export function InviteMemberDialog({
         return result;
     };
 
+
     const handleSend = async () => {
         if (!isEmailValid || !groupId) return;
+
         if (role === "Owner") {
             setToast({
                 title: "Gửi lời mời thất bại",
@@ -149,9 +182,11 @@ export function InviteMemberDialog({
             });
             return;
         }
+
         setLoading(true);
         const { error } = await requestInvite({ email, role });
         setLoading(false);
+
         if (error) {
             setToast({
                 title: "Gửi lời mời thất bại",
@@ -160,13 +195,16 @@ export function InviteMemberDialog({
             });
             return;
         }
+
         setToast({ title: "Thành công", message: "Đã gửi lời mời thành viên.", variant: "success" });
         onInviteSuccess?.();
         onOpenChange(false);
     };
 
+
     const handleGenerateLink = async () => {
         if (!groupId) return;
+
         if (role === "Owner") {
             setToast({
                 title: "Tạo link thất bại",
@@ -175,9 +213,12 @@ export function InviteMemberDialog({
             });
             return;
         }
+
         setLoading(true);
+
         const { data, error } = await requestInvite({ role });
         setLoading(false);
+
         if (error) {
             setToast({
                 title: "Tạo link thất bại",
@@ -186,6 +227,7 @@ export function InviteMemberDialog({
             });
             return;
         }
+
         const code = getInviteCode(data);
         if (!code) {
             setToast({
@@ -195,11 +237,13 @@ export function InviteMemberDialog({
             });
             return;
         }
-        const apiDomain = "https://schedulr.com/api/v1";
-        const groupUrl = `https://schedulr.com/te/groups/${inviteLinkGroupId}`;
-        setInviteLink(
-            `${apiDomain}?code=${encodeURIComponent(code)}&url=${encodeURIComponent(groupUrl)}`,
+        const { frontendInviteLink } = buildInviteUrls();
+        const resolvedFrontendInviteLink = frontendInviteLink.replace(
+            "{code}",
+            encodeURIComponent(code)
         );
+
+        setInviteLink(resolvedFrontendInviteLink);
         setMode("link");
     };
 
@@ -272,7 +316,7 @@ export function InviteMemberDialog({
                                 </label>
 
                                 <div className="flex min-w-0 items-center gap-2 rounded-lg border border-[#1E2A3A]
-                        bg-[#111820] px-3 py-2">
+                                    bg-[#111820] px-3 py-2">
                                     <span className="min-w-0 flex-1 truncate text-sm text-gray-300">
                                         {inviteLink}
                                     </span>

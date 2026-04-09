@@ -68,6 +68,9 @@ export function NotificationProvider({
   });
 
   const markAsRead = async (id: string) => {
+    const current = notifications.find(n => n.id === id);
+    if (!current || current.is_read) return;
+
     const { error } = await sendRequest({ ids: [id] });
     if (error) {
       setToast({
