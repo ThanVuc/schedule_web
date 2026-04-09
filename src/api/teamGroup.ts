@@ -26,6 +26,8 @@ export const teamSprintApiUrl = {
   update: (sprintId: string) => createAPI(`ts/sprints/${sprintId}`),
   delete: (sprintId: string) => createAPI(`ts/sprints/${sprintId}`),
   updateStatus: (sprintId: string) => createAPI(`ts/sprints/${sprintId}/status`),
+  generationPresign: () =>
+    createAPI(`ts/groups/generate-presigned-urls`),
   generation: (groupId: string) => createAPI(`ts/groups/${groupId}/sprints/generation`),
   export: (groupId: string, sprintId: string) =>
     createAPI(`ts/groups/${groupId}/sprints/${sprintId}/export`),

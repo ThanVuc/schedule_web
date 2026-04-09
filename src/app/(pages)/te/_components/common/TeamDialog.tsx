@@ -336,7 +336,17 @@ export function TeamDialogForm({
                     )}
                 </DialogHeader>
 
-                <DialogBody className={cn(scroll && "min-h-0 flex-1 overflow-y-auto")}>
+                <DialogBody
+                    className={cn(
+                        scroll && "min-h-0 flex-1 overflow-y-auto",
+                        scroll && "scrollbar-thin [scrollbar-color:#94A3B866_transparent]",
+                        scroll && "[&::-webkit-scrollbar]:w-1.5",
+                        scroll && "[&::-webkit-scrollbar-track]:bg-transparent",
+                        scroll && "[&::-webkit-scrollbar-thumb]:rounded-full",
+                        scroll && "[&::-webkit-scrollbar-thumb]:bg-[#94A3B866]",
+                        scroll && "hover:[&::-webkit-scrollbar-thumb]:bg-[#94A3B899]",
+                    )}
+                >
                     {children}
                 </DialogBody>
 
