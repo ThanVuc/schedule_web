@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { SprintStatusMutationDialogProps } from "../sprintTypes";
 import {
   Dialog,
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../../../common/TeamDialog";
+import { Input } from "@/components/ui";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { useToastState } from "@/hooks/useToasts";
 import { teamSprintApiUrl } from "@/api/teamGroup";
@@ -33,9 +34,16 @@ export default function CancelSprintDialog({
     url: teamSprintApiUrl.list(groupId),
   });
   const [submitting, setSubmitting] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
+  const expectedName = target?.name?.trim() ?? "";
+  const canCancel = confirmName.trim() === expectedName && expectedName.length > 0 && !submitting;
+
+  useEffect(() => {
+    if (target) setConfirmName("");
+  }, [target]);
 
   const handleCancel = async () => {
-    if (!target) return;
+    if (!target || !canCancel) return;
     setSubmitting(true);
     const { error } = await updateSprintStatusInGroupRequest(
       { status: CANCEL_STATUS },
@@ -65,12 +73,24 @@ export default function CancelSprintDialog({
             Bạn có chắc muốn hủy sprint này? Sprint sẽ được đánh dấu đã hủy và dữ liệu sẽ trở thành chỉ đọc.
           </DialogDescription>
         </DialogHeader>
-        <DialogBody />
+        <DialogBody>
+          <div className="space-y-3">
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Nhập chính xác tên sprint <span className="font-semibold text-white">{target?.name}</span> để xác nhận hủy.
+            </p>
+            <Input
+              value={confirmName}
+              onChange={(e) => setConfirmName(e.target.value)}
+              placeholder={expectedName || "Tên sprint"}
+              className="w-full bg-[#0D1520] border border-[#1E2A3A] text-white"
+            />
+          </div>
+        </DialogBody>
         <DialogFooter>
           <DialogClose asChild>
-            <DialogCancelButton disabled={submitting}>Thoát</DialogCancelButton>
+            <DialogCancelButton disabled={submitting} onClick={() => setConfirmName("")}>Thoát</DialogCancelButton>
           </DialogClose>
-          <DialogDangerButton disabled={submitting} onClick={handleCancel}>
+          <DialogDangerButton disabled={!canCancel} onClick={handleCancel}>
             Hủy
           </DialogDangerButton>
         </DialogFooter>

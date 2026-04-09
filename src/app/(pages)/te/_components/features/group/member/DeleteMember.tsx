@@ -14,10 +14,6 @@ import {
   DialogTitle,
 } from "../../../common/TeamDialog";
 import type { DeleteMemberDialogProps, MemberToDelete } from "./memberTypes";
-import { useAxiosMutation } from "@/hooks/useAxios";
-import { useToastState } from "@/hooks/useToasts";
-import { teamMemberApiUrl } from "@/api/teamGroup";
-import { memberApiToastMessage } from "./memberToastErrors";
 
 export type { MemberToDelete };
 
@@ -27,11 +23,7 @@ export function DeleteMemberDialog({
   groupId,
   onSuccess,
 }: DeleteMemberDialogProps) {
-  const { setToast } = useToastState();
-  const { sendRequest: deleteMemberRequest } = useAxiosMutation({
-    method: "DELETE",
-    url: teamMemberApiUrl.list(groupId),
-  });
+
   const [submitting, setSubmitting] = useState(false);
 
   return (
@@ -61,20 +53,8 @@ export function DeleteMemberDialog({
             onClick={async () => {
               if (!target || !groupId) return;
               setSubmitting(true);
-              const { error } = await deleteMemberRequest(undefined, target.id);
+
               setSubmitting(false);
-              if (error) {
-                setToast({
-                  title: "Xóa thành viên thất bại",
-                  message: memberApiToastMessage(
-                    error,
-                    "removeMember",
-                    "Không thể xóa thành viên khỏi nhóm.",
-                  ),
-                  variant: "error",
-                });
-                return;
-              }
               onSuccess?.();
               onOpenChange(false);
             }}

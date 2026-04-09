@@ -1,12 +1,13 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
     DialogHeader, DialogTitle, DialogBody,
     DialogCancelButton, DialogDangerButton,
 } from "../../common/TeamDialog";
+import { Input } from "@/components/ui";
 import { type Group } from "./types";
 import { TrashIcon } from "@/components/icon";
 
@@ -18,8 +19,16 @@ export interface DeleteGroupDialogProps {
 
 
 export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGroupDialogProps) => {
+    const [confirmName, setConfirmName] = useState("");
+    const expectedName = target?.name?.trim() ?? "";
+    const canDelete = confirmName.trim() === expectedName && expectedName.length > 0;
+
+    useEffect(() => {
+        if (target) setConfirmName("");
+    }, [target]);
+
     const handleConfirm = () => {
-        if (!target) return;
+        if (!target || !canDelete) return;
         onConfirm(target.id);
     };
 
@@ -37,11 +46,22 @@ export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGro
                 </DialogHeader>
 
                 <DialogBody>
-                    <p className="text-sm text-gray-300 leading-relaxed">
-                        Bạn có chắc muốn xóa nhóm{" "}
-                        <span className="font-semibold text-white">{target?.name}</span>?{" "}
-                        Tất cả thành viên trong nhóm sẽ bị xóa khỏi nhóm này.
-                    </p>
+                    <div className="space-y-3">
+                        <p className="text-sm text-gray-300 leading-relaxed">
+                            Bạn có chắc muốn xóa nhóm{" "}
+                            <span className="font-semibold text-white">{target?.name}</span>?{" "}
+                            Tất cả thành viên trong nhóm sẽ bị xóa khỏi nhóm này.
+                        </p>
+                        <p className="text-xs text-red-200/80">
+                            Nhập chính xác tên nhóm để xác nhận xóa.
+                        </p>
+                        <Input
+                            value={confirmName}
+                            onChange={(e) => setConfirmName(e.target.value)}
+                            placeholder={expectedName || "Tên nhóm"}
+                            className="w-full bg-[#0D1520] border border-[#1E2A3A] text-white"
+                        />
+                    </div>
                 </DialogBody>
 
                 <DialogFooter>
@@ -50,7 +70,7 @@ export const DeleteGroupDialog = ({ target, onOpenChange, onConfirm }: DeleteGro
                             Hủy
                         </DialogCancelButton>
                     </DialogClose>
-                    <DialogDangerButton onClick={handleConfirm}>
+                    <DialogDangerButton onClick={handleConfirm} disabled={!canDelete}>
                         <Trash2 size={14} /> Xóa nhóm
                     </DialogDangerButton>
                 </DialogFooter>

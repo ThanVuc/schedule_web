@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import { TeamDialogForm } from "../../../../common/TeamDialog";
-import { Button, Textarea } from "@/components/ui";
+import { Button, Input, Textarea } from "@/components/ui";
 import z from "zod";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { useToastState } from "@/hooks/useToasts";
@@ -19,7 +19,14 @@ const GenerateSprintWithAISchema = z.object({
   planningContext: z.string().max(5000, "Nội dung vượt quá giới hạn cho phép"),
 });
 
-const INITIAL: GenerateSprintWithAIFormData = { tab: "text", planningContext: "" };
+const INITIAL: GenerateSprintWithAIFormData = {
+  tab: "text",
+  name: "",
+  goal: "",
+  startDate: "",
+  endDate: "",
+  planningContext: "",
+};
 
 export default function GenerateSprintWithAIDialog({
   open,
@@ -40,18 +47,29 @@ export default function GenerateSprintWithAIDialog({
   }, [open]);
 
   const setTab = (tab: GenerateSprintAiTab) => setData((prev) => ({ ...prev, tab }));
+  const setName = (name: string) => setData((prev) => ({ ...prev, name }));
+  const setGoal = (goal: string) => setData((prev) => ({ ...prev, goal }));
+  const setStartDate = (startDate: string) => setData((prev) => ({ ...prev, startDate }));
+  const setEndDate = (endDate: string) => setData((prev) => ({ ...prev, endDate }));
   const setPlanningContext = (planningContext: string) =>
     setData((prev) => ({ ...prev, planningContext }));
 
   return (
     <TeamDialogForm
+    scroll
       open={open}
       onOpenChange={onOpenChange}
       size="md"
       icon={<Zap size={18} className="text-[#F8AF18]" />}
       title="Tạo Sprint với AI"
       description="Cung cấp thông tin bối cảnh hoặc tải lên file kế hoạch."
-      warnOnClose={data.planningContext.trim().length > 0}
+      warnOnClose={
+        data.name.trim().length > 0 ||
+        data.goal.trim().length > 0 ||
+        data.startDate.trim().length > 0 ||
+        data.endDate.trim().length > 0 ||
+        data.planningContext.trim().length > 0
+      }
       submitDisabled={
         submitting || (data.tab === "text" && !GenerateSprintWithAISchema.safeParse(data).success)
       }
@@ -59,7 +77,13 @@ export default function GenerateSprintWithAIDialog({
       cancelButtonText="Hủy"
       onSubmit={async () => {
         setSubmitting(true);
-        const { error } = await generateSprintRequest({ planning_context: data.planningContext.trim() });
+        const { error } = await generateSprintRequest({
+          name: data.name.trim(),
+          goal: data.goal.trim(),
+          start_date: data.startDate || null,
+          end_date: data.endDate || null,
+          planning_context: data.planningContext.trim(),
+        });
         setSubmitting(false);
         if (error) {
           setToast({
@@ -100,6 +124,44 @@ export default function GenerateSprintWithAIDialog({
 
         {data.tab === "text" ? (
           <div className="space-y-3">
+            <div className="space-y-1.5">
+              <div className="text-sm text-gray-300 font-medium">Tên Sprint</div>
+              <Input
+                className="w-full rounded-lg border border-[#1E2A3A] bg-[#0D1520] text-white px-4 py-2.5 text-sm outline-none focus:border-[#42A5F5]/60"
+                placeholder="Nhập tên sprint"
+                value={data.name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="text-sm text-gray-300 font-medium">Mục tiêu Sprint</div>
+              <Input
+                className="w-full rounded-lg border border-[#1E2A3A] bg-[#0D1520] text-white px-4 py-2.5 text-sm outline-none focus:border-[#42A5F5]/60"
+                placeholder="Nhập mục tiêu sprint"
+                value={data.goal}
+                onChange={(e) => setGoal(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <div className="text-sm text-gray-300 font-medium">Ngày bắt đầu</div>
+                <Input
+                  type="date"
+                  className="w-full rounded-lg border border-[#1E2A3A] bg-[#0D1520] text-white px-4 py-2.5 text-sm outline-none focus:border-[#42A5F5]/60"
+                  value={data.startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <div className="text-sm text-gray-300 font-medium">Ngày kết thúc</div>
+                <Input
+                  type="date"
+                  className="w-full rounded-lg border border-[#1E2A3A] bg-[#0D1520] text-white px-4 py-2.5 text-sm outline-none focus:border-[#42A5F5]/60"
+                  value={data.endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            </div>
             <div className="text-xs text-gray-400 font-semibold">Bối cảnh lập kế hoạch</div>
             <Textarea
               rows={10}

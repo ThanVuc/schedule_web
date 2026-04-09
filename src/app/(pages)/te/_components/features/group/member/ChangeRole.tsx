@@ -15,15 +15,18 @@ import {
 import { Button } from "@/components/ui";
 import { Check, ChevronDown } from "lucide-react";
 import type { MemberRole, RoleDefinition, RoleDropdownProps, ChangeRoleDialogProps } from "./memberTypes";
+import { GroupRole } from "../../../../_constants/groupRole";
 
 export type { MemberRole, ChangeRoleDialogProps };
 
 function toApiRole(role: MemberRole) {
-    return role.toLowerCase();
+    if (role === "Owner") return GroupRole.OWNER;
+    if (role === "Manager") return GroupRole.MANAGER;
+    if (role === "Member") return GroupRole.MEMBER;
+    return GroupRole.VIEWER;
 }
 
 export const ROLES: RoleDefinition[] = [
-    { value: "Owner", label: "Owner", desc: "Quyền quản trị viên đầy đủ để quản lý thành viên và xem toàn bộ nội dung." },
     { value: "Manager", label: "Manager", desc: "Quản lý thành viên và sprints" },
     { value: "Member", label: "Member", desc: "Tham gia và đóng góp vào công việc" },
     { value: "Viewer", label: "Viewer", desc: "Chỉ xem, không được chỉnh sửa" },
@@ -89,7 +92,7 @@ export function ChangeRoleDialog({
     const { setToast } = useToastState();
     const { sendRequest: changeRoleRequest } = useAxiosMutation({
         method: "PATCH",
-        url: teamMemberApiUrl.list(groupId),
+        url: teamMemberApiUrl.updateRole(groupId, memberId),
     });
     const [role, setRole] = useState<MemberRole>(currentRole);
 
@@ -111,7 +114,9 @@ export function ChangeRoleDialog({
             submitButtonText="Update Role"
             cancelButtonText="Cancel"
             onSubmit={async () => {
-                const { error } = await changeRoleRequest({ role: toApiRole(role) }, memberId);
+                const { error } = await changeRoleRequest({
+                    new_role: toApiRole(role),
+                });
                 if (error) {
                     setToast({
                         title: "Đổi vai trò thất bại",
