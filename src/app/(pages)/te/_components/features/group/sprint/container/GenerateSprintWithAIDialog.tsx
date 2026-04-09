@@ -1,25 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Zap } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { TeamDialogForm } from "../../../../common/TeamDialog";
-import { Button, Textarea } from "@/components/ui";
-import z from "zod";
+import { Form } from "@/components/ui";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { useToastState } from "@/hooks/useToasts";
 import { teamSprintApiUrl } from "@/api/teamGroup";
-import type {
-  GenerateSprintAiTab,
-  GenerateSprintWithAIFormData,
-  GenerateSprintWithAIDialogProps,
-} from "../sprintTypes";
+import {
+  normalizeDateToApiIso,
+  SprintAiGenerationRequestSchema,
+  type SprintAiGenerationRequest,
+} from "../../../../../_models/sprints/schema/sprint.schema";
+import type { GenerateSprintWithAIDialogProps } from "../sprintTypes";
 import { sprintApiToastMessage } from "./sprintToastErrors";
+import AISprintAdditionalForm from "../components/AISprintAdditionalForm";
+import UploadFileForm, { type UploadFileFormRef } from "../components/UploadFileForm";
 
-const GenerateSprintWithAISchema = z.object({
-  planningContext: z.string().max(5000, "Nội dung vượt quá giới hạn cho phép"),
-});
-
-const INITIAL: GenerateSprintWithAIFormData = { tab: "text", planningContext: "" };
+const initialFormValues: SprintAiGenerationRequest = {
+  name: "",
+  goal: "",
+  start_date: "",
+  end_date: "",
+  additional_context: "",
+  files: [],
+};
 
 export default function GenerateSprintWithAIDialog({
   open,
@@ -28,113 +35,139 @@ export default function GenerateSprintWithAIDialog({
   onSuccess,
 }: GenerateSprintWithAIDialogProps) {
   const { setToast } = useToastState();
-  const { sendRequest: generateSprintRequest } = useAxiosMutation({
+  const uploadFormRef = useRef<UploadFileFormRef>(null);
+  const { sendRequest: generateSprintRequest } = useAxiosMutation<unknown, SprintAiGenerationRequest>({
     method: "POST",
     url: teamSprintApiUrl.generation(groupId),
   });
-  const [data, setData] = useState<GenerateSprintWithAIFormData>(INITIAL);
+
   const [submitting, setSubmitting] = useState(false);
+  const [activeError, setActiveError] = useState<string | null>(null);
+  const [hasSelectedUploadFiles, setHasSelectedUploadFiles] = useState(false);
+
+  const form = useForm<SprintAiGenerationRequest>({
+    resolver: zodResolver(SprintAiGenerationRequestSchema),
+    defaultValues: initialFormValues,
+    mode: "onChange",
+  });
 
   useEffect(() => {
-    if (open) setData(INITIAL);
-  }, [open]);
+    if (!open) {
+      return;
+    }
 
-  const setTab = (tab: GenerateSprintAiTab) => setData((prev) => ({ ...prev, tab }));
-  const setPlanningContext = (planningContext: string) =>
-    setData((prev) => ({ ...prev, planningContext }));
+    form.reset(initialFormValues);
+    setActiveError(null);
+    setHasSelectedUploadFiles(false);
+    uploadFormRef.current?.resetSelection();
+  }, [open, form]);
+
+  const watchedValues = form.watch();
+  const warnOnClose = useMemo(() => {
+    const hasInputValues =
+      watchedValues.name.trim().length > 0 ||
+      watchedValues.goal.trim().length > 0 ||
+      watchedValues.start_date.trim().length > 0 ||
+      watchedValues.end_date.trim().length > 0 ||
+      watchedValues.additional_context.trim().length > 0;
+
+    return hasInputValues || hasSelectedUploadFiles;
+  }, [watchedValues, hasSelectedUploadFiles]);
+
+  const submitDisabled = submitting || !form.formState.isValid;
+
+  const onSubmit = async (values: SprintAiGenerationRequest) => {
+    setSubmitting(true);
+    setActiveError(null);
+
+    try {
+      let files = values.files;
+      if (uploadFormRef.current?.hasSelectedFiles()) {
+        const uploadedFiles = await uploadFormRef.current.uploadFiles();
+        files = uploadedFiles.map((item) => ({
+          object_key: item.object_key,
+          size: item.size,
+        }));
+      } else {
+        files = [];
+      }
+
+      const payload = SprintAiGenerationRequestSchema.parse({
+        ...values,
+        start_date: normalizeDateToApiIso(values.start_date),
+        end_date: normalizeDateToApiIso(values.end_date),
+        files,
+      });
+
+      form.setValue("files", payload.files, { shouldValidate: true });
+      const { error } = await generateSprintRequest(payload);
+      if (error) {
+        setToast({
+          title: "Tạo sprint AI thất bại",
+          message: sprintApiToastMessage(error, "generateSprintAi", "Không thể tạo sprint bằng AI."),
+          variant: "error",
+        });
+        return;
+      }
+
+      setToast({
+        title: "Đang xử lý",
+        message: "AI đang xử lý yêu cầu tạo sprint.",
+        variant: "default",
+      });
+      onSuccess?.();
+      onOpenChange(false);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Không thể tải tệp hoặc tạo sprint bằng AI.";
+      setActiveError(message);
+      setToast({
+        title: "Tạo sprint AI thất bại",
+        message,
+        variant: "error",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <TeamDialogForm
+      scroll
       open={open}
       onOpenChange={onOpenChange}
       size="md"
       icon={<Zap size={18} className="text-[#F8AF18]" />}
       title="Tạo Sprint với AI"
       description="Cung cấp thông tin bối cảnh hoặc tải lên file kế hoạch."
-      warnOnClose={data.planningContext.trim().length > 0}
-      submitDisabled={
-        submitting || (data.tab === "text" && !GenerateSprintWithAISchema.safeParse(data).success)
-      }
+      warnOnClose={warnOnClose}
+      submitDisabled={submitDisabled}
       submitButtonText="Tạo sprint với AI"
       cancelButtonText="Hủy"
-      onSubmit={async () => {
-        setSubmitting(true);
-        const { error } = await generateSprintRequest({ planning_context: data.planningContext.trim() });
-        setSubmitting(false);
-        if (error) {
-          setToast({
-            title: "Tạo sprint AI thất bại",
-            message: sprintApiToastMessage(error, "generateSprintAi", "Không thể tạo sprint bằng AI."),
-            variant: "error",
-          });
-          return;
-        }
-        setToast({ title: "Đang xử lý", message: "AI đang xử lý yêu cầu tạo sprint.", variant: "default" });
-        onSuccess?.();
-        onOpenChange(false);
-      }}
+      onSubmit={() => form.handleSubmit(onSubmit)()}
     >
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            onClick={() => setTab("text")}
-            className={`h-10 rounded-md border hover:bg-[#2A3A4F] border-[#1E2A3A] text-sm font-medium transition-colors ${data.tab === "text"
-              ? "bg-[#2A3A4F] text-white"
-              : "bg-[#0D1520] text-gray-400 hover:text-white"
-              }`}
-          >
-            Nhập văn bản
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setTab("upload")}
-            className={`h-10 rounded-md border hover:bg-[#2A3A4F] border-[#1E2A3A] text-sm font-medium transition-colors ${data.tab === "upload"
-              ? "bg-[#2A3A4F] text-white"
-              : "bg-[#0D1520] text-gray-400 hover:text-white"
-              }`}
-          >
-            Tải lên file
-          </Button>
-        </div>
+      <Form {...form}>
+        <div className="space-y-4">
+          {activeError ? <div className="text-xs text-red-400">{activeError}</div> : null}
 
-        {data.tab === "text" ? (
-          <div className="space-y-3">
-            <div className="text-xs text-gray-400 font-semibold">Bối cảnh lập kế hoạch</div>
-            <Textarea
-              rows={10}
-              className="w-full h-45 resize-none rounded-lg border border-[#1E2A3A] bg-[#0D1520] text-white px-4 py-3 text-sm outline-none focus:border-[#42A5F5]/60"
-              placeholder="Dán tài liệu kế hoạch, yêu cầu hoặc mục tiêu của bạn vào đây..."
-              value={data.planningContext}
-              onChange={(e) => setPlanningContext(e.target.value)}
-            />
-            <div className="text-xs text-gray-500">
-              Bao gồm mục tiêu sprint, tính năng, nhiệm vụ hoặc bất kỳ thông tin lập kế hoạch nào.
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="text-xs text-gray-400 font-semibold">Tải lên tệp kế hoạch</div>
-            <div className="rounded-lg border border-dashed border-[#1E2A3A] bg-[#0D1520] px-6 py-10 text-center">
-              <div className="flex justify-center mb-2">
-                <Zap size={20} className="text-[#F8AF18]" />
-              </div>
-              <div className="text-sm text-white font-semibold">Tải lên tệp kế hoạch</div>
-              <div className="text-xs text-gray-500 mt-1">
-                Hỗ trợ các định dạng tài liệu TXT, PDF, DOC.
-              </div>
-              <div className="mt-5">
-                <Button
-                  type="button"
-                  className="bg-[#2A3A4F] inline-flex items-center h-9 rounded-lg border border-[#1E2A3A] px-4 text-sm font-semibold text-gray-300 hover:bg-[#1E2A3A]"
-                >
-                  Chọn File
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          <AISprintAdditionalForm form={form} />
+
+          <UploadFileForm
+            ref={uploadFormRef}
+            onSelectionChange={setHasSelectedUploadFiles}
+            onUploaded={(uploadedFiles) => {
+              form.setValue(
+                "files",
+                uploadedFiles.map((item) => ({
+                  object_key: item.object_key,
+                  size: item.size,
+                })),
+                { shouldValidate: true },
+              );
+            }}
+          />
+        </div>
+      </Form>
     </TeamDialogForm>
   );
 }

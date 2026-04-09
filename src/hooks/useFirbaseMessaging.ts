@@ -16,6 +16,7 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
         showNotification,
         NotificationComponent
     } = useAppNotification();
+    const refetchNotifications = notificationContext?.refetch;
 
     useEffect(() => {
         if (!me) return; // User must be logged in
@@ -72,7 +73,7 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
         
         // Listen for foreground messages
         const unsubscribe = onMessage(messaging, (payload) => {
-            const { title, body, url, src } = payload.data || {};
+            const { title, body, url, src, correlation_id, message_id } = payload.data || {};
             if (title && body) {
                 showNotification({
                     title,
@@ -80,15 +81,18 @@ export function useFirebaseMessaging(me?: MeModel | null, csrfToken?: string | n
                     url,
                     src,
                     duration: 8000,
+                    dedupeKey: correlation_id
+                        ? `corr:${correlation_id}|${title}|${body}`
+                        : `msg:${message_id || ""}|${title}|${body}|${url || ""}`,
                 });
-                if (notificationContext && notificationContext.refetch) {
-                    notificationContext.refetch();
+                if (refetchNotifications) {
+                    refetchNotifications();
                 }
             }
         });
 
         return unsubscribe;
-    }, [me, showNotification, sendRequest, csrfToken, notificationContext]);
+    }, [me, showNotification, sendRequest, csrfToken, refetchNotifications]);
 
     return { fcmToken, NotificationComponent };
 }

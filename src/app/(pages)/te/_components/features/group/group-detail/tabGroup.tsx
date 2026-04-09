@@ -97,7 +97,7 @@ export const TabGroup = ({ className }: TabGroupProps) => {
 
     const queryGroupName = (searchParams.get("groupName") ?? "").trim();
     const queryMemberCount = searchParams.get("memberCount");
-    const groupName = queryGroupName || groupDetail?.name || groupDetail?.group_name || "Group";
+    const groupName = groupDetail?.name || groupDetail?.group_name || queryGroupName || "Group";
     const memberCount = Number(
         queryMemberCount ??
         groupDetail?.member_total ??

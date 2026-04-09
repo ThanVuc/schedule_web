@@ -56,11 +56,6 @@ export type SprintToastErrorContext =
 
 export type GenerateSprintAiTab = "text" | "upload";
 
-export interface GenerateSprintWithAIFormData {
-  tab: GenerateSprintAiTab;
-  planningContext: string;
-}
-
 export interface GenerateSprintWithAIDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

@@ -28,8 +28,8 @@ const GroupAvatar = ({ group }: { group: Group }) => {
     const initials = group.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
     return (
         <Avatar className="w-11 h-11 shrink-0">
-            <AvatarImage src={group.avatarUrl} alt={group.name} />
-            <AvatarFallback className="bg-[#1E2A3A] text-white text-sm font-bold">
+            <AvatarImage src={group.avatarUrl||""} alt={group.name} />
+            <AvatarFallback className="bg-[#2A97EA] text-white text-sm font-bold">
                 {initials}
             </AvatarFallback>
         </Avatar>

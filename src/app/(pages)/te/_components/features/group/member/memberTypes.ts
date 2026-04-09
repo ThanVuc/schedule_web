@@ -13,28 +13,11 @@ export interface Member {
 
 export interface MemberApiModel {
   id?: string;
-  user_id?: string;
   name?: string;
-  full_name?: string;
   email?: string;
-  user_email?: string;
-  invited_email?: string;
   role?: string | { name?: string } | null;
   joined_at?: string;
-  created_at?: string;
   avatar?: string;
-  avatar_url?: string;
-  user?: {
-    id?: string;
-    name?: string;
-    full_name?: string;
-    email?: string;
-    avatar?: string;
-    avatar_url?: string;
-  };
-  member?: {
-    email?: string;
-  };
 }
 
 export interface ActionsMenuProps {
