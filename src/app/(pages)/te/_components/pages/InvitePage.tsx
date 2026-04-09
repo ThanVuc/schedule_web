@@ -3,7 +3,7 @@
 import InviteApiUrl from "@/api/invite.api";
 import { useCsrfToken } from "@/context/csrf.context";
 import axios, { AxiosError } from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 
@@ -17,10 +17,10 @@ type AcceptanceErrorResponse = {
     error?: string;
 };
 
-const normalizeDestination = (value?: string | null): string => {
-    if (!value) return "/te/group";
+const normalizeDestination = (value?: string | null): string | null => {
+    if (!value) return null;
     const raw = value.trim();
-    if (!raw) return "/te/group";
+    if (!raw) return null;
 
     try {
         const decoded = decodeURIComponent(raw);
@@ -28,14 +28,13 @@ const normalizeDestination = (value?: string | null): string => {
         if (parsed.pathname.startsWith("/te/group")) {
             return `${parsed.pathname}${parsed.search}${parsed.hash}`;
         }
-        return decoded;
+        return null;
     } catch {
-        return raw;
+        return raw.startsWith("/te/group") ? raw : null;
     }
 };
 
 export const InvitePage = () => {
-    const router = useRouter();
     const searchParams = useSearchParams();
 
     const code = searchParams.get("code");
@@ -45,8 +44,10 @@ export const InvitePage = () => {
     const csrfToken = useCsrfToken();
     const hasAcceptedRef = useRef(false);
 
-    const [status, setStatus] = useState<"loading" | "error">("loading");
+    const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
     const [errorMessage, setErrorMessage] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [nextLocation, setNextLocation] = useState<string | null>(null);
 
     useEffect(() => {
         if (!csrfToken) return;
@@ -94,7 +95,9 @@ export const InvitePage = () => {
                     errorBody?.error ||
                     "";
 
-                if (httpStatus === 301 || httpStatus === 302) { router.replace(joinDestination);
+                if (httpStatus === 301 || httpStatus === 302 || httpStatus === 401) {
+                    setErrorMessage(backendMessage || "Yêu cầu đăng nhập. Vui lòng đăng nhập để chấp nhận lời mời.");
+                    setStatus("error");
                     return;
                 } else if (httpStatus === 404) {
                     setErrorMessage(backendMessage || "Liên kết mời không tồn tại hoặc đã hết hạn.");
@@ -103,34 +106,43 @@ export const InvitePage = () => {
                         backendMessage || "Dữ liệu liên kết mời chưa hợp lệ (code). Vui lòng tạo link mới.",
                     );
                 } else if (httpStatus === 409) {
-                    router.replace(joinDestination);
+                    setErrorMessage(backendMessage || "Bạn đã ở trong nhóm.");
+                    setStatus("error");
                     return;
                 } else if (httpStatus === 422) {
                     setErrorMessage(backendMessage || "Nhóm đã đầy hoặc liên kết mời không còn hiệu lực.");
                 } else {
-                    if (!httpStatus) {
-                        router.replace(joinDestination);
-                        return;
-                    }
                     setErrorMessage(backendMessage || "Có lỗi xảy ra, vui lòng thử lại sau.");
                 }
 
                 setStatus("error");
                 return;
             }
-            const destination = normalizeDestination(data?.location) || joinDestination;
-            router.replace(destination);
+            const destination = normalizeDestination(data?.location) ?? joinDestination;
+            if (destination) {
+                setNextLocation(destination);
+                setSuccessMessage("Đã chấp nhận lời mời thành công. Bạn có thể tiếp tục đến trang nhóm.");
+                setStatus("success");
+                return;
+            }
+
+            setStatus("error");
+            setErrorMessage("Lỗi không xác định: không nhận được đường dẫn nhóm hợp lệ từ máy chủ.");
         };
 
         accept();
-    }, [csrfToken, code, joinDestination, router]);
+    }, [csrfToken, code, joinDestination]);
 
     if (status === "error") {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-center px-4">
                 <p className="text-red-400 text-sm">{errorMessage}</p>
                 <button
-                    onClick={() => router.replace("/")}
+                    onClick={() => {
+                        if (typeof window !== "undefined") {
+                            window.location.href = "/";
+                        }
+                    }}
                     className="text-xs text-gray-400 underline hover:text-white transition-colors"
                 >
                     Về trang chủ
@@ -139,10 +151,26 @@ export const InvitePage = () => {
         );
     }
 
+    if (status === "success") {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-3 text-center px-4">
+                <p className="text-green-400 text-sm">{successMessage}</p>
+                {nextLocation && (
+                    <a
+                        href={nextLocation}
+                        className="text-xs text-blue-400 underline hover:text-blue-300 transition-colors"
+                    >
+                        Mở trang nhóm
+                    </a>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="flex items-center justify-center min-h-screen">
             <p className="text-sm text-gray-400">
-                Đang chuyển hướng đến nhóm của bạn, vui lòng chờ...
+                Đang xử lý lời mời...
             </p>
         </div>
     );
