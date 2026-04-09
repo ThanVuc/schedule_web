@@ -8,29 +8,32 @@ import { useEffect, useRef, useState } from "react";
 
 
 type AcceptanceResponse = {
-    location?: string;
+    redirect_url?: string;
 };
 
 type AcceptanceErrorResponse = {
+    redirect_url?: string;
     detail?: string;
     message?: string;
     error?: string;
 };
 
-const normalizeDestination = (value?: string | null): string | null => {
+const normalizeRedirectTarget = (value?: string | null): string | null => {
     if (!value) return null;
     const raw = value.trim();
     if (!raw) return null;
 
     try {
-        const decoded = decodeURIComponent(raw);
-        const parsed = new URL(decoded, typeof window !== "undefined" ? window.location.origin : "https://localhost:3000");
-        if (parsed.pathname.startsWith("/te/group")) {
+        const parsed = new URL(raw, typeof window !== "undefined" ? window.location.origin : "https://localhost:3000");
+        if (typeof window !== "undefined" && parsed.origin === window.location.origin) {
             return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+        }
+        if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+            return parsed.toString();
         }
         return null;
     } catch {
-        return raw.startsWith("/te/group") ? raw : null;
+        return null;
     }
 };
 
@@ -38,16 +41,12 @@ export const InvitePage = () => {
     const searchParams = useSearchParams();
 
     const code = searchParams.get("code");
-    const redirectUrl = searchParams.get("url");
-    const joinDestination = normalizeDestination(redirectUrl);
 
     const csrfToken = useCsrfToken();
     const hasAcceptedRef = useRef(false);
 
-    const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
+    const [status, setStatus] = useState<"loading" | "error">("loading");
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [successMessage, setSuccessMessage] = useState<string>("");
-    const [nextLocation, setNextLocation] = useState<string | null>(null);
 
     useEffect(() => {
         if (!csrfToken) return;
@@ -96,6 +95,11 @@ export const InvitePage = () => {
                     "";
 
                 if (httpStatus === 301 || httpStatus === 302 || httpStatus === 401) {
+                    const redirectTarget = normalizeRedirectTarget(errorBody?.redirect_url);
+                    if (redirectTarget && typeof window !== "undefined") {
+                        window.location.href = redirectTarget;
+                        return;
+                    }
                     setErrorMessage(backendMessage || "Yêu cầu đăng nhập. Vui lòng đăng nhập để chấp nhận lời mời.");
                     setStatus("error");
                     return;
@@ -118,20 +122,20 @@ export const InvitePage = () => {
                 setStatus("error");
                 return;
             }
-            const destination = normalizeDestination(data?.location) ?? joinDestination;
+            const destination = normalizeRedirectTarget(data?.redirect_url);
             if (destination) {
-                setNextLocation(destination);
-                setSuccessMessage("Đã chấp nhận lời mời thành công. Bạn có thể tiếp tục đến trang nhóm.");
-                setStatus("success");
+                if (typeof window !== "undefined") {
+                    window.location.href = destination;
+                }
                 return;
             }
 
             setStatus("error");
-            setErrorMessage("Lỗi không xác định: không nhận được đường dẫn nhóm hợp lệ từ máy chủ.");
+            setErrorMessage("Lỗi không xác định: không nhận được redirect_url hợp lệ từ máy chủ.");
         };
 
         accept();
-    }, [csrfToken, code, joinDestination]);
+    }, [csrfToken, code]);
 
     if (status === "error") {
         return (
@@ -147,22 +151,6 @@ export const InvitePage = () => {
                 >
                     Về trang chủ
                 </button>
-            </div>
-        );
-    }
-
-    if (status === "success") {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen gap-3 text-center px-4">
-                <p className="text-green-400 text-sm">{successMessage}</p>
-                {nextLocation && (
-                    <a
-                        href={nextLocation}
-                        className="text-xs text-blue-400 underline hover:text-blue-300 transition-colors"
-                    >
-                        Mở trang nhóm
-                    </a>
-                )}
             </div>
         );
     }
