@@ -254,7 +254,7 @@ const CommentComponent = ({ listComments, onRefreshComments, disable}: CommentCo
                                     </div>
                                 </div>
                             ) : (
-                                <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
+                                <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap break-words">
                                     {comment.content}
                                 </p>
                             )}
@@ -268,8 +268,7 @@ const CommentComponent = ({ listComments, onRefreshComments, disable}: CommentCo
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Thêm bình luận..."
-                    className="min-h-[42px] max-h-32 resize-none"
-                    rows={1}
+                    className="min-h-[42px] max-h-32 resize-none "
                     disabled={isSubmitting || disable}
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
