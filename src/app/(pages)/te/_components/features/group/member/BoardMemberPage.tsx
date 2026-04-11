@@ -232,7 +232,6 @@ const BoardMemberPage = () => {
                                     member.avatarFallback
                                 )}
                             </div>
-                            <span className="text-sm font-medium text-white">{member.name}</span>
                         </div>
                         <span className="text-sm text-gray-400">{member.email}</span>
                         <RoleBadge role={member.role} />

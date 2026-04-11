@@ -20,16 +20,23 @@ import { useToastState } from "@/hooks/useToasts";
 import { teamSprintApiUrl } from "@/api/teamGroup";
 import { sprintApiToastMessage } from "./sprintToastErrors";
 
+export type DeleteSprintMode = "sprintOnly" | "sprintAndWorks";
+
 export default function DeleteSprintDialog({
   target,
   onOpenChange,
   groupId,
   onSuccess,
-}: SprintStatusMutationDialogProps) {
+  mode = "sprintOnly",
+}: SprintStatusMutationDialogProps & { mode?: DeleteSprintMode }) {
   const { setToast } = useToastState();
-  const { sendRequest: deleteSprintInGroupRequest } = useAxiosMutation({
+  const { sendRequest: deleteSprintOnlyRequest } = useAxiosMutation({
     method: "DELETE",
-    url: teamSprintApiUrl.list(groupId),
+    url: teamSprintApiUrl.deleteInGroup(groupId, target?.id ?? ""),
+  });
+  const { sendRequest: deleteSprintAndWorksRequest } = useAxiosMutation({
+    method: "DELETE",
+    url: teamSprintApiUrl.deleteDrafts(groupId, target?.id ?? ""),
   });
   const [submitting, setSubmitting] = useState(false);
   const [confirmName, setConfirmName] = useState("");
@@ -43,7 +50,9 @@ export default function DeleteSprintDialog({
   const handleDelete = async () => {
     if (!target || !canDelete) return;
     setSubmitting(true);
-    const { error } = await deleteSprintInGroupRequest(undefined, target.id);
+    const { error } = mode === "sprintAndWorks"
+      ? await deleteSprintAndWorksRequest()
+      : await deleteSprintOnlyRequest();
     setSubmitting(false);
     if (error) {
       setToast({
@@ -62,10 +71,12 @@ export default function DeleteSprintDialog({
       <DialogContent size="sm">
         <DialogHeader>
           <DialogTitle className="text-white text-base">
-            Xóa Sprint
+            {mode === "sprintAndWorks" ? "Xóa Sprint và công việc" : "Xóa Sprint"}
           </DialogTitle>
           <DialogDescription className="text-gray-500 text-sm">
-            Bạn có chắc muốn xóa sprint này? Hành động này không thể hoàn tác.
+            {mode === "sprintAndWorks"
+              ? "Bạn có chắc muốn xóa sprint này và toàn bộ công việc bên trong? Hành động này không thể hoàn tác."
+              : "Bạn có chắc muốn xóa sprint này? Hành động này không thể hoàn tác."}
           </DialogDescription>
         </DialogHeader>
         <DialogBody>

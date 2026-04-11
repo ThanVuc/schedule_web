@@ -33,11 +33,12 @@ function GroupAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) 
             <Image
                 src={avatarUrl}
                 alt={name}
-                className="w-35 h-35 rounded-full object-cover ring-2 ring-[#1E2A3A] shrink-0"
+                width={64}
+                height={64}
+                className="w-16 h-16 rounded-full object-cover ring-2 ring-[#1E2A3A] shrink-0"
             />
         );
     }
-
 
     return (
         <div
@@ -63,24 +64,23 @@ export const TabGroup = ({ className }: TabGroupProps) => {
 
     const params = useParams<{ id: string }>();
     const groupId = params?.id ?? "";
-    const altGroupId = (searchParams.get("altGroupId") ?? "").trim();
     const [activeGroupId, setActiveGroupId] = useState(groupId);
 
     useEffect(() => {
         setActiveGroupId(groupId);
     }, [groupId]);
+
     type GroupDetailApiModel = {
         id?: string;
         group_id?: string;
         name?: string;
         group_name?: string;
-        member_total?: number;
-        member_count?: number;
-        members_count?: number;
+        members_total?: number;
         avatar_url?: string;
+        owner?: { avatar?: string } | null;
     };
 
-    const { data: groupDetailRaw, error: groupDetailError } = useAxios<unknown>({
+    const { data: groupDetailRaw, error: groupDetailError } = useAxios<GroupDetailApiModel | { group?: GroupDetailApiModel; item?: GroupDetailApiModel; data?: GroupDetailApiModel }>({
         method: "GET",
         url: teamGroupApiUrl.detail(activeGroupId),
     }, [activeGroupId], !activeGroupId);
@@ -95,26 +95,10 @@ export const TabGroup = ({ className }: TabGroupProps) => {
         return raw as GroupDetailApiModel;
     })();
 
-    const queryGroupName = (searchParams.get("groupName") ?? "").trim();
-    const queryMemberCount = searchParams.get("memberCount");
-    const groupName = groupDetail?.name || groupDetail?.group_name || queryGroupName || "Group";
-    const memberCount = Number(
-        queryMemberCount ??
-        groupDetail?.member_total ??
-        groupDetail?.member_count ??
-        groupDetail?.members_count ??
-        0,
-    );
-    const avatarUrl = groupDetail?.avatar_url;
+    const groupName = groupDetail?.name || groupDetail?.group_name || "Group";
+    const memberCount = Number(groupDetail?.members_total ?? 0);
+    const avatarUrl = groupDetail?.avatar_url || groupDetail?.owner?.avatar || undefined;
     const hasForbiddenError = groupDetailError?.response?.status === 422;
-
-    useEffect(() => {
-        if (!hasForbiddenError || !altGroupId || activeGroupId === altGroupId) return;
-        setActiveGroupId(altGroupId);
-        const next = new URLSearchParams(searchParams.toString());
-        next.delete("altGroupId");
-        router.replace(`/te/group/${altGroupId}?${next.toString()}`, { scroll: false });
-    }, [activeGroupId, altGroupId, hasForbiddenError, router, searchParams]);
 
     const navigate = (key: TabKey) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -123,10 +107,10 @@ export const TabGroup = ({ className }: TabGroupProps) => {
     };
 
     return (
-        <div className={cn(" top-0 sticky z-[50]", className)}>
-            <div className="flex items-center gap-4 px-6 py-8 bg-[#0B1120]">
+        <>
+         <div className={cn("flex items-center gap-4 px-6 py-8 bg-[#0B1120] border-b border-[#1E2A3A]", className)}>
                 <Button
-                    onClick={() => router.back()}
+                    onClick={() => router.push("/te/group")}
                     aria-label="back"
                     className={cn(
                         "flex bg-[#0B1120] items-center justify-center w-10 h-10 rounded-full shrink-0",
@@ -145,55 +129,51 @@ export const TabGroup = ({ className }: TabGroupProps) => {
                         {groupName}
                     </span>
                     <p className="text-sm text-gray-400 mt-0.5">
-                        {hasForbiddenError ? "Bạn không có quyền truy cập group này" : `${memberCount} thành viên`}
+                        {hasForbiddenError
+                            ? "Bạn không có quyền truy cập group này"
+                            : `${memberCount} thành viên`}
                     </p>
                 </div>
             </div>
-
-            <div
-                className="bg-[#0B1120] flex items-end gap-0 overflow-x-auto no-scrollbar
-                             border-[#1E2A3A] px-2 border-t"
-            >
-                {GROUP_TABS.map(({ key, label }) => {
-                    const isActive = activeTab === key;
-                    return (
-                        <Button
-                            key={key}
-                            onClick={() => navigate(key)}
-                            className={cn(
-                                "bg-[#0B1120] hover:bg-[#0B1120] relative flex items-center gap-2 px-4 py-3 text-sm font-medium",
-                                "whitespace-nowrap transition-colors duration-150 outline-none shrink-0",
-                                "focus-visible:ring-2 focus-visible:ring-[#1565C0]/50 rounded-t-md",
-                                isActive
-                                    ? "text-white"
-                                    : "text-gray-500 hover:text-gray-300",
-                            )}
-                            aria-selected={isActive}
-                            role="tab"
-                        >
-                            <span
+<div className="sticky top-0 z-10 bg-[#0B1120] border-b border-[#1E2A3A]">
+                <div className="flex items-end gap-0 overflow-x-auto no-scrollbar px-2">
+                    {GROUP_TABS.map(({ key, label }) => {
+                        const isActive = activeTab === key;
+                        return (
+                            <Button
+                                key={key}
+                                onClick={() => navigate(key)}
                                 className={cn(
-                                    "transition-colors duration-150",
-                                    isActive ? "text-[#42A5F5]" : "text-gray-600",
+                                    "bg-[#0B1120] hover:bg-[#0B1120] relative flex items-center gap-2 px-4 py-3 text-sm font-medium",
+                                    "whitespace-nowrap transition-colors duration-150 outline-none shrink-0",
+                                    "focus-visible:ring-2 focus-visible:ring-[#1565C0]/50 rounded-t-md",
+                                    isActive
+                                        ? "text-white"
+                                        : "text-gray-500 hover:text-gray-300",
                                 )}
+                                aria-selected={isActive}
+                                role="tab"
                             >
-                            </span>
-
-                            {label}
-
-                            {isActive && (
                                 <span
-                                    className="absolute inset-x-0 bottom-0 h-[2px] rounded-full
-                                               bg-gradient-to-r from-[#1565C0] via-[#42A5F5] to-[#1565C0]"
+                                    className={cn(
+                                        "transition-colors duration-150",
+                                        isActive ? "text-[#42A5F5]" : "text-gray-600",
+                                    )}
                                 />
-                            )}
-                        </Button>
-                    );
-                })}
-            </div>
-            <div className="border-b w-4/9">
 
+                                {label}
+
+                                {isActive && (
+                                    <span
+                                        className="absolute inset-x-0 bottom-0 h-[2px] rounded-full
+                                                   bg-gradient-to-r from-[#1565C0] via-[#42A5F5] to-[#1565C0]"
+                                    />
+                                )}
+                            </Button>
+                        );
+                    })}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
