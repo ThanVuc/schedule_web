@@ -31,4 +31,8 @@ export const teamSprintApiUrl = {
   generation: (groupId: string) => createAPI(`ts/groups/${groupId}/sprints/generation`),
   export: (groupId: string, sprintId: string) =>
     createAPI(`ts/groups/${groupId}/sprints/${sprintId}/export`),
+  deleteInGroup: (groupId: string, sprintId: string) =>
+    createAPI(`ts/groups/${groupId}/sprints/${sprintId}`),
+  deleteDrafts: (groupId: string, sprintId: string) =>
+    createAPI(`ts/groups/${groupId}/sprints/${sprintId}/drafts`),
 };

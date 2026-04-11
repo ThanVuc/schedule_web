@@ -83,7 +83,6 @@ export function RoleDropdown({
 export function ChangeRoleDialog({
     open,
     onOpenChange,
-    memberName,
     currentRole,
     memberId,
     groupId,
@@ -107,12 +106,12 @@ export function ChangeRoleDialog({
             open={open}
             onOpenChange={onOpenChange}
             size="md"
-            title="Change Member Role"
-            description={`Update the role for ${memberName}`}
+            title="Đổi vai trò thành viên"
+            description={`Cập nhật vai trò cho thành viên`}
             warnOnClose={role !== currentRole}
             submitDisabled={role === currentRole || !groupId || !memberId}
-            submitButtonText="Update Role"
-            cancelButtonText="Cancel"
+            submitButtonText="Cập nhật vai trò"
+            cancelButtonText="Hủy"
             onSubmit={async () => {
                 const { error } = await changeRoleRequest({
                     new_role: toApiRole(role),
@@ -134,7 +133,7 @@ export function ChangeRoleDialog({
             }}
         >
             <div className="flex flex-col gap-3">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Role</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vai trò</p>
                 <RoleDropdown value={role} onChange={setRole} />
                 <div className="flex items-start rounded-lg px-4 py-3 border border-[#1E2A3A] transition-all duration-200">
                     <p className="text-xs text-gray-400 leading-relaxed">{roleObj.desc}</p>

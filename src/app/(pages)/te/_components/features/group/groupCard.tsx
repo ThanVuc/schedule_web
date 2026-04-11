@@ -9,6 +9,7 @@ import {
     DropdownMenuItem, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { type Group, type Role } from "./types";
+import { CaculateTimeFromTimeToNow } from "@/utils/timeFormat";
 
 
 const ROLE_STYLES: Record<Role, string> = {
@@ -142,7 +143,9 @@ export const GroupCard = ({
             {group.name}
         </h3>
         <p className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
-            <Clock size={11} className="shrink-0" /> Cập nhật lần cuối: {group.updatedAt}
+            <Clock size={11} className="shrink-0" /> Cập nhật lần cuối: {CaculateTimeFromTimeToNow(
+                group.updatedAt ? new Date(group.updatedAt).getTime() : undefined
+            )}
         </p>
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#1E2A3A]">
