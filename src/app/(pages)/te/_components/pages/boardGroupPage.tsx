@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
 import { Button } from "@/components/ui";
 import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
 import { useMe } from "@/context/me.context";
@@ -121,7 +120,8 @@ export default function BoardGroupPage() {
         ? groupData
         : (groupData?.items ?? []);
 
-    const groups: Group[] = groupsFromApi.map((item) => { const primaryId = (item.group_id ?? "").trim() || (item.id ?? "").trim();
+    const groups: Group[] = groupsFromApi.map((item) => {
+        const primaryId = (item.group_id ?? "").trim() || (item.id ?? "").trim();
         const secondaryId = (item.id ?? "").trim();
         const altGroupId = primaryId && secondaryId && primaryId !== secondaryId ? secondaryId : undefined;
         return {
@@ -129,8 +129,8 @@ export default function BoardGroupPage() {
             altGroupId,
             name: item.name ?? item.group_name ?? "Untitled group",
             description: item.description,
-            createdAt: item.created_at ? format(new Date(item.created_at), "dd/MM/yyyy HH:mm") : "N/A",
-            updatedAt: item.updated_at ? format(new Date(item.updated_at), "dd/MM/yyyy HH:mm") : item.updatedAt ? format(new Date(item.updatedAt), "dd/MM/yyyy HH:mm") : "N/A",
+            createdAt: item.created_at ?? "",
+            updatedAt: item.updated_at ?? item.updatedAt ?? "",
             memberCount: item.member_total ?? item.member_count ?? item.members_count ?? 0,
             role: normalizeRole(item.my_role ?? item.role),
             avatarUrl: item.avatar_url,
@@ -234,17 +234,8 @@ export default function BoardGroupPage() {
     const openLeave = (id: string) => { const g = groups.find((g) => g.id === id); if (g) setLeaveTarget(g); };
 
     const handleCardClick = (id: string) => {
-        const group = groups.find((g) => g.id === id);
         setSelectedId(id);
-        const params = new URLSearchParams({
-            tab: "members",
-            groupName: group?.name ?? "",
-            memberCount: String(group?.memberCount ?? 0),
-        });
-        if (group?.altGroupId) {
-            params.set("altGroupId", group.altGroupId);
-        }
-        router.push(`/te/group/${id}?${params.toString()}`);
+        router.push(`/te/group/${id}`);
     };
 
     const filtered = groups.filter((g) =>
@@ -252,7 +243,7 @@ export default function BoardGroupPage() {
     );
 
     return (
-        <div className="min-h-full bg-[#0B1120]">
+        <div className="min-h-full bg-[#0B1120] pb-8">
 
             <CreateGroupDialog
                 open={createOpen}

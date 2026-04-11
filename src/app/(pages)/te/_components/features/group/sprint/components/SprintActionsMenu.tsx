@@ -14,17 +14,21 @@ import { Button } from "@/components/ui";
 export default function SprintActionsMenu({
   sprint,
   onEdit,
+  onExport,
   onActivate,
   onComplete,
   onCancel,
-  onDelete,
+  onDeleteSprintOnly,
+  onDeleteSprintAndWorks,
 }: {
   sprint: Sprint;
   onEdit: () => void;
+  onExport: () => void;
   onActivate: () => void;
   onComplete: () => void;
   onCancel: () => void;
-  onDelete: () => void;
+  onDeleteSprintOnly: () => void;
+  onDeleteSprintAndWorks: () => void;
 }) {
   return (
     <DropdownMenu>
@@ -33,6 +37,7 @@ export default function SprintActionsMenu({
           type="button"
           variant="ghost"
           size="icon"
+          onClick={(e) => e.stopPropagation()}
           className="h-8 w-8 p-1.5 text-gray-500 hover:text-gray-200 hover:bg-[#F8AF18] transition-colors"
           aria-label="Sprint actions"
         >
@@ -46,6 +51,13 @@ export default function SprintActionsMenu({
           className="z-[200] cursor-pointer hover:bg-[#F8AF18] hover:text-black data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-black"
         >
           Chỉnh sửa Sprint
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onSelect={() => onExport()}
+          className="z-[200] cursor-pointer hover:bg-[#F8AF18] hover:text-black data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-black"
+        >
+          Xuất Sprint
         </DropdownMenuItem>
 
         {sprint.status === "Draft" && (
@@ -75,10 +87,16 @@ export default function SprintActionsMenu({
           </>
         )}
         <DropdownMenuItem
-          onSelect={() => onDelete()}
+          onSelect={() => onDeleteSprintOnly()}
           className="z-[200] text-red-400 cursor-pointer hover:bg-[#F8AF18] hover:text-black data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-black"
         >
           Xóa Sprint
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => onDeleteSprintAndWorks()}
+          className="z-[200] text-red-400 cursor-pointer hover:bg-[#F8AF18] hover:text-black data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-black"
+        >
+          Xóa Sprint và công việc
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

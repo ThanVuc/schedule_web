@@ -14,6 +14,8 @@ import ActivateSprintDialog from "./container/ActivateSprintDialog";
 import CompleteSprintDialog from "./container/CompleteSprintDialog";
 import CancelSprintDialog from "./container/CancelSprintDialog";
 import DeleteSprintDialog from "./container/DeleteSprintDialog";
+import api from "@/lib/axiosInstance";
+import { useToastState } from "@/hooks/useToasts";
 
 export default function BoardSprintPage() {
   const router = useRouter();
@@ -22,6 +24,8 @@ export default function BoardSprintPage() {
   const groupId = params?.id ?? "";
   const altGroupId = (searchParams.get("altGroupId") ?? "").trim();
   const [activeGroupId, setActiveGroupId] = useState(groupId);
+  const { setToast } = useToastState();
+  const [exportingSprintId, setExportingSprintId] = useState<string | null>(null);
 
   useEffect(() => {
     setActiveGroupId(groupId);
@@ -92,6 +96,7 @@ export default function BoardSprintPage() {
   const [completeTarget, setCompleteTarget] = useState<Sprint | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Sprint | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Sprint | null>(null);
+  const [deleteMode, setDeleteMode] = useState<"sprintOnly" | "sprintAndWorks">("sprintOnly");
 
   const [aiOpen, setAiOpen] = useState(false);
   const isForbidden = sprintListError?.response?.status === 422;
@@ -110,6 +115,66 @@ export default function BoardSprintPage() {
     startDate: s.startDate,
     endDate: s.endDate,
   });
+  const openWorkboardForSprint = (sprint: Sprint) => {
+    if (!activeGroupId || !sprint.id) return;
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("tab", "workboard");
+    next.set("sprint_id", sprint.id);
+    next.delete("mode");
+    next.delete("id");
+    router.push(`/te/group/${activeGroupId}?${next.toString()}`, { scroll: false });
+  };
+
+  const parseFilenameFromContentDisposition = (cd: unknown): string | null => {
+    if (typeof cd !== "string") return null;
+    const raw = cd.trim();
+    const matchStar = raw.match(/filename\*\s*=\s*UTF-8''([^;]+)/i);
+    if (matchStar?.[1]) {
+      try {
+        return decodeURIComponent(matchStar[1].replace(/^["']|["']$/g, ""));
+      } catch {
+        return matchStar[1].replace(/^["']|["']$/g, "");
+      }
+    }
+    const match = raw.match(/filename\s*=\s*([^;]+)/i);
+    if (!match?.[1]) return null;
+    return match[1].trim().replace(/^["']|["']$/g, "");
+  };
+
+  const handleExportSprint = async (sprint: Sprint) => {
+    if (!activeGroupId || !sprint?.id) return;
+    if (exportingSprintId) return;
+
+    setExportingSprintId(sprint.id);
+    try {
+      const res = await api.get(teamSprintApiUrl.export(activeGroupId, sprint.id), {
+        responseType: "blob",
+      });
+
+      const filename =
+        parseFilenameFromContentDisposition(res.headers?.["content-disposition"]) ??
+        `sprint_${sprint.id}.xlsx`;
+
+      const blob = res.data as Blob;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setToast({
+        title: "Xuất sprint thất bại",
+        message: "Không thể xuất sprint. Vui lòng thử lại.",
+        variant: "error",
+      });
+      return;
+    } finally {
+      setExportingSprintId(null);
+    }
+  };
 
   return (
     <div className="px-6 py-6">
@@ -161,11 +226,20 @@ export default function BoardSprintPage() {
           <SprintCard
             key={sprint.id}
             sprint={sprint}
+            onOpenWorkboard={() => openWorkboardForSprint(sprint)}
             onEdit={() => setEditTarget(sprint)}
+            onExport={() => handleExportSprint(sprint)}
             onActivate={() => setActivateTarget(sprint)}
             onComplete={() => setCompleteTarget(sprint)}
             onCancel={() => setCancelTarget(sprint)}
-            onDelete={() => setDeleteTarget(sprint)}
+            onDeleteSprintOnly={() => {
+              setDeleteMode("sprintOnly");
+              setDeleteTarget(sprint);
+            }}
+            onDeleteSprintAndWorks={() => {
+              setDeleteMode("sprintAndWorks");
+              setDeleteTarget(sprint);
+            }}
           />
         ))}
 
@@ -238,6 +312,7 @@ export default function BoardSprintPage() {
           if (!open) setDeleteTarget(null);
         }}
         groupId={activeGroupId}
+        mode={deleteMode}
         onSuccess={() => refetch?.()}
       />
     </div>
