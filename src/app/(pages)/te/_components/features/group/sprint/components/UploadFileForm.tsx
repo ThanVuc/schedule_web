@@ -72,6 +72,26 @@ const UploadFileForm = forwardRef<UploadFileFormRef, UploadFileFormProps>(
 			if (!incomingFiles.length) {
 				return;
 			}
+			const checkNameFile = incomingFiles.some((file) => file.name.includes("/"));
+			if (checkNameFile) {
+				setToast({
+					title: "Tên tệp không hợp lệ",
+					message: "Tên tệp không được chứa ký tự '/'.",
+					variant: "error",
+				});
+				event.target.value = "";
+				return;
+			}
+			const reqNameFile = incomingFiles.some((file) => file.name.trim().length === 0);
+			if (reqNameFile) {
+				setToast({
+					title: "Tên tệp không hợp lệ",
+					message: "Tên tệp không được để trống.",
+					variant: "error",
+				});
+				event.target.value = "";
+				return;
+			}
 
 			const mergedFiles = [...files, ...incomingFiles];
 			const parsedFiles = SprintAiUploadSelectionSchema.safeParse(mergedFiles);
@@ -172,7 +192,7 @@ const UploadFileForm = forwardRef<UploadFileFormRef, UploadFileFormProps>(
 					</div>
 					<div className="text-sm text-white font-semibold">Tải lên tệp kế hoạch</div>
 					<div className="text-xs text-gray-500 mt-1">
-						Hỗ trợ .md, .pdf, .doc, .docx, .xls, .xlsx. Tối đa 3 tệp, mỗi tệp nhỏ hơn 4MB.
+						Tên tệp phải bắt đầu bằng Design, Requirement, Planning, hoặc SRS. Hỗ trợ .md, .markdown, .doc, .docx, .xls, .xlsx. Tối đa 3 tệp, mỗi tệp nhỏ hơn 4MB.
 					</div>
 					<div className="mt-5">
 						<Input

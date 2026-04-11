@@ -8,7 +8,6 @@ export const SPRINT_AI_MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
 export const SPRINT_AI_ALLOWED_EXTENSIONS = [
 	".md",
     ".markdown",
-	".pdf",
 	".doc",
 	".docx",
 	".xls",
@@ -97,10 +96,16 @@ export const SprintAiPresignResponseSchema = z.object({
 		.min(1),
 });
 
+
+
 const SprintAiUploadFileSchema = z
 	.custom<File>((value) => value instanceof File, "Tệp không hợp lệ")
+	.refine((file) => isAllowedSprintAiFileNamePrefix(file.name), {
+		message:
+			"Tên tệp phải bắt đầu bằng Design, Design_, Design-, Requirement, Requirement_, Requirement-, Planning, Planning_, Planning-, SRS, SRS_ hoặc SRS-.",
+	})
 	.refine((file) => isAllowedSprintAiFile(file), {
-		message: "Chỉ hỗ trợ .md, .pdf, .doc, .docx, .xls, .xlsx.",
+		message: "Chỉ hỗ trợ .md, .markdown, .doc, .docx, .xls, .xlsx.",
 	})
 	.refine((file) => file.size <= SPRINT_AI_MAX_FILE_SIZE_BYTES, {
 		message: "Mỗi tệp phải nhỏ hơn 4MB.",
@@ -118,4 +123,22 @@ export type SprintAiPresignResponse = z.infer<typeof SprintAiPresignResponseSche
 export function isAllowedSprintAiFile(file: File): boolean {
 	const lowerName = file.name.toLowerCase();
 	return SPRINT_AI_ALLOWED_EXTENSIONS.some((ext) => lowerName.endsWith(ext));
+}
+
+export function isAllowedSprintAiFileNamePrefix(fileName: string): boolean {
+	const lowerName = fileName.toLowerCase();
+	return [
+		"design",
+		"design_",
+		"design-",
+		"requirement",
+		"requirement_",
+		"requirement-",
+		"planning",
+		"planning_",
+		"planning-",
+		"srs",
+		"srs_",
+		"srs-",
+	].some((prefix) => lowerName.startsWith(prefix));
 }
