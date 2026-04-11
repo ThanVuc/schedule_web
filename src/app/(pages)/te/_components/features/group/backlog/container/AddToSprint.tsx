@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useModalParams } from "@/app/(pages)/schedule/(features)/daily/hooks/useModalParams";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 
 
@@ -25,12 +25,13 @@ export interface AddToSprintWorkBoardDialogProps {
 export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork, getBoardWorkDataById, GetListSprint }: AddToSprintWorkBoardDialogProps) => {
     const { id, mode } = useModalParams();
     const [selectedSprintId, setSelectedSprintId] = useState<string | undefined>();
-
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const searchParams = useSearchParams();
-        const listParams = useMemo(() => {
-            const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
-            return Object.fromEntries(entries);
-        }, [searchParams]);
+    const listParams = useMemo(() => {
+        const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
+        return Object.fromEntries(entries);
+    }, [searchParams]);
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
             setSelectedSprintId(undefined);
@@ -40,7 +41,7 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork
 
     const { sendRequest: sendUpdateRequest } = useAxiosMutation({
         method: "PATCH",
-        url: `${boardWorksApiUrl.UpdateBoardWork}/works/${id}`,
+        url: `${boardWorksApiUrl.UpdateBoardWork}/${groupId}/works/${id}`,
         headers: {
             "Content-Type": "application/json"
         },

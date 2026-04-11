@@ -4,6 +4,7 @@ import { ThreeDotVertical } from "@/components/icon";
 import { Avatar, AvatarFallback, AvatarImage, Button, Card, CardContent } from "@/components/ui";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useEnumMap } from "@/hooks/useEnumMap";
+import { FormatDateShort } from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface CardBacklogProps {
@@ -13,7 +14,7 @@ interface CardBacklogProps {
     avatar: string;
     assignee: string;
     number: number;
-    date: string;
+    date?: string;
 }
 
 const CardBacklog = ({ id, title, state, assignee, number, date }: CardBacklogProps) => {
@@ -70,15 +71,15 @@ const CardBacklog = ({ id, title, state, assignee, number, date }: CardBacklogPr
                 </div>
                 <div className="flex justify-between items-center mt-2">
                     <div className="flex items-center gap-2">
-                       <Avatar>
-                        <AvatarImage src={assignee} alt={assignee} />
-                        <AvatarFallback className="bg-blue-500">{assignee.charAt(0).toUpperCase()}</AvatarFallback>
-                       </Avatar>
-                          <span>{assignee}</span>
+                        <Avatar>
+                            <AvatarImage src={assignee} alt={assignee} />
+                            <AvatarFallback className="bg-blue-500 m-0">{assignee.split('@')[0].charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span title={assignee.split('@')[0]}>{assignee.split('@')[0].length > 20 ? assignee.split('@')[0].substring(0, 20) + "..." : assignee.split('@')[0]}</span>
                     </div>
                     <div className="flex gap-2 items-center">
                         <div className="border-[#2A3A4F] border-2 p-1 px-2 rounded-lg">{number}</div>
-                        {date}
+                        {FormatDateShort(date)}
                     </div>
                 </div>
             </CardContent>

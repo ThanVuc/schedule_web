@@ -80,7 +80,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                    <FormItem className="w-full break-words whitespace-normal text-left">
+                    <FormItem className="w-full break-words whitespace-pre-wrap text-left break-all">
                         {isEditingTitle && !disable ? (
                             <Input
                             disabled={disable}
@@ -104,7 +104,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                         ) : (
                             <div
                                 onClick={() => setIsEditingTitle(true)}
-                                className="cursor-pointer  p-2 rounded min-h-[40px] flex items-center"
+                                className="cursor-pointer p-2 rounded min-h-[40px] w-full whitespace-pre-wrap [overflow-wrap:anywhere]"
                             >
                                 {field.value || "Click to add title"}
                             </div>
@@ -116,7 +116,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                    <FormItem className="w-full break-words whitespace-normal text-left">
+                    <FormItem className="w-full break-words whitespace-pre-wrap text-left ">
                         {isEditingDescription && !disable ? (
                             <Input
                             disabled={disable}
@@ -139,7 +139,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                         ) : (
                             <div
                                 onClick={() => setIsEditingDescription(true)}
-                                className="cursor-pointer p-2 rounded min-h-[40px] flex items-center text-sm text-gray-600"
+                                className="cursor-pointer p-2 rounded min-h-[40px] w-full whitespace-pre-wrap text-sm text-gray-600 [overflow-wrap:anywhere]"
                             >
                                 {field.value || "No description. Click to add."}
                             </div>

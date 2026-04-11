@@ -66,10 +66,18 @@ const BoardWorkPage = () => {
     useEffect(() => {
         if (!GetListSprint?.items) return;
 
-        const activeSprintId = GetListSprint.items.find(
-            (sprint) => sprint.status === 2
-        )?.id;
-        setDisable(!!activeSprintId);
+        const activeSprint = GetListSprint.items.find(
+            (sprint) => Number(sprint.status) === 2
+        );
+        const activeSprintId = activeSprint?.id;
+
+        if (sprintIdFromUrl) {
+            const selectedSprint = GetListSprint.items.find((sprint) => sprint.id === sprintIdFromUrl);
+            setDisable(Number(selectedSprint?.status) !== 2);
+            return;
+        }
+
+        setDisable(!activeSprintId);
 
         if (!activeSprintId || sprintIdFromUrl !== null) return;
 
@@ -140,7 +148,7 @@ const BoardWorkPage = () => {
                         onValueChange={(value) => {
                             const params = new URLSearchParams(searchParams.toString());
 
-                            if (value === "AllWork") {
+                            if (value === "BackLog") {
                                 params.delete("sprint_id");
                             } else {
                                 params.set("sprint_id", value);
@@ -149,8 +157,8 @@ const BoardWorkPage = () => {
                             router.push(`?${params.toString()}`, { scroll: false });
                         }}
                     >
-                        <SelectTrigger >
-                            <SelectValue placeholder="Hiện không có Sprint nào đang active" />
+                        <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Hiện không có Sprint" defaultValue="BackLog" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -176,7 +184,7 @@ const BoardWorkPage = () => {
                             router.push(`?${params.toString()}`, { scroll: false });
                         }}
                     >
-                        <SelectTrigger >
+                        <SelectTrigger className="w-40">
                             <SelectValue placeholder="Lọc theo người thực hiện" />
                         </SelectTrigger>
                         <SelectContent>
@@ -203,7 +211,6 @@ const BoardWorkPage = () => {
         </div>
         <div className="p-4">
             <BoardWork ListWork={getListWork?.items || []}  disable={disable}/>
-
         </div>
         <DrawerPage refetchListWork={refetch}
             getBoardWorkDataById={getBoardWorkDataById?.item}
