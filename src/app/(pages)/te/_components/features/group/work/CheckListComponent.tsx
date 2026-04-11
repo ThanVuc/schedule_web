@@ -156,7 +156,6 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
             await onUpdateItem(id, { name: trimmedName });
         }
     };
-    items.map(item => console.log(item.id))
     return (<>
         <div className="space-y-4 p-5">
             <div className="flex items-center justify-between">
@@ -168,8 +167,8 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
 
             <div className="space-y-3">
 
-                {items.map((item) => (
-                    <div key={item.id} className="group flex min-w-0 items-center gap-3">
+                {items.map((item, index) => (
+                    <div key={`${item.id}-${item.created_at}-${index}`} className="group flex min-w-0 items-center gap-3">
 
                         <Checkbox
                             checked={item.is_completed}

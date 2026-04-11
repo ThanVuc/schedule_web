@@ -1,7 +1,7 @@
 'use client';
 import { ModelType } from "@/app/(pages)/schedule/_constant";
 import { ThreeDotVertical } from "@/components/icon";
-import { Button, Card, CardContent } from "@/components/ui";
+import { Avatar, AvatarFallback, AvatarImage, Button, Card, CardContent } from "@/components/ui";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSortable } from '@dnd-kit/react/sortable';
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,9 +18,10 @@ interface BoardItemProps {
     date?: string;
     column: string;
     disable?: boolean;
+    avatar?: string;
 }
 
-const BoardItem = ({ id, index, title, state, name, number, date, column, disable }: BoardItemProps) => {
+const BoardItem = ({ id, index, title, state, name, number, date, column, disable, avatar }: BoardItemProps) => {
     const { ref, isDragging } = useSortable({
         id,
         index,
@@ -47,9 +48,10 @@ const BoardItem = ({ id, index, title, state, name, number, date, column, disabl
             className={`gap-3 bg-[#1A2332] rounded-2xl border-1 p-3 mb-3 text-sm w-80 border-[#2A3A4F] transition-opacity ${isDragging ? 'opacity-50' : 'opacity-100'} cursor-default hover:cursor-pointer`}
         >
             <CardContent className=" p-0 ">
-                <div className="flex justify-between items-center gap-2">
-                    <p className=" hover:text-blue-500 "
+                <div className="flex items-start justify-between gap-2">
+                    <p
                     onClick={()=>{handlePageQueryToModal(ModelType.UPDATE, id)}}
+                    className="min-w-0 flex-1 overflow-hidden break-words leading-5 line-clamp-2 hover:text-blue-500"
                     >{title}</p>
                     <DropdownMenu >
                         <DropdownMenuTrigger asChild>
@@ -74,11 +76,15 @@ const BoardItem = ({ id, index, title, state, name, number, date, column, disabl
                 <div className={`p-1 w-max text-xs rounded-lg ${state === 1 ? "bg-[#FFFFFF]/90 text-black px-3" : state === 2 ? "bg-[#2A97EA] text-black px-3" : state === 3 ? "bg-[#F8AF18] text-black px-3" : "bg-[#00FF4C] text-black px-3"}`}>
                     {useEnumMap(state, "WORK_STATUS")}
                 </div>
-                <div className="flex justify-between items-center mt-2">
-                    <div>
-                        {name}
+                <div className="mt-2 flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                        <Avatar>
+                            <AvatarImage src={avatar} alt={avatar} />
+                            <AvatarFallback className="bg-blue-500">{name.split('@')[0].charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span title={name.split('@')[0]}>{name.split('@')[0].length > 20 ? name.split('@')[0].substring(0, 20) + "..." : name.split('@')[0]}</span>
                     </div>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex shrink-0 items-center gap-2">
                         <div className="border-[#2A3A4F] border-2 p-1 px-2 rounded-lg">{number}</div>
                         <div className="text-xs text-gray-400">{FormatDateShort(date)}</div>
                     </div>

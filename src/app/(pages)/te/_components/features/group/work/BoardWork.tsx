@@ -257,13 +257,14 @@ const BoardWork = ({ ListWork,disable }: BoardWorkProps) => {
                                 <BoardItem
                                     key={task.id}
                                     column={column.id}
+                                    avatar={task.assignee.avatar || ""}
                                     id={task.id}
                                     index={index}
                                     title={task.name}
-                                    name={task.assignee.email}
+                                    name={task.assignee.email || "Unassigned"}
                                     number={task.story_point}
                                     state={task.status}
-                                    date={task.created_at}
+                                    date={task.due_date}
                                     disable={disable}
                                 />
                             ))}

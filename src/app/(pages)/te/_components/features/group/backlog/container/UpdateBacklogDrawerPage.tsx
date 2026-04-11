@@ -1,7 +1,7 @@
 'use client';
 import { ModelType } from "@/app/(pages)/schedule/_constant/common";
 import { useModalParams } from "../../../../../_hooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -15,8 +15,8 @@ import z from "zod";
 import { useAxiosMutation, useToastState } from "@/hooks";
 import { ChecklistApiUrl } from "@/api/checklist";
 import { ChecklistItemResponse } from "@/app/(pages)/te/_models/works/CheckList";
-import { ListSimpleSprintResponse, WorkDetailResponse} from "../../../../../_models";
-import { useEffect} from "react";
+import { ListSimpleSprintResponse, WorkDetailResponse } from "../../../../../_models";
+import { useEffect } from "react";
 import { UpdateWorkSchema } from "@/app/(pages)/te/_models/works/schema/UpdateWork";
 import { DrawerComponent } from "../../work/Drawer";
 import DrawerForm from "../../work/DrawerForm";
@@ -34,29 +34,30 @@ interface UpdateBacklogDrawerPageProps {
 }
 
 export const UpdateBacklogDrawerPage = ({ getBoardWorkDataById, loadingBoardWork, refetchBoardWork, GetListSprint, loadingGetListSprint }: UpdateBacklogDrawerPageProps) => {
-    const { mode, workId } = useModalParams();
+    const { mode, id } = useModalParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const openDrawer = mode === ModelType.UPDATE
     const { setToast } = useToastState();
-
+    const params = useParams<{ id: string }>();
+    const groupId = params?.id ?? "";
     const { sendRequest: createChecklistItem } = useAxiosMutation<ChecklistItemResponse, CreateChecklistItemRequest>({
         method: "POST",
-        url: `${ChecklistApiUrl.CreateCheckList}${workId}/checklists`,
+        url: `${ChecklistApiUrl.CreateCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     })
     const { sendRequest: updateChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "PATCH",
-        url: `${ChecklistApiUrl.UpdateCheckList}${workId}/checklists`,
+        url: `${ChecklistApiUrl.UpdateCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }
     });
     const { sendRequest: deleteChecklistItem } = useAxiosMutation<UpdateChecklistItemResponse, UpdateChecklistItemRequest>({
         method: "DELETE",
-        url: `${ChecklistApiUrl.DeleteCheckList}${workId}/checklists`,
+        url: `${ChecklistApiUrl.DeleteCheckList}/${groupId}/works/${id}/checklists`,
         headers: {
             "Content-Type": "application/json"
         }

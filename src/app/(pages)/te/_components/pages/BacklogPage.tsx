@@ -1,13 +1,12 @@
 'use client';
 
-import { H1} from "@/components/common";
+import { H1 } from "@/components/common";
 import { AddIcon } from "@/components/icon";
 import { Button } from "@/components/ui";
 import CardBacklog from "../features/group/backlog/CardBacklog";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useModalParams } from "../../_hooks";
 import { ModelType } from "@/app/(pages)/schedule/_constant";
-import { UpdateBacklogDrawerPage } from "../features/group/backlog/container/UpdateBacklogDrawerPage";
 import { DeleteBacklogDialog } from "../features/group/backlog/container/DeleteBacklog";
 import { AddToSprintWorkBoardDialog } from "../features/group/backlog/container/AddToSprint";
 import { AssignBacklogDialog } from "../features/group/backlog/container/AssignBacklog";
@@ -16,13 +15,14 @@ import { ListSimpleSprintResponse, ListSimpleUserResponse, WorkDetailResponse, W
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { useMemo } from "react";
 import { CreateWorkBoardDialog } from "../features/group/work/container/CreateWorkBoard";
+import { DrawerPage } from "../features/group/work/container/DrawerPage";
 
 
 const BacklogPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = useParams<{ id: string }>();
-        const groupId = params?.id ?? "";
+    const groupId = params?.id ?? "";
     const { mode, id } = useModalParams();
     const openDialogCreate = mode === ModelType.CREATE;
     const openDialogDelete = mode === ModelType.DELETE;
@@ -37,20 +37,20 @@ const BacklogPage = () => {
 
     const { data: getListWork, refetch: refetchListWork } = useAxios<{ items: WorkResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListWork}/${groupId}/works`,
+        url: `${boardWorksApiUrl.GetListWork}${groupId}/works`,
     }, [])
     const { data: GetListUser } = useAxios<{ items: ListSimpleUserResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListUser}/${groupId}/users/simple`,
+        url: `${boardWorksApiUrl.GetListUser}${groupId}/users/simple`,
         params: { ...listParams },
     }, [])
     const { data: getBoardWorkDataById, loading: loadingBoardWork, refetch: refetchBoardWork } = useAxios<{ item: WorkDetailResponse }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetBoardWorks}/${groupId}/works/${id}`
+        url: `${boardWorksApiUrl.GetBoardWorks}${groupId}/works/${id}`
     })
     const { loading: loadingGetListSprint, data: GetListSprint } = useAxios<{ items: ListSimpleSprintResponse[] }>({
         method: "GET",
-        url: `${boardWorksApiUrl.GetListSprint}/${groupId}/sprints/simple`,
+        url: `${boardWorksApiUrl.GetListSprint}${groupId}/sprints/simple`,
         params: { ...listParams },
     }, [])
 
@@ -125,14 +125,12 @@ const BacklogPage = () => {
                 getBoardWorkDataById={getBoardWorkDataById?.item}
                 refreshListWork={refetchListWork}
             />
-            <UpdateBacklogDrawerPage
+            <DrawerPage
+                refetchListWork={refetchListWork}
                 getBoardWorkDataById={getBoardWorkDataById?.item}
                 loadingBoardWork={loadingBoardWork}
                 refetchBoardWork={refetchBoardWork}
-                GetListSprint={GetListSprint?.items}
-                loadingGetListSprint={loadingGetListSprint}
             />
-
 
             <div className="flex justify-between p-4">
                 <H1 className="font-bold">BackLog</H1>
@@ -140,7 +138,7 @@ const BacklogPage = () => {
                     onClick={() => { handlePageQueryToModal(ModelType.CREATE) }}
                 >
                     <AddIcon />
-                        Thêm công việc
+                    Thêm công việc
                 </Button>
             </div>
             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 p-3">
@@ -148,7 +146,7 @@ const BacklogPage = () => {
                     <CardBacklog
                         key={item.id}
                         id={item.id}
-                        date={item.due_date ? new Date(item.due_date).toLocaleDateString() : ""}
+                        date={item.due_date}
                         avatar={item.assignee?.avatar || ""}
                         assignee={item.assignee?.email || "Unassigned"}
                         number={item.story_point}
