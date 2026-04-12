@@ -65,6 +65,11 @@ const BoardItem = ({ id, index, title, state, name, number, date, column, disabl
                             >
                                 Phân công
                             </DropdownMenuItem>
+                            <DropdownMenuItem disabled={disable} className="cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
+                            onClick={()=>{handlePageQueryToModal(ModelType.ADDSPRINT, id)}}
+                            >
+                                Chuyển sprint khác
+                            </DropdownMenuItem>
                             <DropdownMenuItem disabled={disable} className="text-[#EF4444] cursor-pointer hover:bg-[#F8AF18] hover:text-[#FFFFFF] data-[highlighted]:bg-[#F8AF18] data-[highlighted]:text-[#FFFFFF]"
                             onClick={()=>{handlePageQueryToModal(ModelType.DELETE, id)}}
                             >
