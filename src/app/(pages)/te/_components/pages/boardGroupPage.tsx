@@ -4,9 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
-import { useMe } from "@/context/me.context";
 import { Users, Plus } from "lucide-react";
-import { teamGroupApiUrl, teamMemberApiUrl } from "@/api/teamGroup";
+import { teamGroupApiUrl } from "@/api/teamGroup";
 import { GroupRole } from "../../_constants/groupRole";
 import { enumDisplayMap } from "../../_constants/enumDisplayMap";
 import {
@@ -45,7 +44,6 @@ const ROLE_NAME_TO_ENUM: Record<string, GroupRole> = {
 
 export default function BoardGroupPage() {
     const router = useRouter();
-    const meContext = useMe();
     const { setToast } = useToastState();
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [search] = useState("");
@@ -72,11 +70,6 @@ export default function BoardGroupPage() {
         method: "DELETE",
         url: teamGroupApiUrl.list,
     });
-    const { sendRequest: leaveGroupRequest } = useAxiosMutation({
-        method: "DELETE",
-        url: leaveTarget ? teamMemberApiUrl.remove(leaveTarget.id, meContext?.me?.user_id || "") : teamMemberApiUrl.list(""),
-    });
-
     useEffect(() => {
         const id = "group-board-keyframes";
         if (document.getElementById(id)) return;
@@ -196,39 +189,6 @@ export default function BoardGroupPage() {
         setDeleteTarget(null);
     };
 
-    const handleLeave = async (id: string) => {
-        const userId = meContext?.me?.user_id;
-        if (!userId) {
-            setToast({
-                title: "Rời nhóm thất bại",
-                message: "Không xác định được tài khoản hiện tại.",
-                variant: "error",
-            });
-            return;
-        }
-
-        const { error } = await leaveGroupRequest({
-            group_id: id,
-            user_id: userId,
-        });
-        if (error) {
-            setToast({
-                title: "Rời nhóm thất bại",
-                message: "Không thể rời nhóm vào lúc này.",
-                variant: "error",
-            });
-            return;
-        }
-
-        setToast({
-            title: "Thành công",
-            message: "Bạn đã rời nhóm.",
-            variant: "success",
-        });
-        refetch?.();
-        setLeaveTarget(null);
-    };
-
     const openEdit = (id: string) => { const g = groups.find((g) => g.id === id); if (g) setEditTarget(g); };
     const openDelete = (id: string) => { const g = groups.find((g) => g.id === id); if (g) setDeleteTarget(g); };
     const openLeave = (id: string) => { const g = groups.find((g) => g.id === id); if (g) setLeaveTarget(g); };
@@ -263,7 +223,10 @@ export default function BoardGroupPage() {
             <LeaveGroupDialog
                 target={leaveTarget}
                 onOpenChange={(o) => { if (!o) setLeaveTarget(null); }}
-                onConfirm={handleLeave}
+                onSuccess={() => {
+                    refetch?.();
+                    setLeaveTarget(null);
+                }}
             />
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 border-b border-[#1E2A3A] px-4">

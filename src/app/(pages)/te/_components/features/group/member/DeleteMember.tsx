@@ -14,6 +14,10 @@ import {
   DialogTitle,
 } from "../../../common/TeamDialog";
 import type { DeleteMemberDialogProps, MemberToDelete } from "./memberTypes";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamGroupApiUrl } from "@/api/teamGroup";
+import { memberApiToastMessage } from "./memberToastErrors";
 
 export type { MemberToDelete };
 
@@ -23,8 +27,12 @@ export function DeleteMemberDialog({
   groupId,
   onSuccess,
 }: DeleteMemberDialogProps) {
-
+  const { setToast } = useToastState();
   const [submitting, setSubmitting] = useState(false);
+  const { sendRequest: removeMemberRequest } = useAxiosMutation({
+    method: "DELETE",
+    url: teamGroupApiUrl.list,
+  });
 
   return (
     <Dialog open={!!target} onOpenChange={onOpenChange}>
@@ -34,13 +42,7 @@ export function DeleteMemberDialog({
             Xóa thành viên
           </DialogTitle>
           <DialogDescription className="text-gray-500 text-sm">
-            Bạn có chắc muốn xóa
-            {" "}
-            <span className="font-medium text-gray-300">
-              {target?.name}
-            </span>
-            {" "}
-            khỏi nhóm này? Hành động này không thể hoàn tác.
+            Bạn có chắc muốn xoá thành viên khỏi nhóm này? Hành động này không thể hoàn tác.
           </DialogDescription>
         </DialogHeader>
         <DialogBody />
@@ -54,7 +56,29 @@ export function DeleteMemberDialog({
               if (!target || !groupId) return;
               setSubmitting(true);
 
+              const path = `${groupId}/members/${target.id}`;
+              const { error } = await removeMemberRequest(undefined, path);
+
               setSubmitting(false);
+
+              if (error) {
+                setToast({
+                  title: "Xóa thành viên thất bại",
+                  message: memberApiToastMessage(
+                    error,
+                    "removeMember",
+                    "Không thể xóa thành viên.",
+                  ),
+                  variant: "error",
+                });
+                return;
+              }
+
+              setToast({
+                title: "Thành công",
+                message: "Đã xóa thành viên khỏi nhóm.",
+                variant: "success",
+              });
               onSuccess?.();
               onOpenChange(false);
             }}
