@@ -13,6 +13,7 @@ import { useAxios } from "@/hooks/useAxios";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { ListSimpleSprintResponse, ListSimpleUserResponse, WorkDetailResponse, WorkResponse } from "../../_models";
 import { useEffect, useMemo, useState } from "react";
+import { AddToSprintWorkBoardDialog } from "../features/group/backlog/container/AddToSprint";
 
 
 const BoardWorkPage = () => {
@@ -25,6 +26,7 @@ const BoardWorkPage = () => {
     const openDialogCreate = mode === ModelType.CREATE;
     const openDialogDelete = mode === ModelType.DELETE;
     const openDialogAssign = mode === ModelType.ASSIGN;
+    const openDialogAddToSprint = mode === ModelType.ADDSPRINT;
     const sprintIdFromUrl = searchParams.get("sprint_id");
     const assigneeIdFromUrl = searchParams.get("assignee_id") || "AllAssign";
     const listParams = useMemo(() => {
@@ -62,7 +64,7 @@ const BoardWorkPage = () => {
         method: "GET",
         url: `${boardWorksApiUrl.GetBoardWorks}${groupId}/works/${id}`
     })
-    
+
     useEffect(() => {
         if (!GetListSprint?.items) return;
 
@@ -118,6 +120,10 @@ const BoardWorkPage = () => {
 
         closeModal();
     };
+    const handleAddToSprintDialogOpenChange = (open: boolean) => {
+        if (open) return;
+        closeModal();
+    };
     return (<>
         <CreateWorkBoardDialog
             open={openDialogCreate}
@@ -138,6 +144,13 @@ const BoardWorkPage = () => {
             refreshListWork={refetch}
             open={openDialogAssign}
             getBoardWorkDataById={getBoardWorkDataById?.item}
+        />
+        <AddToSprintWorkBoardDialog
+            onOpenChange={handleAddToSprintDialogOpenChange}
+            open={openDialogAddToSprint}
+            getBoardWorkDataById={getBoardWorkDataById?.item}
+            GetListSprint={GetListSprint?.items}
+            refreshListWork={refetch}
         />
         <div className="flex justify-between items-center mb-2 p-6">
             <div className="flex items-center gap-5">
@@ -210,7 +223,7 @@ const BoardWorkPage = () => {
             </div>
         </div>
         <div className="p-4">
-            <BoardWork ListWork={getListWork?.items || []}  disable={disable}/>
+            <BoardWork ListWork={getListWork?.items || []} disable={disable} />
         </div>
         <DrawerPage refetchListWork={refetch}
             getBoardWorkDataById={getBoardWorkDataById?.item}
