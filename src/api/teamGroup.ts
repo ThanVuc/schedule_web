@@ -12,6 +12,7 @@ export const teamGroupApiUrl = {
 
 export const teamMemberApiUrl = {
   list: (groupId: string) => createAPI(`ts/groups/${groupId}/members`),
+  leave: (groupId: string) => createAPI(`ts/groups/${groupId}/members/leave`),
   updateRole: (groupId: string, memberId: string) =>
     createAPI(`ts/groups/${groupId}/members/${memberId}`),
   remove: (groupId: string, memberId: string) =>
