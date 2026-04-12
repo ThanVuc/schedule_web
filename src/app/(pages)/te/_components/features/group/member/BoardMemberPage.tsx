@@ -43,6 +43,18 @@ function RoleBadge({ role }: { role: MemberRole }) {
     );
 }
 
+function MemberAvatar({ member, sizeClass = "size-8" }: { member: Member; sizeClass?: string }) {
+    return (
+        <div
+            className={`${sizeClass} rounded-full bg-[#2274e6] flex items-center justify-center text-sm sm:text-base font-medium text-gray-300 shrink-0 overflow-hidden`}
+        >
+            {(member.avatarUrl, member.avatarFallback)
+
+            }
+        </div>
+    );
+}
+
 function ActionsMenu({ member, onChangeRole, onRemove }: ActionsMenuProps) {
     if (member.role === "Owner") return null;
 
@@ -145,16 +157,14 @@ const BoardMemberPage = () => {
     const members: Member[] = membersFromApi.map((item) => {
         const memberId = item.id ?? "";
         const email = item.email ?? "";
-        const name = item.name ?? "Unknown";
         const avatarUrl = item.avatar;
         return {
             id: memberId,
-            name,
             email,
             role: toRole(item.role),
             joined: formatJoinedAt(item.joined_at),
             avatarUrl,
-            avatarFallback: toAvatarFallback(name),
+            avatarFallback: toAvatarFallback("Member"),
         };
     }).filter((item) => item.id);
     const errorStatus = memberListError?.response?.status;
@@ -171,90 +181,118 @@ const BoardMemberPage = () => {
     }, [activeGroupId, altGroupId, isForbidden, router, searchParams]);
 
     return (
-        <div className="px-6 py-6">
-            <div className="flex items-start justify-between mb-6">
-                <div>
-                    <h2 className="text-xl font-semibold text-white">Thành viên</h2>
-                    <p className="text-sm text-gray-500 mt-0.5">
+        <div className="px-3 py-4 sm:px-5 sm:py-6 md:px-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6 mb-5 sm:mb-6">
+                <div className="min-w-0">
+                    <h2 className="text-lg sm:text-xl font-semibold text-white">Thành viên</h2>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-0.5 leading-relaxed max-w-prose">
                         Quản lý các thành viên nhóm và vai trò của họ.
                     </p>
                 </div>
                 <Button
                     onClick={() => setInviteOpen(true)}
                     disabled={isForbidden && !isRetryPending}
-                    className="inline-flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-bold
-                               bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-95
+                    className="inline-flex items-center justify-center gap-2 h-10 sm:h-9 w-full sm:w-auto shrink-0 px-4 rounded-lg text-sm font-bold
+                               bg-[#1565C0] text-white hover:bg-[#1976D2] active:scale-[0.98]
                                shadow-md shadow-[#1565C0]/30 transition-all duration-150"
                 >
-                    <UserPlus size={15} />
+                    <UserPlus size={15} className="shrink-0" />
                     Mời thành viên
                 </Button>
             </div>
 
-            <div className="rounded-xl border border-[#1E2A3A] overflow-hidden">
+            <div className="rounded-xl border border-[#1E2A3A] overflow-hidden bg-[#0B1120]/40">
                 {loading && (
-                    <div className="px-4 py-3 text-sm text-gray-500 border-b border-[#1E2A3A]">
+                    <div className="px-3 py-3 sm:px-4 text-sm text-gray-500 border-b border-[#1E2A3A]">
                         Đang tải danh sách thành viên...
                     </div>
                 )}
                 {isForbidden && !isRetryPending && (
-                    <div className="px-4 py-3 text-sm text-amber-300 border-b border-[#1E2A3A] bg-amber-500/10">
+                    <div className="px-3 py-3 sm:px-4 text-xs sm:text-sm text-amber-300 border-b border-[#1E2A3A] bg-amber-500/10 leading-relaxed">
                         Bạn không phải thành viên của group này nên không thể xem danh sách thành viên.
                     </div>
                 )}
-                <div className="grid grid-cols-[2fr_2fr_1fr_1fr_48px] px-4 py-3
-                                border-b border-[#1E2A3A] bg-[#0D1726]">
+                <div
+                    className="hidden md:grid md:grid-cols-[minmax(8rem,1.6fr)_minmax(0,1.8fr)_auto_minmax(6.5rem,1fr)_3rem] md:gap-3 md:items-center
+                               px-4 py-3 border-b border-[#1E2A3A] bg-[#0D1726]"
+                >
                     {["Thành viên", "Email", "Vai trò", "Ngày vào", ""].map((h) => (
-                        <span key={h} className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <span
+                            key={h}
+                            className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-500 truncate"
+                        >
                             {h}
                         </span>
                     ))}
                 </div>
-
-                {members.map((member, idx) => (
-                    <div
-                        key={member.id}
-                        className={`grid grid-cols-[2fr_2fr_1fr_1fr_48px] items-center px-4 py-3.5
-                                    transition-colors hover:bg-[#1E2A3A]/40
-                                    ${idx !== members.length - 1 ? "border-b border-[#1E2A3A]" : ""}`}
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="size-8 rounded-full bg-[#1E2A3A] flex items-center justify-center text-base shrink-0 overflow-hidden">
-                                {member.avatarUrl ? (
-                                    <img
-                                        src={member.avatarUrl}
-                                        alt={member.name}
-                                        className="h-full w-full object-cover rounded-full"
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer"
+                <div className="md:hidden divide-y divide-[#1E2A3A]">
+                    {members.map((member) => (
+                        <div key={`member-mobile-${member.id}`} className="px-3 py-4 sm:px-4">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start gap-3 min-w-0 flex-1">
+                                    <MemberAvatar member={member} sizeClass="size-10" />
+                                    <div className="min-w-0 flex-1 pt-0.5">
+                                        <p className="text-xs text-gray-400 truncate mt-0.5">{member.email}</p>
+                                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                                            <RoleBadge role={member.role} />
+                                            <span className="text-[11px] text-gray-500 tabular-nums">
+                                                {member.joined}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="shrink-0 pt-0.5">
+                                    <ActionsMenu
+                                        member={member}
+                                        onChangeRole={() => setChangeTarget(member)}
+                                        onRemove={() =>
+                                            setDeleteTarget({
+                                                id: member.id,
+                                                email: member.email,
+                                                role: member.role,
+                                            })
+                                        }
                                     />
-                                ) : (
-                                    member.avatarFallback
-                                )}
+                                </div>
                             </div>
                         </div>
-                        <span className="text-sm text-gray-400">{member.email}</span>
-                        <RoleBadge role={member.role} />
-                        <span className="text-sm text-gray-500">{member.joined}</span>
-                        <div className="flex justify-end">
-                            <ActionsMenu
-                                member={member}
-                                onChangeRole={() => setChangeTarget(member)}
-                                onRemove={() =>
-                                    setDeleteTarget({
-                                        id: member.id,
-                                        name: member.name,
-                                        email: member.email,
-                                        role: member.role,
-                                    })
-                                }
-                            />
+                    ))}
+                </div>
+                <div className="hidden md:block">
+                    {members.map((member, idx) => (
+                        <div
+                            key={`member-desktop-${member.id}`}
+                            className={`grid grid-cols-[minmax(8rem,1.6fr)_minmax(0,1.8fr)_auto_minmax(6.5rem,1fr)_3rem] gap-3 items-center px-4 py-3.5
+                                        transition-colors hover:bg-[#1E2A3A]/40
+                                        ${idx !== members.length - 1 ? "border-b border-[#1E2A3A]" : ""}`}
+                        >
+                            <div className="flex items-center gap-3 min-w-0">
+                                <MemberAvatar member={member} />
+                            </div>
+                            <span className="text-sm text-gray-400 truncate min-w-0">{member.email}</span>
+                            <div className="justify-self-start">
+                                <RoleBadge role={member.role} />
+                            </div>
+                            <span className="text-xs sm:text-sm text-gray-500 tabular-nums truncate">{member.joined}</span>
+                            <div className="flex justify-end">
+                                <ActionsMenu
+                                    member={member}
+                                    onChangeRole={() => setChangeTarget(member)}
+                                    onRemove={() =>
+                                        setDeleteTarget({
+                                            id: member.id,
+                                            email: member.email,
+                                            role: member.role,
+                                        })
+                                    }
+                                />
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
 
                 {members.length === 0 && !isForbidden && (
-                    <div className="py-16 text-center text-gray-600 text-sm">
+                    <div className="py-12 sm:py-16 px-4 text-center text-gray-600 text-sm">
                         Chưa có thành viên nào trong group.
                     </div>
                 )}
@@ -281,7 +319,6 @@ const BoardMemberPage = () => {
                     onOpenChange={(open) => {
                         if (!open) setChangeTarget(null);
                     }}
-                    memberName={changeTarget.name}
                     currentRole={changeTarget.role}
                     memberId={changeTarget.id}
                     groupId={activeGroupId}

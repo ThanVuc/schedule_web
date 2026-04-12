@@ -3,7 +3,6 @@ export type MemberRole = "Owner" | "Manager" | "Member" | "Viewer";
 
 export interface Member {
   id: string;
-  name: string;
   email: string;
   role: MemberRole;
   joined: string;
@@ -13,7 +12,6 @@ export interface Member {
 
 export interface MemberApiModel {
   id?: string;
-  name?: string;
   email?: string;
   role?: string | { name?: string } | null;
   joined_at?: string;
@@ -41,7 +39,6 @@ export interface RoleDropdownProps {
 export interface ChangeRoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  memberName: string;
   currentRole: MemberRole;
   memberId: string;
   groupId: string;
@@ -50,7 +47,6 @@ export interface ChangeRoleDialogProps {
 
 export interface MemberToDelete {
   id: string;
-  name: string;
   email: string;
   role: MemberRole;
 }

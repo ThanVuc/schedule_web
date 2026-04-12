@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import { LogOut } from "lucide-react";
 import {
     Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter,
@@ -8,19 +8,57 @@ import {
     DialogCancelButton, DialogDangerButton,
 } from "../../common/TeamDialog";
 import { type Group } from "./types";
+import { useAxiosMutation } from "@/hooks/useAxios";
+import { useToastState } from "@/hooks/useToasts";
+import { teamGroupApiUrl } from "@/api/teamGroup";
 
 
 export interface LeaveGroupDialogProps {
     target: Group | null;
     onOpenChange: (open: boolean) => void;
-    onConfirm: (id: string) => void;
+    onSuccess?: () => void;
 }
 
 
-export const LeaveGroupDialog = ({ target, onOpenChange, onConfirm }: LeaveGroupDialogProps) => {
-    const handleConfirm = () => {
+export const LeaveGroupDialog = ({ target, onOpenChange, onSuccess }: LeaveGroupDialogProps) => {
+    const { setToast } = useToastState();
+    const [submitting, setSubmitting] = useState(false);
+    const { sendRequest: leaveGroupRequest } = useAxiosMutation({
+        method: "PATCH",
+        url: teamGroupApiUrl.list,
+    });
+
+    const handleConfirm = async () => {
         if (!target) return;
-        onConfirm(target.id);
+        setSubmitting(true);
+        const tryLeave = async (groupId: string) =>
+            leaveGroupRequest(undefined, `${groupId}/members/leave`);
+
+        let { error } = await tryLeave(target.id);
+        const status = error?.response?.status;
+        const fallbackId = target.altGroupId;
+        if (error && fallbackId && fallbackId !== target.id && (status === 404 || status === 422)) {
+            ({ error } = await tryLeave(fallbackId));
+        }
+
+        setSubmitting(false);
+
+        if (error) {
+            setToast({
+                title: "Rời nhóm thất bại",
+                message: "Không thể rời nhóm vào lúc này.",
+                variant: "error",
+            });
+            return;
+        }
+
+        setToast({
+            title: "Thành công",
+            message: "Bạn đã rời nhóm.",
+            variant: "success",
+        });
+        onSuccess?.();
+        onOpenChange(false);
     };
 
     return (
@@ -46,12 +84,16 @@ export const LeaveGroupDialog = ({ target, onOpenChange, onConfirm }: LeaveGroup
 
                 <DialogFooter>
                     <DialogClose asChild>
-                        <DialogCancelButton className="bg-transparent hover:bg-[#1E2A3A] hover:text-gray-300">
+                        <DialogCancelButton
+                            disabled={submitting}
+                            className="bg-transparent hover:bg-[#1E2A3A] hover:text-gray-300"
+                        >
                             Hủy
                         </DialogCancelButton>
                     </DialogClose>
                     <DialogDangerButton
-                        onClick={handleConfirm}
+                        disabled={submitting}
+                        onClick={() => void handleConfirm()}
                         className="bg-orange-600 hover:bg-orange-500 shadow-orange-900/40"
                     >
                         <LogOut size={14} /> Rời nhóm

@@ -8,7 +8,6 @@ import { GROUP_TABS, TabKey, TabConfig } from "../../../../_constants";
 import { Button } from "@/components/ui";
 import { useAxios } from "@/hooks";
 import { teamGroupApiUrl } from "@/api/teamGroup";
-import Image from 'next/image'
 
 export type { TabKey, TabConfig };
 export { GROUP_TABS };
@@ -20,7 +19,7 @@ export function useActiveTab(defaultTab: TabKey = "members"): TabKey {
     return (valid.includes(raw as TabKey) ? raw : defaultTab) as TabKey;
 }
 
-function GroupAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
+function GroupAvatar({ name }: { name: string; avatarUrl?: string }) {
     const initials = name
         .split(" ")
         .slice(0, 2)
@@ -28,23 +27,11 @@ function GroupAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) 
         .join("")
         .toUpperCase();
 
-    if (avatarUrl) {
-        return (
-            <Image
-                src={avatarUrl}
-                alt={name}
-                width={64}
-                height={64}
-                className="w-16 h-16 rounded-full object-cover ring-2 ring-[#1E2A3A] shrink-0"
-            />
-        );
-    }
-
     return (
         <div
             className={cn(
                 "w-16 h-16 rounded-full flex items-center justify-center shrink-0",
-                "bg-gradient-to-br ring-2 ring-[#1E2A3A] text-white text-base font-semibold select-none",
+                "bg-gradient-to-br ring-2 ring-[#00a5fe] text-white text-base font-semibold select-none",
             )}
         >
             {initials}
@@ -108,7 +95,7 @@ export const TabGroup = ({ className }: TabGroupProps) => {
 
     return (
         <>
-         <div className={cn("flex items-center gap-4 px-6 py-8 bg-[#0B1120] border-b border-[#1E2A3A]", className)}>
+            <div className={cn("flex items-center gap-4 px-6 py-8 bg-[#0B1120] border-b border-[#1E2A3A]", className)}>
                 <Button
                     onClick={() => router.push("/te/group")}
                     aria-label="back"
@@ -135,7 +122,7 @@ export const TabGroup = ({ className }: TabGroupProps) => {
                     </p>
                 </div>
             </div>
-<div className="sticky top-0 z-10 bg-[#0B1120] border-b border-[#1E2A3A]">
+            <div className="sticky top-0 z-10 bg-[#0B1120] border-b border-[#1E2A3A]">
                 <div className="flex items-end gap-0 overflow-x-auto no-scrollbar px-2">
                     {GROUP_TABS.map(({ key, label }) => {
                         const isActive = activeTab === key;
