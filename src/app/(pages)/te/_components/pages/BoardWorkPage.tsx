@@ -75,7 +75,8 @@ const BoardWorkPage = () => {
 
         if (sprintIdFromUrl) {
             const selectedSprint = GetListSprint.items.find((sprint) => sprint.id === sprintIdFromUrl);
-            setDisable(Number(selectedSprint?.status) !== 2);
+            const selectedSprintStatus = Number(selectedSprint?.status);
+            setDisable(!(selectedSprintStatus === 1 || selectedSprintStatus === 2));
             return;
         }
 
