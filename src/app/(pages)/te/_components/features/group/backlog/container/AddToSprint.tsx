@@ -51,18 +51,25 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork
 
     const onSubmit = async () => {
         if (!selectedSprintId) return;
-
-        const sendRequestBody = {
-            sprint_id: selectedSprintId,
-            version: getBoardWorkDataById?.version || 0,
-        };
-
-        if (mode === ModelType.ADDSPRINT) {
-            await sendUpdateRequest(sendRequestBody);
+        if (selectedSprintId === "Backlog") {
+            await sendUpdateRequest({
+                is_unset_sprint: true,
+                version: getBoardWorkDataById?.version || 0,
+            });
             refreshListWork?.();
             handleOpenChange(false);
-        }
-    };
+        } else {
+            const sendRequestBody = {
+                sprint_id: selectedSprintId,
+                version: getBoardWorkDataById?.version || 0,
+            };
+            if (mode === ModelType.ADDSPRINT) {
+                await sendUpdateRequest(sendRequestBody);
+                refreshListWork?.();
+                handleOpenChange(false);
+            }
+        };
+    }
     return (
         <>
             <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -76,11 +83,13 @@ export const AddToSprintWorkBoardDialog = ({ open, onOpenChange, refreshListWork
                     <DialogBody>
                         <div className="flex flex-col gap-2"    >
                             <Label htmlFor="sprint-select" className="text-sm text-gray-300 mb-1">Chọn Sprint</Label>
-                            <Select value={selectedSprintId} onValueChange={(value) => setSelectedSprintId(value)}>
+                            <Select value={selectedSprintId} onValueChange={(value) =>
+                                setSelectedSprintId(value)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Chọn sprint" />
                                 </SelectTrigger>
                                 <SelectContent className="z-200">
+                                    <SelectItem value="Backlog">Backlog</SelectItem>
                                     <SelectGroup>
                                         {GetListSprint?.map((sprint) => (
                                             <SelectItem key={sprint.id} value={sprint.id}>
