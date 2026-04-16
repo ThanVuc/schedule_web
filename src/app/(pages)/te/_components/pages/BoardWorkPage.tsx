@@ -27,6 +27,7 @@ const BoardWorkPage = () => {
     const openDialogDelete = mode === ModelType.DELETE;
     const openDialogAssign = mode === ModelType.ASSIGN;
     const openDialogAddToSprint = mode === ModelType.ADDSPRINT;
+    const tabFromUrl = searchParams.get("tab");
     const sprintIdFromUrl = searchParams.get("sprint_id");
     const assigneeIdFromUrl = searchParams.get("assignee_id") || "AllAssign";
     const listParams = useMemo(() => {
@@ -66,6 +67,15 @@ const BoardWorkPage = () => {
     })
 
     useEffect(() => {
+        if (tabFromUrl === "workboard" || sprintIdFromUrl === null) return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("sprint_id");
+
+        router.replace(`?${params.toString()}`, { scroll: false });
+    }, [tabFromUrl, sprintIdFromUrl, searchParams, router]);
+
+    useEffect(() => {
         if (!GetListSprint?.items) return;
 
         const activeSprint = GetListSprint.items.find(
@@ -76,19 +86,23 @@ const BoardWorkPage = () => {
         if (sprintIdFromUrl) {
             const selectedSprint = GetListSprint.items.find((sprint) => sprint.id === sprintIdFromUrl);
             const selectedSprintStatus = Number(selectedSprint?.status);
-            setDisable(!(selectedSprintStatus === 1 || selectedSprintStatus === 2));
+            setDisable((selectedSprintStatus === 3 || selectedSprintStatus === 4));
             return;
         }
 
         setDisable(!activeSprintId);
 
-        if (!activeSprintId || sprintIdFromUrl !== null) return;
+        if (!activeSprintId || sprintIdFromUrl !== null || tabFromUrl !== "workboard") return;
 
         const params = new URLSearchParams(searchParams.toString());
         params.set("sprint_id", activeSprintId);
 
         router.replace(`?${params.toString()}`, { scroll: false });
-    }, [GetListSprint?.items, sprintIdFromUrl]);
+    }, [GetListSprint?.items, sprintIdFromUrl, tabFromUrl]);
+    useEffect(() => {
+        if (!GetListSprint?.items) return;
+
+    }, [GetListSprint?.items])
 
     const closeModal = () => {
         const params = new URLSearchParams(searchParams.toString());

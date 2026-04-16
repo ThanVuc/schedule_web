@@ -90,6 +90,11 @@ export const TabGroup = ({ className }: TabGroupProps) => {
     const navigate = (key: TabKey) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("tab", key);
+
+        if (key !== "workboard") {
+            params.delete("sprint_id");
+        }
+
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
