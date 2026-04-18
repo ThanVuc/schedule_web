@@ -32,8 +32,8 @@ interface DrawerFormProps {
     listSprint?: ListSimpleSprintResponse[];
     disable?: boolean;
 }
-
-const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => {
+const baseFieldClass ="h-10 w-full border-0 bg-transparent px-3 text-base text-white shadow-none focus-visible:ring-0";
+const DrawerForm = ({ form, version, listSprint, disable }: DrawerFormProps) => {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [currentVersion, setCurrentVersion] = useState<number>(Number(version) || 0);
@@ -59,8 +59,6 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
         }
 
     };
-
-
     const { debouncedUpdate, cleanup } = useDebouncedUpdate(updateWork, 2000, handleResponse);
     const { debouncedUpdate: immediateUpdate, cleanup: immediateCleanup } = useDebouncedUpdate(updateWork, 0, handleResponse);
 
@@ -83,7 +81,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                     <FormItem className="w-full break-words whitespace-pre-wrap text-left break-all">
                         {isEditingTitle && !disable ? (
                             <Input
-                            disabled={disable}
+                                disabled={disable}
                                 autoFocus
                                 {...field}
                                 value={field.value || ""}
@@ -119,7 +117,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                     <FormItem className="w-full break-words whitespace-pre-wrap text-left ">
                         {isEditingDescription && !disable ? (
                             <Input
-                            disabled={disable}
+                                disabled={disable}
                                 autoFocus
                                 {...field}
                                 value={field.value || ""}
@@ -164,7 +162,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                                     field.onChange(statusValue);
                                     immediateUpdate({ status: statusValue });
                                 }}>
-                                    <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">
+                                    <SelectTrigger className="h-10 w-full border-0 bg-transparent px-2 text-base text-white shadow-none focus-visible:ring-0">
                                         <SelectValue placeholder="Select status" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -181,7 +179,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                     )}
                 />
 
-                <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+                <div className="grid grid-cols-2 gap-6 items-end">
                     <FormField
                         control={form.control}
                         name="priority"
@@ -189,16 +187,18 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                             <FormItem className="space-y-2">
                                 <Label className="block text-sm font-semibold text-slate-300">Priority</Label>
                                 <FormControl>
-                                    <Select disabled={disable} value={field.value?.toString()} onValueChange={
-                                        (value) => {
+                                    <Select
+                                        disabled={disable}
+                                        value={field.value && field.value > 0 ? field.value.toString() : undefined}
+                                        onValueChange={(value) => {
                                             const priorityValue = Number(value);
                                             const isValidPriority = Number.isInteger(priorityValue) && priorityValue >= 1 && priorityValue <= 3;
                                             if (!isValidPriority) return;
                                             field.onChange(priorityValue);
                                             immediateUpdate({ priority: priorityValue });
-                                        }
-                                    }>
-                                        <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">
+                                        }}
+                                    >
+                                        <SelectTrigger className={baseFieldClass}>
                                             <SelectValue placeholder="Select priority" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -229,7 +229,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                                             field.onChange(value === "" ? undefined : value);
                                             immediateUpdate({ due_date: value === "" ? undefined : value });
                                         }}
-                                        className="h-9 border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0"
+                                        className={baseFieldClass + " appearance-none"}
                                     />
                                 </FormControl>
                             </FormItem>
@@ -254,7 +254,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                                             field.onChange(value === "" ? undefined : Number(value));
                                             immediateUpdate({ story_point: value === "" ? undefined : Number(value) });
                                         }}
-                                        className="h-9 border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0"
+                                        className={baseFieldClass}
                                     />
                                 </FormControl>
                             </FormItem>
@@ -280,7 +280,7 @@ const DrawerForm = ({ form, version, listSprint , disable}: DrawerFormProps) => 
                                             immediateUpdate({ sprint_id: value });
                                         }
                                     }>
-                                        <SelectTrigger className="w-full border-0 bg-transparent px-0 text-base text-white shadow-none focus-visible:ring-0">
+                                        <SelectTrigger className={baseFieldClass}>
                                             <SelectValue placeholder="Select sprint" />
                                         </SelectTrigger>
                                         <SelectContent>

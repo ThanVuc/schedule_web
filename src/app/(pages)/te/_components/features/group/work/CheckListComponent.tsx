@@ -193,7 +193,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
                                     }
                                 }}
                                 autoFocus
-                                className="h-8 min-w-0 flex-1 border-none bg-transparent px-0 text-base text-slate-200 shadow-none focus-visible:ring-0"
+                                className="h-8 min-w-0 flex-1 border-none bg-transparent px-2 text-base text-slate-200 shadow-none focus-visible:ring-0"
                             />
                         ) : (
                             <span
@@ -235,7 +235,7 @@ const CheckListComponent = ({ checklistItems, onCreateItem, onUpdateItem, onDele
                         }
                     }}
                     placeholder="Thêm mục checklist..."
-                    className="h-9 border-none bg-transparent px-0 text-base text-slate-300 shadow-none placeholder:text-slate-500 focus-visible:ring-0"
+                    className="h-9 border-none bg-transparent px-2 text-base text-slate-300 shadow-none placeholder:text-slate-500 focus-visible:ring-0"
                 />
                 <Button
                     type="button"

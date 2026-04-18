@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui";
+import { Card, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui";
 import { LabelCategory, LabelSelector } from "../../../_components";
 import { WorkCardModel } from "../_models/type";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
@@ -22,7 +22,7 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
   const labels = Array.isArray(workCard.labels) ? workCard.labels : [];
   const Draft = workCard.draft?.key === DraftLabel.DRAFT ? workCard.draft : undefined;
   const Overdue = workCard.overdue?.key === OverdueLabel.OVERDUE ? workCard.overdue : undefined;
-  const BorderColor =  workCard.is_conflict ? "#FF0000" : Draft ? workCard.draft.color : labels.find(label => label.color)?.color;
+  const BorderColor = workCard.is_conflict ? "#FF0000" : Draft ? workCard.draft.color : labels.find(label => label.color)?.color;
   const searchParams = useSearchParams();
   const router = useRouter();
   const handlePageQueryToModal = (mode: string, id?: string) => {
@@ -105,7 +105,19 @@ const WorkCard = ({ workCard }: ScheduleCardProps) => {
               <p className="font-bold  text-sm text-white w-25 flex-shrink-0">Mô tả ngắn:</p>
               <div className="flex items-start gap-2 w-full sm:w-0 sm:flex-1">
                 <p style={{ overflowWrap: "anywhere" } as React.CSSProperties} className="font-light text-sm text-slate-200 line-clamp-2 overflow-hidden flex-1">{workCard.short_descriptions}</p>
-                {workCard.is_conflict && (<ExclamationIcon className="!w-6 !h-6 text-[#FF0000] mt-0.5 flex-shrink-0" />)}
+                {workCard.is_conflict && (
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ExclamationIcon className="!w-6 !h-6 text-[#FF0000] mt-0.5 flex-shrink-0" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Công việc bị xung đột với công việc khác</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
           </div>
