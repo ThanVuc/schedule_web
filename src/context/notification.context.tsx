@@ -8,7 +8,7 @@ import { useFirebaseMessaging } from "@/hooks/useFirbaseMessaging";
 type NotificationContextType = {
   notifications: Notification[];
   refetch?: () => Promise<void>;
-  markAsRead: (id: string) => Promise<void>;
+  markAsRead: (id: string) => void;
   markAllAsRead: () => Promise<void>;
 };
 
@@ -67,23 +67,14 @@ export function NotificationProvider({
     method: "POST",
   });
 
-  const markAsRead = async (id: string) => {
+  const markAsRead = (id: string) => {
     const current = notifications.find(n => n.id === id);
     if (!current || current.is_read) return;
 
-    const { error } = await sendRequest({ ids: [id] });
-    if (error) {
-      setToast({
-        title: "Lỗi",
-        message: "Không thể đánh dấu đã đọc thông báo",
-        variant: "error",
-      });
-      return;
-    }
+    // fire & forget
+    sendRequest({ ids: [id] });
 
-    setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, is_read: true } : n)
-    );
+    window.location.href = current.link || window.location.origin;
   };
 
   const markAllAsRead = async () => {

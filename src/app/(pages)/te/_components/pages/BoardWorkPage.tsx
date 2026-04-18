@@ -12,7 +12,7 @@ import { AssignWorkBoardDialog } from "../features/group/work/container/AssignWo
 import { useAxios } from "@/hooks/useAxios";
 import { boardWorksApiUrl } from "@/api/boardWork";
 import { ListSimpleSprintResponse, ListSimpleUserResponse, WorkDetailResponse, WorkResponse } from "../../_models";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AddToSprintWorkBoardDialog } from "../features/group/backlog/container/AddToSprint";
 
 
@@ -29,6 +29,8 @@ const BoardWorkPage = () => {
     const openDialogAddToSprint = mode === ModelType.ADDSPRINT;
     const tabFromUrl = searchParams.get("tab");
     const sprintIdFromUrl = searchParams.get("sprint_id");
+    const selectedSprintFilter = sprintIdFromUrl ?? "BackLog";
+    const hasInitializedAutoSprintRef = useRef(false);
     const assigneeIdFromUrl = searchParams.get("assignee_id") || "AllAssign";
     const listParams = useMemo(() => {
         const entries = [...searchParams.entries()].filter(([key]) => key !== "mode" && key !== "id");
@@ -87,18 +89,24 @@ const BoardWorkPage = () => {
             const selectedSprint = GetListSprint.items.find((sprint) => sprint.id === sprintIdFromUrl);
             const selectedSprintStatus = Number(selectedSprint?.status);
             setDisable((selectedSprintStatus === 3 || selectedSprintStatus === 4));
+            hasInitializedAutoSprintRef.current = true;
             return;
         }
 
         setDisable(!activeSprintId);
 
-        if (!activeSprintId || sprintIdFromUrl !== null || tabFromUrl !== "workboard") return;
+        if (sprintIdFromUrl !== null || tabFromUrl !== "workboard" || hasInitializedAutoSprintRef.current) return;
 
         const params = new URLSearchParams(searchParams.toString());
-        params.set("sprint_id", activeSprintId);
+        hasInitializedAutoSprintRef.current = true;
+        if (activeSprintId) {
+            params.set("sprint_id", activeSprintId);
+        } else {
+            params.delete("sprint_id");
+        }
 
         router.replace(`?${params.toString()}`, { scroll: false });
-    }, [GetListSprint?.items, sprintIdFromUrl, tabFromUrl]);
+    }, [GetListSprint?.items, sprintIdFromUrl, tabFromUrl, searchParams, router]);
     useEffect(() => {
         if (!GetListSprint?.items) return;
 
@@ -172,8 +180,11 @@ const BoardWorkPage = () => {
                 <p className="text-2xl font-bold">Bảng công việc</p>
                 <div className="flex gap-4">
                     <Select
-                        value={sprintIdFromUrl || ""}
+                        disabled={loadingGetListSprint}
+                        value={loadingGetListSprint ? undefined : selectedSprintFilter}
                         onValueChange={(value) => {
+                            if (loadingGetListSprint) return;
+                            hasInitializedAutoSprintRef.current = true;
                             const params = new URLSearchParams(searchParams.toString());
 
                             if (value === "BackLog") {
@@ -185,11 +196,12 @@ const BoardWorkPage = () => {
                             router.push(`?${params.toString()}`, { scroll: false });
                         }}
                     >
-                        <SelectTrigger className="w-40">
-                            <SelectValue placeholder="Hiện không có Sprint" defaultValue="BackLog" />
+                        <SelectTrigger className="w-40 data-[placeholder]:text-white">
+                            <SelectValue placeholder={loadingGetListSprint ? "Đang tải sprint..." : "Hiện không có Sprint"} defaultValue="BackLog" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
+                                <SelectItem value="BackLog">BackLog</SelectItem>
                                 {GetListSprint?.items.map((sprint) => (
                                     <SelectItem key={sprint.id} value={sprint.id}>
                                         {sprint.name}
