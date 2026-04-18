@@ -29,17 +29,17 @@ export const AppNotification = ({
     onClick
 }: AppNotificationProps) => {
     const handleClick = () => {
+        alert("Notification clicked!");
+        if (onClick) onClick();
+
         if (url) {
-            window.open(url, '_blank');
+            window.location.href = url;
         }
-    }
+    };
 
     return (
         <Alert
-            onClick={() => {
-                handleClick();
-                if (onClick) onClick();
-            }}
+            onClick={handleClick}
             className="
                 fixed bottom-4 right-4 z-50
                 max-w-sm w-full sm:w-[360px]
