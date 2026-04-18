@@ -18,6 +18,7 @@ import type { GenerateSprintWithAIDialogProps } from "../sprintTypes";
 import { sprintApiToastMessage } from "./sprintToastErrors";
 import AISprintAdditionalForm from "../components/AISprintAdditionalForm";
 import UploadFileForm, { type UploadFileFormRef } from "../components/UploadFileForm";
+import ExportTemplate from "../components/ExportTemplate";
 
 const initialFormValues: SprintAiGenerationRequest = {
   name: "",
@@ -166,6 +167,7 @@ export default function GenerateSprintWithAIDialog({
               );
             }}
           />
+          <ExportTemplate />
         </div>
       </Form>
     </TeamDialogForm>

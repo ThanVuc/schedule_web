@@ -91,7 +91,10 @@ export const AppBellNotification = () => {
                                                         img_url: notification.image_url,
                                                     }
                                                 }
-                                                onMarkAsRead={markAsRead} />
+                                                onMarkAsRead={() => {
+                                                    alert("Notification clicked!");
+                                                    markAsRead(notification.id);
+                                                }} />
                                         ))}
                                     </div>
                                 )}
