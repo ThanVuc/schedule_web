@@ -39,11 +39,11 @@ export const AppBellNotification = () => {
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent align="end" className="w-100 p-0 border-cyan-900/30 bg-[#0a0e1a] shadow-2xl shadow-cyan-500/5">
+                <PopoverContent align="end" className="w-100 max-w-[calc(100vw-1rem)] overflow-hidden p-0 border-cyan-900/30 bg-[#0a0e1a] shadow-2xl shadow-cyan-500/5">
                     <div>
                         <div className="notifications-header p-4">
                             <h2 className="text-xl font-semibold mb-3">Thông Báo</h2>
-                            <div className="read-tabs">
+                            <div className="read-tabs flex flex-wrap items-center gap-2">
                                 <Button
                                     onClick={() => setActiveTab("all")}
                                     variant="ghost"
@@ -57,7 +57,7 @@ export const AppBellNotification = () => {
                                     variant="ghost"
                                     size="sm"
                                     className={cn(
-                                        "rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
+                                        "rounded-md px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-colors",
                                         activeTab === "unread" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-400 hover:text-cyan-400",
                                     )}>Chưa đọc {newNotifications.length > 0 ? <Badge className="ml-2 text-cyan-400 bg-cyan-500/20">{newNotifications.length}</Badge> : null}</Button>
                             </div>
@@ -92,7 +92,6 @@ export const AppBellNotification = () => {
                                                     }
                                                 }
                                                 onMarkAsRead={() => {
-                                                    alert("Notification clicked!");
                                                     markAsRead(notification.id);
                                                 }} />
                                         ))}
@@ -175,9 +174,9 @@ function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps)
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-hidden">
-                    <p className="mb-1 text-sm font-semibold text-white line-clamp-1">{notification.title}</p>
-                    <p className="mb-1.5 text-sm text-gray-400 line-clamp-2">{notification.message}</p>
+                <div className="min-w-0 flex-1 overflow-hidden max-w-70">
+                    <p className="mb-1 text-sm font-semibold text-white line-clamp-1 break-words">{notification.title}</p>
+                    <p className="mb-1.5 text-sm text-gray-400 line-clamp-2 break-words">{notification.message}</p>
                     <p className="text-xs text-cyan-400">{notification.trigger_at}</p>
                 </div>
 
