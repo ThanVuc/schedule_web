@@ -41,24 +41,19 @@ export default function BoardSprintPage() {
   );
 
   const normalizeStatus = (status?: SprintApiItem["status"]): Sprint["status"] => {
-    const statusText = (() => {
-      if (typeof status === "string" || typeof status === "number") return String(status);
-      if (status && typeof status === "object") {
-        if ("name" in status && typeof status.name === "string") return status.name;
-        if ("value" in status && typeof status.value === "string") return status.value;
-        if ("id" in status && (typeof status.id === "string" || typeof status.id === "number")) return String(status.id);
-      }
-      return "";
-    })();
+    if (!status) return "Draft";
 
-    const normalized = statusText.trim().toLowerCase();
-    if (normalized === "active") return "Active";
-    if (normalized === "completed") return "Completed";
-    if (normalized === "cancelled") return "Cancelled";
-    if (normalized === "1") return "Draft";
-    if (normalized === "2") return "Active";
-    if (normalized === "3") return "Completed";
-    if (normalized === "4") return "Cancelled";
+    if (status === "Draft") return "Draft";
+    if (status === "Active") return "Active";
+    if (status === "Completed") return "Completed";
+    if (status === "Cancelled") return "Cancelled";
+
+    const asStr = String(status).trim();
+    if (asStr === "1") return "Draft";
+    if (asStr === "2") return "Active";
+    if (asStr === "3") return "Completed";
+    if (asStr === "4") return "Cancelled";
+
     return "Draft";
   };
 
@@ -73,6 +68,7 @@ export default function BoardSprintPage() {
     if (raw.result && Array.isArray(raw.result.items)) return raw.result.items;
     return [] as SprintApiItem[];
   })();
+
   const sprints: Sprint[] = sprintsFromApi.map((item) => {
     const primaryId = (item.id ?? "").trim() || (item.sprint_id ?? "").trim();
     const secondaryId = (item.sprint_id ?? "").trim();
@@ -85,7 +81,7 @@ export default function BoardSprintPage() {
       startDate: item.start_date ?? item.startDate ?? "",
       endDate: item.end_date ?? item.endDate ?? "",
       status: normalizeStatus(item.status),
-      progress: item.progress ?? 0,
+      progress: item.progress_percent ?? item.progress ?? 0,
     };
   }).filter((item) => item.id);
 
@@ -115,6 +111,7 @@ export default function BoardSprintPage() {
     startDate: s.startDate,
     endDate: s.endDate,
   });
+
   const openWorkboardForSprint = (sprint: Sprint) => {
     if (!activeGroupId || !sprint.id) return;
     const next = new URLSearchParams(searchParams.toString());

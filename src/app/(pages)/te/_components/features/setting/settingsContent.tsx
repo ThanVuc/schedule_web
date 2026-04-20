@@ -10,8 +10,8 @@ type UserSettingModel = {
     email?: string;
     status?: boolean;
     time_zone?: string;
-    use_email_notification?: boolean;
-    use_app_notification?: boolean;
+    UseEmailNotification?: boolean;
+    UseAppNotification?: boolean;
     created_at?: string;
 };
 
@@ -19,26 +19,6 @@ type ApiErrorResponse = {
     detail?: string;
     message?: string;
     error?: string;
-};
-
-const NOTIFICATION_SETTINGS_KEY = 'te_notification_settings';
-
-const getPersistedNotificationSettings = (): { email: boolean; app: boolean } | null => {
-    if (typeof window === 'undefined') return null;
-    try {
-        const raw = window.localStorage.getItem(NOTIFICATION_SETTINGS_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw) as { email?: unknown; app?: unknown };
-        if (typeof parsed.email !== 'boolean' || typeof parsed.app !== 'boolean') return null;
-        return { email: parsed.email, app: parsed.app };
-    } catch {
-        return null;
-    }
-};
-
-const persistNotificationSettings = (email: boolean, app: boolean) => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(NOTIFICATION_SETTINGS_KEY, JSON.stringify({ email, app }));
 };
 
 const formatCreatedAt = (value?: string) => {
@@ -66,41 +46,26 @@ const SettingContent = () => {
     const parseUserInfo = (source: unknown): UserSettingModel | null => {
         const raw = source as any;
         if (!raw) return null;
+        if (raw.metadata?.user) return raw.metadata.user as UserSettingModel;
+        if (raw.data?.email || raw.data?.created_at) return raw.data as UserSettingModel;
+        if (raw.item?.email || raw.item?.created_at) return raw.item as UserSettingModel;
+        if (raw.user?.email || raw.user?.created_at) return raw.user as UserSettingModel;
         if (raw.email || raw.created_at || raw.time_zone) return raw as UserSettingModel;
-        if (raw.data && (raw.data.email || raw.data.created_at)) return raw.data as UserSettingModel;
-        if (raw.item && (raw.item.email || raw.item.created_at)) return raw.item as UserSettingModel;
-        if (raw.user && (raw.user.email || raw.user.created_at)) return raw.user as UserSettingModel;
-        return raw as UserSettingModel;
+        return null;
     };
 
     const userInfo = useMemo(() => parseUserInfo(userInfoRaw), [userInfoRaw]);
 
     const [emailNotif, setEmailNotif] = useState(false);
-    const [activityNotif, setActivityNotif] = useState(true);
+    const [activityNotif, setActivityNotif] = useState(false);
     const [isEmailUpdating, setIsEmailUpdating] = useState(false);
     const [isAppUpdating, setIsAppUpdating] = useState(false);
-    const [hasHydratedLocalSetting, setHasHydratedLocalSetting] = useState(false);
-
-    useEffect(() => {
-        const persisted = getPersistedNotificationSettings();
-        if (!persisted) return;
-        setEmailNotif(persisted.email);
-        setActivityNotif(persisted.app);
-        setHasHydratedLocalSetting(true);
-    }, []);
 
     useEffect(() => {
         if (!userInfo) return;
-        if (hasHydratedLocalSetting) return;
-        const serverEmail = Boolean(userInfo.use_email_notification);
-        const serverApp =
-            userInfo.use_app_notification === undefined
-                ? true
-                : Boolean(userInfo.use_app_notification);
-        setEmailNotif(serverEmail);
-        setActivityNotif(serverApp);
-        persistNotificationSettings(serverEmail, serverApp);
-    }, [userInfo, hasHydratedLocalSetting]);
+        setEmailNotif(Boolean(userInfo.UseEmailNotification));
+        setActivityNotif(Boolean(userInfo.UseAppNotification));
+    }, [userInfo]);
 
     const email = userInfo?.email || '-';
 
@@ -155,7 +120,6 @@ const SettingContent = () => {
         const ok = await submitNotificationConfig(checked, activityNotif, 'email');
         if (ok) {
             setEmailNotif(checked);
-            persistNotificationSettings(checked, activityNotif);
         }
     };
 
@@ -163,7 +127,6 @@ const SettingContent = () => {
         const ok = await submitNotificationConfig(emailNotif, checked, 'app');
         if (ok) {
             setActivityNotif(checked);
-            persistNotificationSettings(emailNotif, checked);
         }
     };
 
@@ -194,7 +157,7 @@ const SettingContent = () => {
                         </p>
                     </div>
                     <Switch
-                    className='data-[state=checked]:bg-blue-400'
+                        className='data-[state=checked]:bg-blue-400'
                         checked={emailNotif}
                         onCheckedChange={onToggleEmail}
                         disabled={isEmailUpdating || loading}
@@ -209,7 +172,7 @@ const SettingContent = () => {
                         </p>
                     </div>
                     <Switch
-                    className='data-[state=checked]:bg-blue-400'
+                        className='data-[state=checked]:bg-blue-400'
                         checked={activityNotif}
                         onCheckedChange={onToggleApp}
                         disabled={isAppUpdating || loading}
