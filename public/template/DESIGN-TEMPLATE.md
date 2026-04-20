@@ -14,17 +14,42 @@ Cuối cùng, đưa file này vào hệ thống để AI sinh sprint
 *Note: Nếu bạn đã có file planning, với task đã breaking rõ ràng, thì có thể bypass file này, đưa trực tiếp vào system.
 --> 
 
-# 🚀 Tên Module / Công Việc
+# 🚀 Tên Module / Công Việc  
 
 ## 🎯 Mục tiêu
-- 
+-  
+
+---
+
+## 📌 Use Cases
+### UC-01: <Tên use case>
+- Actor: 
+- Mô tả: 
+- Preconditions:
+- Main Flow:
+  1. 
+  2. 
+- Alternative Flow:
+  - 
+- Expected Result:
+
+### UC-02: <Tên use case>
+- Actor: 
+- Description: 
+- Preconditions:
+- Main Flow:
+  1. 
+  2. 
+- Alternative Flow:
+  - 
+- Expected Result:
 
 ---
 
 ## 🧩 Phạm vi công việc (In-Scope)
-- 
-- 
-- 
+-  
+-  
+-  
 
 ---
 
@@ -33,24 +58,22 @@ Cuối cùng, đưa file này vào hệ thống để AI sinh sprint
 - GET /...
 - PATCH /...
 - DELETE /...
-- PATCH /...
 
 ---
 
 ## 🗄️ Mô hình dữ liệu (Data Model)
 
 ### <Tên Entity>
-- 
-- 
+-  
+-  
 
 ---
 
 ## ⚙️ Logic nghiệp vụ
-- 
-- 
+-  
+-  
 
 ---
 
 ## 🧪 Ghi chú
-- 
-
+-  
