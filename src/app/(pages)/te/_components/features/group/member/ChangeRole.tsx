@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { TeamDialogForm } from "../../../common/TeamDialog";
 import { useAxiosMutation } from "@/hooks/useAxios";
 import { useToastState } from "@/hooks/useToasts";
 import { teamMemberApiUrl } from "@/api/teamGroup";
+import { authApiUrl } from "@/api";
+import { useCsrfToken } from "@/context/csrf.context";
 import { memberApiToastMessage } from "./memberToastErrors";
 import {
     DropdownMenu,
@@ -14,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui";
 import { Check, ChevronDown } from "lucide-react";
-import type { MemberRole, RoleDefinition, RoleDropdownProps, ChangeRoleDialogProps } from "./memberTypes";
+import type { MemberRole, RoleDropdownProps, ChangeRoleDialogProps, RoleOption } from "./memberTypes";
 import { GroupRole } from "../../../../_constants/groupRole";
 
 export type { MemberRole, ChangeRoleDialogProps };
@@ -26,18 +29,23 @@ function toApiRole(role: MemberRole) {
     return GroupRole.VIEWER;
 }
 
-export const ROLES: RoleDefinition[] = [
+export const ALL_ROLES: RoleOption[] = [
+    { value: "Owner", label: "Owner", desc: "Toàn quyền quản lý nhóm, bao gồm xóa nhóm và chuyển quyền sở hữu" },
     { value: "Manager", label: "Manager", desc: "Quản lý thành viên và sprints" },
     { value: "Member", label: "Member", desc: "Tham gia và đóng góp vào công việc" },
     { value: "Viewer", label: "Viewer", desc: "Chỉ xem, không được chỉnh sửa" },
 ];
 
+export const ROLES: RoleOption[] = ALL_ROLES.slice(1);
+
 export function RoleDropdown({
     value,
     onChange,
     triggerClassName,
-}: RoleDropdownProps) {
-    const selected = ROLES.find((r) => r.value === value) ?? ROLES[0];
+    availableRoles,
+}: RoleDropdownProps & { availableRoles?: RoleOption[] }) {
+    const roles = availableRoles?.length ? availableRoles : ROLES;
+    const selected = roles.find((r) => r.value === value) ?? roles[0];
 
     return (
         <DropdownMenu>
@@ -59,7 +67,7 @@ export function RoleDropdown({
                 className="z-[200] w-[var(--radix-dropdown-menu-trigger-width)]
                            border-[#1E2A3A] bg-[#0D1520] shadow-xl shadow-black/60"
             >
-                {ROLES.map((role) => {
+                {roles.map((role) => {
                     const isActive = value === role.value;
                     return (
                         <DropdownMenuItem
@@ -89,17 +97,20 @@ export function ChangeRoleDialog({
     onSuccess,
 }: ChangeRoleDialogProps) {
     const { setToast } = useToastState();
+    const csrfToken = useCsrfToken();
     const { sendRequest: changeRoleRequest } = useAxiosMutation({
         method: "PATCH",
         url: teamMemberApiUrl.updateRole(groupId, memberId),
     });
     const [role, setRole] = useState<MemberRole>(currentRole);
 
+
     useEffect(() => {
         if (open) setRole(currentRole);
     }, [open, currentRole]);
 
-    const roleObj = ROLES.find((r) => r.value === role)!;
+    const availableRoles = ALL_ROLES;
+    const roleObj = ALL_ROLES.find((item) => item.value === role) ?? ALL_ROLES[0];
 
     return (
         <TeamDialogForm
@@ -128,13 +139,25 @@ export function ChangeRoleDialog({
                     });
                     return;
                 }
+                try {
+                    await axios({
+                        method: "POST",
+                        url: authApiUrl.refreshToken,
+                        withCredentials: true,
+                        headers: {
+                            "X-CSRF-Token": csrfToken ?? "",
+                        },
+                    });
+                } catch {
+
+                }
                 onSuccess?.();
                 onOpenChange(false);
             }}
         >
             <div className="flex flex-col gap-3">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vai trò</p>
-                <RoleDropdown value={role} onChange={setRole} />
+                <RoleDropdown value={role} onChange={setRole} availableRoles={availableRoles} />
                 <div className="flex items-start rounded-lg px-4 py-3 border border-[#1E2A3A] transition-all duration-200">
                     <p className="text-xs text-gray-400 leading-relaxed">{roleObj.desc}</p>
                 </div>

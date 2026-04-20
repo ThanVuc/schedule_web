@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useAxios, useAxiosMutation, useToastState } from "@/hooks";
@@ -52,11 +52,28 @@ export default function BoardGroupPage() {
     const [editTarget, setEditTarget] = useState<Group | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Group | null>(null);
     const [leaveTarget, setLeaveTarget] = useState<Group | null>(null);
+    const lastGroupFetchErrorKeyRef = useRef<string | null>(null);
 
-    const { data: groupData, loading, refetch } = useAxios<GroupApiModel[] | { items?: GroupApiModel[] }>({
+    const { data: groupData, error: groupFetchError, loading, refetch } = useAxios<GroupApiModel[] | { items?: GroupApiModel[] }>({
         method: "GET",
         url: teamGroupApiUrl.list,
     });
+
+    useEffect(() => {
+        if (!groupFetchError) return;
+        const status = groupFetchError.response?.status;
+        const data = groupFetchError.response?.data as { detail?: string; errorCode?: string } | undefined;
+        const detail = (typeof data?.detail === "string" ? data.detail : "").trim();
+        const errorCode = (typeof data?.errorCode === "string" ? data.errorCode : "").trim();
+        const key = `${status ?? "unknown"}-${errorCode}-${detail}`;
+        if (lastGroupFetchErrorKeyRef.current === key) return;
+        lastGroupFetchErrorKeyRef.current = key;
+        setToast({
+            title: "Không tải được danh sách nhóm",
+            message: detail || "Có lỗi máy chủ khi tải danh sách nhóm, vui lòng thử lại.",
+            variant: "error",
+        });
+    }, [groupFetchError, setToast]);
 
     const { sendRequest: createGroupRequest } = useAxiosMutation({
         method: "POST",

@@ -1,6 +1,12 @@
 
 export type MemberRole = "Owner" | "Manager" | "Member" | "Viewer";
 
+export interface RoleOption {
+  value: MemberRole;
+  label: string;
+  desc: string;
+}
+
 export interface Member {
   id: string;
   email: string;
@@ -24,11 +30,6 @@ export interface ActionsMenuProps {
   onRemove: () => void;
 }
 
-export interface RoleDefinition {
-  value: MemberRole;
-  label: string;
-  desc: string;
-}
 
 export interface RoleDropdownProps {
   value: MemberRole;
