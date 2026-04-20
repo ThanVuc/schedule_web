@@ -10,8 +10,11 @@ export interface SprintApiItem {
   startDate?: string;
   end_date?: string;
   endDate?: string;
-  status?: string | number | { name?: string; value?: string; id?: string | number } | null;
+  status?: SprintStatus;
   progress?: number;
+  progress_percent?: number;
+  completed_work?: number;
+  total_work?: number;
 }
 
 export type SprintListMetadata =
@@ -81,4 +84,3 @@ export interface SprintStatusMutationDialogProps {
   groupId: string;
   onSuccess?: () => void;
 }
-
