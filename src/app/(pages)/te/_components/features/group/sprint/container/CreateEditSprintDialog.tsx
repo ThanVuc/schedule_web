@@ -45,6 +45,18 @@ const SprintSchema = z.object({
     return;
   }
 
+  // Check if start date is in the past (before today)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (start < today) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["startDate"],
+      message: "Ngày bắt đầu không được trong quá khứ",
+    });
+    return;
+  }
+
   if (end < start) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
