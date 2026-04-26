@@ -72,6 +72,16 @@ const UploadFileForm = forwardRef<UploadFileFormRef, UploadFileFormProps>(
 			if (!incomingFiles.length) {
 				return;
 			}
+
+			if (incomingFiles.length > 1) {
+				setToast({
+					title: "Không thể chọn tệp",
+					message: "Chỉ được gửi 1 tệp mỗi lần.",
+					variant: "error",
+				});
+				event.target.value = "";
+				return;
+			}
 			const checkNameFile = incomingFiles.some((file) => file.name.includes("/"));
 			if (checkNameFile) {
 				setToast({
@@ -93,7 +103,7 @@ const UploadFileForm = forwardRef<UploadFileFormRef, UploadFileFormProps>(
 				return;
 			}
 
-			const mergedFiles = [...files, ...incomingFiles];
+			const mergedFiles = incomingFiles;
 			const parsedFiles = SprintAiUploadSelectionSchema.safeParse(mergedFiles);
 			if (!parsedFiles.success) {
 				setToast({
@@ -192,13 +202,12 @@ const UploadFileForm = forwardRef<UploadFileFormRef, UploadFileFormProps>(
 					</div>
 					<div className="text-sm text-white font-semibold">Tải lên tệp kế hoạch</div>
 					<div className="text-xs text-gray-500 mt-1">
-						Tên tệp phải bắt đầu bằng Design, Requirement, Planning, hoặc SRS. Hỗ trợ .md, .markdown, .doc, .docx, .xls, .xlsx. Tối đa 3 tệp, mỗi tệp nhỏ hơn 4MB.
+						Tên tệp phải bắt đầu bằng Design, Requirement, Planning, hoặc SRS. Chỉ hỗ trợ Markdown (.md, .markdown). Chỉ gửi 1 tệp, kích thước nhỏ hơn 2MB.
 					</div>
 					<div className="mt-5">
 						<Input
 							id="sprint-ai-file-upload"
 							type="file"
-							multiple
 							accept={SPRINT_AI_FILE_ACCEPT}
 							className="hidden"
 							onChange={onSelectFiles}
