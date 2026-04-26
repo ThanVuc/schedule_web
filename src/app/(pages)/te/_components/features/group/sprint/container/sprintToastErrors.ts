@@ -76,8 +76,14 @@ export function sprintApiToastMessage(
   }
 
   if (context === "createEditSprint") {
+    if (status === 422) {
+      return "Khoảng thời gian sprint bị trùng với sprint khác hoặc trùng tên. Vui lòng thử lại";
+    }
+    if (detail.includes("start date") && detail.includes("past")) {
+      return "Ngày bắt đầu không được trong quá khứ. Vui lòng chọn ngày bắt đầu từ hôm nay trở đi.";
+    }
     if (detail.includes("date range overlaps") || (detail.includes("overlap") && detail.includes("date"))) {
-      return "Khoảng thời gian sprint bị trùng với sprint khác.";
+      return "Khoảng thời gian sprint bị trùng với sprint khác hoặc trùng tên. Vui lòng thử lại";
     }
     if (errorCode === "ts.validation.unprocessable") {
       return "Dữ liệu sprint không hợp lệ. Vui lòng kiểm tra lại ngày và thông tin.";
@@ -85,7 +91,16 @@ export function sprintApiToastMessage(
   }
 
   if (context === "generateSprintAi") {
-    if (errorCode === "ts.validation.unprocessable") {
+    if (status === 422) {
+      return "Khoảng thời gian sprint bị trùng với sprint khác. Vui lòng chọn khoảng thời gian khác.";
+    }
+    if (detail.includes("start date") && detail.includes("past")) {
+      return "Ngày bắt đầu không được trong quá khứ. Vui lòng chọn ngày bắt đầu từ hôm nay trở đi.";
+    }
+    if (detail.includes("date range overlaps") || (detail.includes("overlap") && detail.includes("date"))) {
+      return "Khoảng thời gian sprint bị trùng với sprint khác. Vui lòng chọn khoảng thời gian khác.";
+    }
+    if (errorCode === "ts.validation.bad-request" || errorCode === "ts.validation.unprocessable") {
       return "Yêu cầu tạo sprint bằng AI không hợp lệ. Vui lòng kiểm tra nội dung và thử lại.";
     }
   }

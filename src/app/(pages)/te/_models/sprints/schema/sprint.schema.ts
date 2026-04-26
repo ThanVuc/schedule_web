@@ -2,16 +2,12 @@ import { z } from "zod";
 import { DateOnly } from "../../../_types/DateOnly";
 import { normalizeDateToIso, toIsoDateString } from "../../../_utils";
 
-export const SPRINT_AI_MAX_FILES = 3;
-export const SPRINT_AI_MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
+export const SPRINT_AI_MAX_FILES = 1;
+export const SPRINT_AI_MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024;
 
 export const SPRINT_AI_ALLOWED_EXTENSIONS = [
 	".md",
-    ".markdown",
-	".doc",
-	".docx",
-	".xls",
-	".xlsx",
+	".markdown",
 ] as const;
 
 export const SPRINT_AI_FILE_ACCEPT = SPRINT_AI_ALLOWED_EXTENSIONS.join(",");
@@ -44,7 +40,7 @@ export function normalizeIsoDateToHandlerDate(value: string): string {
 
 export const SprintAiFileItemSchema = z.object({
 	object_key: z.string().trim().min(1),
-	size: z.number().int().positive().max(SPRINT_AI_MAX_FILE_SIZE_BYTES),
+	size: z.number().int().positive().lt(SPRINT_AI_MAX_FILE_SIZE_BYTES),
 });
 
 export const SprintAiGenerationRequestSchema = z
@@ -61,6 +57,15 @@ export const SprintAiGenerationRequestSchema = z
 		const endDate = tryParseDateOnly(value.end_date);
 		if (!startDate || !endDate) {
 			return;
+		}
+
+		const today = DateOnly.fromDate(new Date());
+		if (startDate.isBefore(today)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Ngày bắt đầu không được trong quá khứ",
+				path: ["start_date"],
+			});
 		}
 
 		if (!startDate.isBefore(endDate)) {
@@ -105,15 +110,15 @@ const SprintAiUploadFileSchema = z
 			"Tên tệp phải bắt đầu bằng Design, Design_, Design-, Requirement, Requirement_, Requirement-, Planning, Planning_, Planning-, SRS, SRS_ hoặc SRS-.",
 	})
 	.refine((file) => isAllowedSprintAiFile(file), {
-		message: "Chỉ hỗ trợ .md, .markdown, .doc, .docx, .xls, .xlsx.",
+		message: "Chỉ hỗ trợ tệp Markdown (.md, .markdown).",
 	})
-	.refine((file) => file.size <= SPRINT_AI_MAX_FILE_SIZE_BYTES, {
-		message: "Mỗi tệp phải nhỏ hơn 4MB.",
+	.refine((file) => file.size < SPRINT_AI_MAX_FILE_SIZE_BYTES, {
+		message: "Tệp phải nhỏ hơn 2MB.",
 	});
 
 export const SprintAiUploadSelectionSchema = z
 	.array(SprintAiUploadFileSchema)
-	.max(SPRINT_AI_MAX_FILES, "Bạn chỉ có thể tải lên tối đa 3 tệp.");
+	.max(SPRINT_AI_MAX_FILES, "Bạn chỉ có thể tải lên tối đa 1 tệp.");
 
 export type SprintAiGenerationRequest = z.infer<typeof SprintAiGenerationRequestSchema>;
 export type SprintAiFileItem = z.infer<typeof SprintAiFileItemSchema>;
